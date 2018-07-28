@@ -45,7 +45,6 @@
     "stream-browserify": "^2.0.1",
     "tassign": "^1.0.0",
     "tempfile": "^2.0.0",
-    "ursa": "^0.9.4",
     "vm-browserify": "^1.1.0",
     "web3": "^0.20.6",
     "web3-provider-engine": "^14.0.6",

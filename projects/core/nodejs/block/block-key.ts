@@ -1,26 +1,27 @@
-import * as ursa from 'ursa';
-import { Block, BlockUtil } from '@muzika/core';
+import * as crypto from 'crypto';
+import * as secp256k1 from 'secp256k1';
+import { Block } from '@muzika/core';
+import * as cipherUtil from '../cipher/cipher-util';
 
 
 export class BlockKey {
   block: Block;
-  privateKey: any;
-  publicKey: any;
+  privateKey: Buffer;
+  publicKey: Buffer;
+  remotePubKey: Buffer;
   encryptedAESKey: Buffer = null;
 
-  private constructor(block: Block, publicKey: any = null) {
+  private constructor(block: Block, remotePubKey: Buffer = null) {
     this.block = block;
-    if (!publicKey) {
-      this.generateKey();
-    } else {
-      this.publicKey = publicKey;
-      this.encryptAESKey();
+    this.generateKey();
+    if (remotePubKey) {
+      this.remotePubKey = remotePubKey;
     }
   }
 
-  static forResponse(block: Block, publicKey: any) {
+  static forResponse(block: Block, remotePubKey: any) {
     // create a block key for response
-    return new BlockKey(block, publicKey);
+    return new BlockKey(block, remotePubKey);
   }
 
   static forRequest(block: Block = null) {
@@ -28,42 +29,34 @@ export class BlockKey {
     return new BlockKey(block);
   }
 
-  generateKey() {
-    // creates a 2048 bit RSA key
-    const rsaKey = ursa.generatePrivateKey(BlockUtil.RSA_KEY_BIT_SIZE, 65537);
-    this.privateKey = rsaKey;
-    this.publicKey = rsaKey;
-  }
-
   getPrivateKey() {
-    return this.privateKey.toPrivatePem().toString();
+    return this.privateKey.toString('hex');
   }
 
   getPublicKey() {
-    return this.publicKey.toPublicPem().toString();
+    return this.publicKey.toString('hex');
   }
 
-  _encryptByPublicKey(blob: Buffer) {
-    return this.publicKey.encrypt(blob);
-  }
-
-  _decryptByPrivateKey(blob: Buffer) {
-    return this.privateKey.decrypt(blob);
-  }
-
-  getEncryptedAESKey() {
-    if (!this.encryptedAESKey) {
-      this.encryptAESKey();
-    }
-    return this.encryptedAESKey;
-  }
-
+  /**
+   * Encrypt AES key by shared material.
+   * XOR(AESkey, convertKey) = (sharedMaterial)
+   * (convertKey) = XOR(AesKey, sharedMaterial)
+   *
+   * (encryptedKey) = AESEncrypt(ephAesKey, convertKey)
+   */
   encryptAESKey() {
     if (!this.block || !this.block.isEncrypted()) {
       // if aes key is not set since the block is not encrypted, cannot encrypt
       throw new Error('The block is not encrypted');
     } else {
-      this.encryptedAESKey = this._encryptByPublicKey(this.block.aesKey);
+      const sharedSecret = cipherUtil.getSharedSecret(this.remotePubKey, this.privateKey);
+      const material = cipherUtil.deriveSecretMaterial(sharedSecret, 80);
+      const convertMaterial = cipherUtil.bufxor(material.slice(0, 32), this.block.aesKey);
+      const ephAesKey = material.slice(32, 64);
+      const iv = material.slice(64);
+      const cipher = crypto.createCipheriv('aes-256-cbc', ephAesKey, iv);
+      cipher.setAutoPadding(false);
+      this.encryptedAESKey = cipher.update(convertMaterial);
     }
   }
 
@@ -71,16 +64,23 @@ export class BlockKey {
     if (!this.block) {
       throw new Error('The block does not exist.');
     } else {
-      this.block.aesKey = this._decryptByPrivateKey(this.encryptedAESKey);
+      const sharedSecret = cipherUtil.getSharedSecret(this.remotePubKey, this.privateKey);
+      const material = cipherUtil.deriveSecretMaterial(sharedSecret, 80);
+      const ephAesKey = material.slice(32, 64);
+      const iv = material.slice(64);
+      const decipher = crypto.createDecipheriv('aes-256-cbc', ephAesKey, iv);
+      decipher.setAutoPadding(false);
+      this.block.aesKey = cipherUtil.bufxor(decipher.update(this.encryptedAESKey), material.slice(0, 32));
     }
   }
 
   receiveBlob(blob: Buffer, doDecryption: boolean = true) {
     // receive blob and translate block.
-    this.encryptedAESKey = blob.slice(0, BlockUtil.RSA_KEY_BIT_SIZE / 8);
+    this.encryptedAESKey = blob.slice(0, 32);
+    this.remotePubKey = blob.slice(32, 64);
 
     // generate an encrypted block from binary
-    this.block = Block.fromEncryptedData(blob.slice(BlockUtil.RSA_KEY_BIT_SIZE / 8));
+    this.block = Block.fromEncryptedData(blob.slice(64));
     this.decryptAESKey();
 
     if (doDecryption) {
@@ -89,6 +89,16 @@ export class BlockKey {
   }
 
   sendBlob() {
-    return Buffer.concat([this.getEncryptedAESKey(), this.block.data]);
+    if (!this.encryptedAESKey) {
+      this.encryptAESKey();
+    }
+
+    return Buffer.concat([this.encryptedAESKey, this.publicKey, this.block.data]);
+  }
+
+  private generateKey() {
+    // creates a 256 bit ECC key
+    this.privateKey = cipherUtil.createPrivateKey();
+    this.publicKey = secp256k1.publicKeyCreate(this.privateKey, false);
   }
 }

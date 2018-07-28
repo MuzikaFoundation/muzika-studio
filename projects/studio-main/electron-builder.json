@@ -29,11 +29,6 @@
         "from": "/${env.MAGICK_HOME}",
         "to": ".",
         "filter": "./*(CORE_RL_*.dll|msvcr120.dll|msvcp120.dll|vcomp120.dll)"
-      },
-      {
-        "from": "/${env.OPENSSL_HOME}",
-        "to": ".",
-        "filter": "*.dll"
       }
     ],
     "publish": [{
