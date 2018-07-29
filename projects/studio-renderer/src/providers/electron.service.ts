@@ -5,7 +5,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { ipcRenderer, webFrame, remote, shell } from 'electron';
 import * as childProcess from 'child_process';
 import * as fs from 'fs';
-import * as ipfs from 'ipfs';
+import * as ipfs from 'ipfs-api';
 
 @Injectable({providedIn: 'root'})
 export class ElectronService {
@@ -32,7 +32,7 @@ export class ElectronService {
 
       this.childProcess = window.require('child_process');
       this.fs = window.require('fs');
-      this.ipfs = window.require('ipfs');
+      this.ipfs = window.require('ipfs-api');
     }
   }
 

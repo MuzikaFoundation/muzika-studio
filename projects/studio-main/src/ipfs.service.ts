@@ -1,4 +1,5 @@
-import * as IPFS from 'ipfs';
+import {IpfsProcess} from 'go-ipfs-wrapper';
+import * as IpfsAPI from 'ipfs-api';
 import * as request from 'request';
 import * as path from 'path';
 import { Observable } from 'rxjs';
@@ -6,7 +7,8 @@ import { electronEnvironment } from './environment';
 import { MuzikaConsole } from '@muzika/core';
 
 export class IpfsService {
-  node: IPFS;
+  ipfsProcess: IpfsProcess;
+  api: IpfsAPI;
   muzikaPeers: string[] = [];
   isReady = false;
 
@@ -14,31 +16,11 @@ export class IpfsService {
   }
 
   init(directoryPath) {
-    this.node = new IPFS({
-      repo: path.join(directoryPath, 'ipfs-muzika'),
-      config: {
-        Addresses: {
-          Swarm: [
-            '/ip4/0.0.0.0/tcp/4004/ws',
-          ]
-        },
-        EXPERIMENTAL: {
-          relay: {
-            enabled: true,
-            hop: {
-              enabled: true
-            }
-          }
-        },
-        Swarm: {
-          DisableRelay: false,
-          EnableRelayHop: true
-        }
-      }
-    });
-
+    this.ipfsProcess = new IpfsProcess(path.join(directoryPath, 'ipfs-muzika'));
     // if ipfs node generated, connect to a remote storage for speeding up file exchange.
-    this.node.on('ready', () => {
+    this.ipfsProcess.on('start', () => {
+      MuzikaConsole.log('IPFS node is ready');
+      this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
       // get IPFS nodes list
       request.get({
           url: `${electronEnvironment.base_api_url}/seed/ipfs`,
@@ -61,44 +43,44 @@ export class IpfsService {
         }
       );
     });
+
+    this.ipfsProcess.run();
   }
 
   sub(arg): Promise<any> {
     return Observable.create(observer => {
-      this.node.pubsub.subscribe(arg, {discover: true}, (msg) => {
+      this.api.pubsub.subscribe(arg, {discover: true}, (msg) => {
         observer.next(msg.data);
       });
     });
   }
 
   pub(arg, msg) {
-    this.node.pubsub.publish(arg, new this.node.types.Buffer(msg));
+    this.api.pubsub.publish(arg, new this.api.types.Buffer(msg));
   }
 
   connectPeer(peer): Promise<void> {
-    return this.node.swarm.connect(peer);
+    return this.api.swarm.connect(peer);
   }
 
   peers(): Promise<any> {
     return new Promise<any>((resolve, reject) => {
-      this.node._libp2pNode.on('peer:connect', peer => {
-        this.node.swarm.peers()
-          .then((peerInfos) => resolve(peerInfos))
-          .catch(err => reject(err));
-      });
+      this.api.swarm.peers()
+        .then((peerInfos) => resolve(peerInfos))
+        .catch(err => reject(err));
     });
   }
 
   id(): Promise<any> {
-    return this.node.id();
+    return this.api.id();
   }
 
   add(uploadQueue, options: any = {}): Promise<any> {
-    return this.node.files.add(uploadQueue, options);
+    return this.api.files.add(uploadQueue, options);
   }
 
   get(hash): Promise<void> {
-    return this.node.files.get(hash);
+    return this.api.files.get(hash);
   }
 
   getRandomPeer() {

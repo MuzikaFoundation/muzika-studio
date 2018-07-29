@@ -146,7 +146,7 @@ export class IpcMainService {
         });
 
         fileUploader.ready().then(() => {
-          fileUploader.upload(IpfsServiceInstance.node).then(hash => {
+          fileUploader.upload(IpfsServiceInstance.api).then(hash => {
             MuzikaConsole.log('IPFS Root Hash : ', hash);
             const uploadHelper = IpfsServiceInstance.getRandomPeer();
             MuzikaConsole.log('IPFS PROPAGATOR : ', uploadHelper);

@@ -8,7 +8,7 @@ import { BufferStream } from '../utils/buffer-stream';
 import * as imagemagick from 'imagemagick-native';
 import { MuzikaFileUtil } from './ipfs-upload.interface';
 import * as os from 'os';
-import { IPFS } from 'ipfs';
+import * as IpfsAPI from 'ipfs-api';
 
 export interface IpfsUploadTask {
   path: string;
@@ -135,6 +135,7 @@ export class MuzikaFileTask {
 
     this.progress.setProgressPercent(0.2);
 
+    MuzikaConsole.log('start to generate preview');
     return promisify(imagemagick.generatePreview, { pdfPath: this._file })
       .then((previewFiles) => {
         this.progress.setProgressPercent(1);
@@ -380,11 +381,11 @@ export class MuzikaFileUploader {
 
   /**
    * Upload to the IPFS. It must be called after ready finished.
-   * @param {IpfsService} ipfsNode ipfs node instance.
+   * @param {IpfsAPI} ipfs ipfs node instance.
    * @returns {Promise<string>}
    */
-  upload(ipfsNode: IPFS): Promise<string> {
-    return ipfsNode.files.add(this._uploadQueue, { wrapWithDirectory: true })
+  upload(ipfs: IpfsAPI): Promise<string> {
+    return ipfs.files.add(this._uploadQueue, { wrapWithDirectory: true })
       .then(result => {
         this._taskQueue.forEach(task => task.finalize());
         MuzikaConsole.log('UPLOAD TO IPFS : ', result);

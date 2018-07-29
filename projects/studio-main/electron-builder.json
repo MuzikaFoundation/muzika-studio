@@ -22,7 +22,11 @@
       "!node_modules/ffprobe-static/bin/win32/!(${arch}${/*})",
       "node_modules/ffprobe-static/bin/win32/${arch}${/*}",
       "!node_modules/ffprobe-static/bin/darwin${/*}",
-      "!node_modules/ffprobe-static/bin/linux${/*}"
+      "!node_modules/ffprobe-static/bin/linux${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/win32/!(${arch}${/*})",
+      "node_modules/go-ipfs-wrapper/bin/win32/${arch}${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/darwin${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/linux${/*}"
     ],
     "extraFiles": [
       {
@@ -51,7 +55,11 @@
       "!node_modules/ffprobe-static/bin/darwin/!(${arch}${/*})",
       "node_modules/ffprobe-static/bin/darwin/${arch}${/*}",
       "!node_modules/ffprobe-static/bin/win32${/*}",
-      "!node_modules/ffprobe-static/bin/linux${/*}"
+      "!node_modules/ffprobe-static/bin/linux${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/darwin/!(${arch}${/*})",
+      "node_modules/go-ipfs-wrapper/bin/darwin/${arch}${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/win32${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/linux${/*}"
     ],
     "publish": [{
       "provider": "s3",
@@ -72,7 +80,11 @@
       "!node_modules/ffprobe-static/bin/linux/!(${arch}${/*})",
       "node_modules/ffprobe-static/bin/linux/${arch}${/*}",
       "!node_modules/ffprobe-static/bin/darwin${/*}",
-      "!node_modules/ffprobe-static/bin/win32${/*}"
+      "!node_modules/ffprobe-static/bin/win32${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/linux/!(${arch}${/*})",
+      "node_modules/go-ipfs-wrapper/bin/linux/${arch}${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/darwin${/*}",
+      "!node_modules/go-ipfs-wrapper/bin/win32${/*}"
     ],
     "publish": [{
       "provider": "s3",
