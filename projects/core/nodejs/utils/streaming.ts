@@ -4,9 +4,10 @@ import {Observable, throwError} from 'rxjs';
 import * as path from 'path';
 import {MuzikaConsole} from '@muzika/core';
 
+const isDev = require('electron-is-dev');
 const ffmpeg = require('fluent-ffmpeg');
-ffmpeg.setFfmpegPath(ffmpegStatic.path);
-ffmpeg.setFfprobePath(ffprobeStatic.path);
+ffmpeg.setFfmpegPath(isDev ? ffmpegStatic.path : ffmpegStatic.path.replace('app.asar', 'app.asar.unpacked'));
+ffmpeg.setFfprobePath(isDev ? ffprobeStatic.path : ffprobeStatic.path.replace('app.asar', 'app.asar.unpacked'));
 
 /**
  * Utils for streaming conversion. It defines several quality of options of streaming convertion for audio and video.

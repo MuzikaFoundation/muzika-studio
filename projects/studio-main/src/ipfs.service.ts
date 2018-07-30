@@ -1,10 +1,13 @@
-import {IpfsProcess} from 'go-ipfs-wrapper';
+import { MuzikaConsole } from '@muzika/core';
+import { ipfsPath, IpfsProcess } from 'go-ipfs-wrapper';
 import * as IpfsAPI from 'ipfs-api';
-import * as request from 'request';
 import * as path from 'path';
+import * as request from 'request';
 import { Observable } from 'rxjs';
 import { electronEnvironment } from './environment';
-import { MuzikaConsole } from '@muzika/core';
+
+const isDev = require('electron-is-dev');
+IpfsProcess.setIpfsPath(isDev ? ipfsPath : ipfsPath.replace('app.asar', 'app.asar.unpacked'));
 
 export class IpfsService {
   ipfsProcess: IpfsProcess;

@@ -2,13 +2,21 @@ import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
 
+const isDev = require('electron-is-dev');
+
+/* For Imagemagick Env */
+if (!isDev) {
+  process.env.MAGICK_CODER_MODULE_PATH = path.join(process.resourcesPath, 'magick_modules', 'coders');
+  process.env.MAGICK_CODER_FILTER_PATH = path.join(process.resourcesPath, 'magick_modules', 'filters');
+  process.env.MAGICK_CONFIGURE_PATH = path.join(process.resourcesPath, 'magick_modules');
+  console.log(process.env);
+}
+
 import { IpcWalletServiceInstance } from './src/ipc-wallet.service';
 import { IpcMainServiceInstance } from './src/ipc.service';
 import { IpfsServiceInstance } from './src/ipfs.service';
 import { StorageServiceInstance } from './src/storage.service';
 import { MuzikaConsole } from '@muzika/core';
-
-const isDev = require('electron-is-dev');
 
 MuzikaConsole.chalk = require('chalk');
 
@@ -49,7 +57,6 @@ function createWindow() {
       electron: require(`${__dirname}/../../node_modules/electron`)
     });
     win.loadURL('http://localhost:4200');
-    win.webContents.openDevTools();
   } else {
     win.loadURL(url.format({
       pathname: path.join(__dirname, 'renderer/index.html'),
@@ -57,6 +64,7 @@ function createWindow() {
       slashes: true
     }));
   }
+  win.webContents.openDevTools();
 
   // Emitted when the window is closed.
   win.on('closed', () => {

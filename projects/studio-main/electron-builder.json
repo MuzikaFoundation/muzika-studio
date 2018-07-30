@@ -7,6 +7,7 @@
     "oneClick": false,
     "allowToChangeInstallationDirectory": true
   },
+  "npmRebuild": false,
   "asar": true,
   "win": {
     "icon": "assets/muzika.png",
@@ -33,6 +34,13 @@
         "from": "/${env.MAGICK_HOME}",
         "to": ".",
         "filter": "./*(CORE_RL_*.dll|msvcr120.dll|msvcp120.dll|vcomp120.dll)"
+      }
+    ],
+    "extraResources": [
+      {
+        "from": "/${env.MAGICK_HOME}/modules",
+        "to": "magick_modules",
+        "filter": "**/*"
       }
     ],
     "publish": [{
