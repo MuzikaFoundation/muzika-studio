@@ -8,6 +8,7 @@ import {BlockKey, MuzikaFileUploader, ProgressSet} from '@muzika/core/nodejs';
 import {electronEnvironment} from './environment';
 import {IpfsServiceInstance} from './ipfs.service';
 import {StorageServiceInstance} from './storage.service';
+import {MuzikaUpdater} from './auto-update.service';
 
 // ipcMain.on('synchronous-message', (event, arg) => {
 //   console.log(arg); // prints "ping"
@@ -175,6 +176,29 @@ export class IpcMainService {
           ipcReject(err);
         });
       });
+
+    this.eventHandler(IPCUtil.EVENT_CHECK_FOR_UPDATE, (ipcResolve, ipcReject) => {
+      const updater = new MuzikaUpdater();
+      updater.on('update-available', (available) => {
+        if (!available) {
+          return ipcResolve(false);
+        }
+
+        return ipcResolve(true, 'downloading');
+      });
+
+      updater.on('update-downloaded', () => ipcResolve(true, 'ready'));
+      updater.on('error', (err) => ipcReject(err));
+    });
+
+    this.eventHandler(IPCUtil.EVENT_QUIT_AND_UPDATE, (ipcResolve, ipcReject) => {
+      try {
+        MuzikaUpdater.update();
+        ipcResolve();
+      } catch (err) {
+        ipcReject(err);
+      }
+    });
   }
 }
 
