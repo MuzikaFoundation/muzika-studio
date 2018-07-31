@@ -41,6 +41,10 @@
         "from": "/${env.MAGICK_HOME}/modules",
         "to": "magick_modules",
         "filter": "**/*"
+      },
+      {
+        "from": "/${env.MAGICK_HOME}/delegates.xml",
+        "to": "magick_modules/delegates.xml"
       }
     ],
     "publish": [{
@@ -68,6 +72,21 @@
       "node_modules/go-ipfs-wrapper/bin/darwin/${arch}${/*}",
       "!node_modules/go-ipfs-wrapper/bin/win32${/*}",
       "!node_modules/go-ipfs-wrapper/bin/linux${/*}"
+    ],
+    "extraResources": [
+      {
+        "from": "/${env.MAGICK_HOME}/lib/ImageMagick/modules-Q16",
+        "to": "magick_modules"
+      },
+      {
+        "from": "/${env.MAGICK_HOME}/etc/ImageMagick-6/delegates.xml",
+        "to": "magick_modules/delegates.xml"
+      },
+      {
+        "from": "/${env.MAGICK_HOME}/lib",
+        "to": "magick_modules",
+        "filter": "*.dylib"
+      }
     ],
     "publish": [{
       "provider": "s3",

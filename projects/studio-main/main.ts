@@ -9,6 +9,12 @@ if (!isDev) {
   process.env.MAGICK_CODER_MODULE_PATH = path.join(process.resourcesPath, 'magick_modules', 'coders');
   process.env.MAGICK_CODER_FILTER_PATH = path.join(process.resourcesPath, 'magick_modules', 'filters');
   process.env.MAGICK_CONFIGURE_PATH = path.join(process.resourcesPath, 'magick_modules');
+
+  // On Mac OS, add magick library path.
+  if (process.platform === 'darwin') {
+    process.env.DYLD_LIBRARY_PATH = path.join(process.resourcesPath, 'magick_modules');
+  }
+
   console.log(process.env);
 }
 
