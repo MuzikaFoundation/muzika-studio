@@ -13,6 +13,7 @@ if (!isDev) {
   // On Mac OS, add magick library path.
   if (process.platform === 'darwin') {
     process.env.DYLD_LIBRARY_PATH = path.join(process.resourcesPath, 'magick_modules');
+    process.env.PATH = path.join(process.resourcesPath, 'ghostscript', 'bin') + ':' + process.env.PATH;
   } else if (process.platform === 'win32') {
     process.env.PATH = path.join(process.resourcesPath, 'magick_modules') + ';' + process.env.PATH;
   }

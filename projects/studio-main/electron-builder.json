@@ -45,6 +45,10 @@
       {
         "from": "/${env.MAGICK_HOME}/delegates.xml",
         "to": "magick_modules/delegates.xml"
+      },
+      {
+        "from": "/${env.MAGICK_HOME}",
+        "to": "imagemagick"
       }
     ],
     "publish": [{
@@ -86,6 +90,16 @@
         "from": "/${env.MAGICK_HOME}/lib",
         "to": "magick_modules",
         "filter": "*.dylib"
+      },
+      {
+        "from": "/${env.MAGICK_HOME}/bin",
+        "to": "imagemagick",
+        "filter": "convert"
+      },
+      {
+        "from": "/${env.GHOSTSCRIPT_HOME}",
+        "to": "ghostscript",
+        "filter": ["**/*", "!share/doc", "!share/man", "!share/ghostscript/**/doc"]
       }
     ],
     "publish": [{
