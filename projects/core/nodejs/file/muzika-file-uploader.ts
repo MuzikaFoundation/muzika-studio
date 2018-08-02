@@ -1,14 +1,15 @@
-import { BlockUtil, MuzikaConsole, MuzikaContractSummary, promisify } from '@muzika/core';
-import { ManualProgress, Progress, ProgressSet, ProgressStream, StreamingUtil } from '../utils';
+import {BlockUtil, MuzikaConsole, MuzikaContractSummary, promisify} from '@muzika/core';
+import {ManualProgress, ProgressSet, ProgressStream, StreamingUtil} from '../utils';
 import * as path from 'path';
 import { BlockPaddingStream } from '../cipher/block-stream';
 import { AESCBCEncryptionStream } from '../cipher/aes-stream';
 import * as fs from 'fs';
 import { BufferStream } from '../utils/buffer-stream';
-import * as imagemagick from 'imagemagick-native';
+import { GenPreview } from '../utils/gen-preview';
 import { MuzikaFileUtil } from './ipfs-upload.interface';
 import * as os from 'os';
 import * as IpfsAPI from 'ipfs-api';
+import { GenCoverimage } from '../utils/gen-coverimage';
 
 export interface IpfsUploadTask {
   path: string;
@@ -133,11 +134,19 @@ export class MuzikaFileTask {
       return Promise.reject(new Error('the file type should be file path string in generating preview task.'));
     }
 
-    this.progress.setProgressPercent(0.2);
+    MuzikaConsole.log('Start to generate preview..');
+    const genPreview = new GenPreview(this._file);
+    genPreview.on('progress', (status, count) => {
+      if (status === GenPreview.PROGRESS.CONVERT_TO_PNG) {
+        this.progress.setProgressPercent(0.2);
+      } else {
+        this.progress.setProgressPercent(0.2 + count * 0.8 / genPreview.length);
+      }
+    });
 
-    MuzikaConsole.log('start to generate preview');
-    return promisify(imagemagick.generatePreview, { pdfPath: this._file })
-      .then((previewFiles) => {
+    return genPreview.generate()
+      .then(previewFiles => {
+        this.tempDirs.push(genPreview.tempDir);
         this.progress.setProgressPercent(1);
         return previewFiles.map((previewFile, idx) => this.buildFile(this.buildFilePath(`${idx}.png`), previewFile));
       });
@@ -193,35 +202,23 @@ export class MuzikaFileTask {
       return Promise.reject(new Error('the file type should be file path string in cover image task.'));
     }
 
-    return promisify(fs.readFile, this._file).then(data => {
-      this.progress.setProgressPercent(0.2);
-      return Promise.all([
-        this._createCoverImage(data, MuzikaFileUtil.COVER_IMAGE.RECT.WIDTH, MuzikaFileUtil.COVER_IMAGE.RECT.HEIGHT),
-        this._createCoverImage(data, MuzikaFileUtil.COVER_IMAGE.SQUARE.WIDTH, MuzikaFileUtil.COVER_IMAGE.SQUARE.HEIGHT)
-      ]).then(([rectImgBuf, squareImgBuf]) => {
-        this.progress.setProgressPercent(1);
-        return Promise.resolve([rectImgBuf, squareImgBuf].map((buf, idx) =>
-          this.buildFile(this.buildFilePath((idx === 0) ? 'rect.png' : 'square.png'), buf)));
-      });
-    });
-  }
+    const genCover = new GenCoverimage(<string>this._file);
+    this.tempDirs.push(genCover.tempDir);
 
-  /**
-   * Creates a cover image with proper format.
-   * @param {Buffer} data original cover image data buffer.
-   * @param {number} width cover image width to resize.
-   * @param {number} height cover image height to resize.
-   *
-   * @returns {Promise<Buffer>} new cover image with resized.
-   * @private
-   */
-  private _createCoverImage(data: Buffer, width: number, height: number): Promise<Buffer> {
-    return promisify(imagemagick.convert, {
-      srcData: data,
-      format: 'png',
-      width: width,
-      height: height
+    genCover.on('progress', (finishCount) => {
+      this.progress.setProgressPercent(finishCount * 0.5);
     });
+
+    return Promise.all([
+      genCover.generate(MuzikaFileUtil.COVER_IMAGE.RECT.WIDTH, MuzikaFileUtil.COVER_IMAGE.RECT.HEIGHT),
+      genCover.generate(MuzikaFileUtil.COVER_IMAGE.SQUARE.WIDTH, MuzikaFileUtil.COVER_IMAGE.SQUARE.HEIGHT)
+    ])
+      .then(() => {
+        this.progress.setProgressPercent(1);
+        return Promise.resolve(genCover.coverImages.map((file, index) =>
+          this.buildFile(this.buildFilePath((index === 0) ? 'rect.png' : 'square.png'), file)
+        ));
+      });
   }
 }
 
