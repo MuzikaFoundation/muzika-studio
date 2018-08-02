@@ -21,30 +21,14 @@ export class IpfsService {
   init(directoryPath) {
     this.ipfsProcess = new IpfsProcess(path.join(directoryPath, 'ipfs-muzika'));
     // if ipfs node generated, connect to a remote storage for speeding up file exchange.
-    this.ipfsProcess.on('start', () => {
-      MuzikaConsole.log('IPFS node is ready');
-      this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
-      // get IPFS nodes list
-      request.get({
-          url: `${electronEnvironment.base_api_url}/seed/ipfs`,
-          json: true
-        },
-        (error, response, body) => {
-          if (!error) {
-            for (const ipfsNode of body) {
-              this.connectPeer(ipfsNode.ID)
-                .then(() => {
-                  MuzikaConsole.log('CONNECTED WITH MUZIKA RELAY NODE : ', ipfsNode.ID);
-                  // if one of the IPFS is connected, ready status to true
-                  this.muzikaPeers.push(ipfsNode.APIServer);
-                  this.isReady = true;
-                });
-            }
-          } else {
-            MuzikaConsole.error('Not connected with muzika-platform-server..');
-          }
-        }
-      );
+    this.ipfsProcess.on('start', () => this.connectLocalIpfsApi());
+    this.ipfsProcess.on('error', (err) => {
+
+      // if ipfs occurs error when initializing daemon, it could be run ipfs already in os.
+      // so try to connect it instead.
+      if (Object.values(IpfsProcess.ERROR).includes(err)) {
+        this.connectLocalIpfsApi();
+      }
     });
 
     this.ipfsProcess.run();
@@ -88,6 +72,32 @@ export class IpfsService {
 
   getRandomPeer() {
     return this.muzikaPeers[Math.floor(Math.random() * this.muzikaPeers.length)];
+  }
+
+  connectLocalIpfsApi() {
+    MuzikaConsole.log('IPFS node is ready');
+    this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
+    // get IPFS nodes list
+    request.get({
+        url: `${electronEnvironment.base_api_url}/seed/ipfs`,
+        json: true
+      },
+      (error, response, body) => {
+        if (!error) {
+          for (const ipfsNode of body) {
+            this.connectPeer(ipfsNode.ID)
+              .then(() => {
+                MuzikaConsole.log('CONNECTED WITH MUZIKA RELAY NODE : ', ipfsNode.ID);
+                // if one of the IPFS is connected, ready status to true
+                this.muzikaPeers.push(ipfsNode.APIServer);
+                this.isReady = true;
+              });
+          }
+        } else {
+          MuzikaConsole.error('Not connected with muzika-platform-server..');
+        }
+      }
+    );
   }
 }
 
