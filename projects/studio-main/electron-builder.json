@@ -77,31 +77,7 @@
       "!node_modules/go-ipfs-wrapper/bin/win32${/*}",
       "!node_modules/go-ipfs-wrapper/bin/linux${/*}"
     ],
-    "extraResources": [
-      {
-        "from": "/${env.MAGICK_HOME}/lib/ImageMagick/modules-Q16",
-        "to": "magick_modules"
-      },
-      {
-        "from": "/${env.MAGICK_HOME}/etc/ImageMagick-6/delegates.xml",
-        "to": "magick_modules/delegates.xml"
-      },
-      {
-        "from": "/${env.MAGICK_HOME}/lib",
-        "to": "magick_modules",
-        "filter": "*.dylib"
-      },
-      {
-        "from": "/${env.MAGICK_HOME}/bin",
-        "to": "imagemagick",
-        "filter": "convert"
-      },
-      {
-        "from": "/${env.GHOSTSCRIPT_HOME}",
-        "to": "ghostscript",
-        "filter": ["**/*", "!share/doc", "!share/man", "!share/ghostscript/**/doc"]
-      }
-    ],
+    "extraResources": [],
     "publish": [{
       "provider": "s3",
       "bucket": "muzika-release",

@@ -90,6 +90,7 @@
     "buffer": "^5.1.0",
     "chalk": "^2.4.1",
     "classlist.js": "^1.1.20150312",
+    "command-exists": "^1.2.7",
     "cordova-android": "6.3.0",
     "cordova-ios": "4.5.4",
     "cordova-plugin-device": "^2.0.2",

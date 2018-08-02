@@ -1,8 +1,12 @@
 import { app, BrowserWindow, screen } from 'electron';
 import * as path from 'path';
 import * as url from 'url';
+import * as os from 'os';
+import { spawn } from 'child_process';
+import { InstallMacDependencies } from './src/scripts/darwin/insall_magick';
 
 const isDev = require('electron-is-dev');
+const commandExists = require('command-exists');
 
 /* For Imagemagick Env */
 if (!isDev) {
@@ -10,11 +14,7 @@ if (!isDev) {
   process.env.MAGICK_CODER_FILTER_PATH = path.join(process.resourcesPath, 'magick_modules', 'filters');
   process.env.MAGICK_CONFIGURE_PATH = path.join(process.resourcesPath, 'magick_modules');
 
-  // On Mac OS, add magick library path.
-  if (process.platform === 'darwin') {
-    process.env.DYLD_LIBRARY_PATH = path.join(process.resourcesPath, 'magick_modules');
-    process.env.PATH = path.join(process.resourcesPath, 'ghostscript', 'bin') + ':' + process.env.PATH;
-  } else if (process.platform === 'win32') {
+  if (process.platform === 'win32') {
     process.env.PATH = path.join(process.resourcesPath, 'magick_modules') + ';' + process.env.PATH;
   }
 
@@ -91,6 +91,12 @@ try {
   // Some APIs can only be used after this event occurs.
   app.on('ready', () => {
     createWindow();
+
+    // Install imagemagick and ghostscript for generating preview
+    // images and cover images if not existing
+    if (os.platform() === 'darwin') {
+      InstallMacDependencies();
+    }
 
     IpfsServiceInstance.init((isDev) ? '' : app.getPath('userData'));
     IpcMainServiceInstance.init();
