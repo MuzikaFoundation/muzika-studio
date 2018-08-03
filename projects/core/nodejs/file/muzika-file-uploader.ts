@@ -379,23 +379,11 @@ export class MuzikaFileUploader {
   /**
    * Upload to the IPFS. It must be called after ready finished.
    * @param {IpfsAPI} ipfs ipfs node instance.
-   * @returns {Promise<string>}
+   * @returns {Promise<any[]>} array that has all ipfs-uploaded objects.
    */
-  upload(ipfs: IpfsAPI): Promise<string> {
+  upload(ipfs: IpfsAPI): Promise<any[]> {
     return ipfs.files.add(this._uploadQueue, { wrapWithDirectory: true })
-      .then(result => {
-        this._taskQueue.forEach(task => task.finalize());
-        MuzikaConsole.log('UPLOAD TO IPFS : ', result);
-
-        const rootObject = result.find((object) => {
-          return ['', '/'].includes(object.path);
-        });
-
-        return rootObject.hash;
-      })
-      .catch(err => {
-        this._taskQueue.forEach(task => task.finalize());
-        throw err;
-      });
+      // Regardless of success or fail, finalize all tasks
+      .finally(() => this._taskQueue.forEach(task => task.finalize()));
   }
 }

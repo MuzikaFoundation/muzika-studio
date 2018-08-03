@@ -21,13 +21,13 @@ export class IpfsService {
   init(directoryPath) {
     this.ipfsProcess = new IpfsProcess(path.join(directoryPath, 'ipfs-muzika'));
     // if ipfs node generated, connect to a remote storage for speeding up file exchange.
-    this.ipfsProcess.on('start', () => this.connectLocalIpfsApi());
+    this.ipfsProcess.on('start', () => this.connectLocalIpfs());
     this.ipfsProcess.on('error', (err) => {
 
       // if ipfs occurs error when initializing daemon, it could be run ipfs already in os.
       // so try to connect it instead.
       if (Object.values(IpfsProcess.ERROR).includes(err)) {
-        this.connectLocalIpfsApi();
+        this.connectLocalIpfs();
       }
     });
 
@@ -94,7 +94,7 @@ export class IpfsService {
     });
   }
 
-  connectLocalIpfsApi() {
+  connectLocalIpfs() {
     MuzikaConsole.log('IPFS node is ready');
     this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
     // get IPFS nodes list
