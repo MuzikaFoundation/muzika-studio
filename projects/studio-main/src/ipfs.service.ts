@@ -74,6 +74,26 @@ export class IpfsService {
     return this.muzikaPeers[Math.floor(Math.random() * this.muzikaPeers.length)];
   }
 
+  /**
+   * Restores IPFS instance if it is down.
+   * @returns {Promise<void>}
+   */
+  async restore() {
+    // TODO: Restore IPFS
+    return false;
+  }
+
+  /**
+   * Returns true if interacting successfully with IPFS or false if not.
+   */
+  async isHealthy() {
+    return await new Promise((resolve, reject) => {
+      this.id()
+        .then(() => resolve(true))
+        .catch((err) => resolve(false));
+    });
+  }
+
   connectLocalIpfsApi() {
     MuzikaConsole.log('IPFS node is ready');
     this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
