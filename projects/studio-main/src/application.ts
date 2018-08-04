@@ -3,7 +3,8 @@ import { app } from 'electron';
 import { BrowserWindow } from 'electron';
 import * as url from 'url';
 import * as path from 'path';
-import { IpfsServiceInstance } from './ipfs.service';
+import { ipfsPath } from 'go-ipfs-wrapper';
+import { IpfsService, IpfsServiceInstance } from './ipfs.service';
 import { IpcMainServiceInstance } from './ipc.service';
 import { IpcWalletServiceInstance } from './ipc-wallet.service';
 import { StorageServiceInstance } from './storage.service';
@@ -26,6 +27,9 @@ export class MuzikaApp {
     if (!_options) {
       this._options = {};
     }
+
+    // set ipfs path
+    IpfsService.setIpfsExecPath((_isDevMode) ? ipfsPath : ipfsPath.replace('app.asar', 'app.asar.unpacked'));
 
     // initialize service instances for muzika application.
     IpfsServiceInstance.init((_isDevMode) ? '' : app.getPath('userData'));

@@ -54,6 +54,7 @@
     "zcash-bitcore-lib": "git+https://github.com/MuzikaFoundation/zcash-bitcore-lib.git"
   },
   "devDependencies": {
+    "devtron": "^1.4.0",
     "electron": "2.0.5"
   }
 }

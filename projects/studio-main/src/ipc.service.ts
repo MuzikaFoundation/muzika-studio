@@ -1,12 +1,12 @@
-import {BlockUtil, MuzikaConsole, MuzikaFilePath} from '@muzika/core';
+import {BlockUtil, MuzikaConsole, MuzikaFilePath, IpfsUtil} from '@muzika/core';
 import {BrowserWindow, ipcMain} from 'electron';
 import * as fs from 'fs';
 import * as request from 'request';
 import * as tempfile from 'tempfile';
 import {IPCUtil} from './util/ipc-utils';
-import {BlockKey, MuzikaFileUploader, ProgressSet} from '@muzika/core/nodejs';
+import {BlockKey, ManualProgress, MuzikaFileUploader, ProgressSet} from '@muzika/core/nodejs';
 import {electronEnvironment} from './environment';
-import {IpfsServiceInstance} from './ipfs.service';
+import {IpfsService, IpfsServiceInstance} from './ipfs.service';
 import {StorageServiceInstance} from './storage.service';
 import {MuzikaUpdater} from './auto-update.service';
 
@@ -140,36 +140,34 @@ export class IpcMainService {
           }
         }
 
-        const totalProgress = new ProgressSet([fileUploader.readyProgress, fileUploader.uploadProgress]);
+        const downloadProgress = new ManualProgress();
+        const totalProgress = new ProgressSet([
+          fileUploader.readyProgress,
+          fileUploader.uploadProgress,
+          downloadProgress
+        ]);
         totalProgress.onChange.subscribe(percent => {
           MuzikaConsole.log(`TOTAL PERCENT : ${percent}%`);
           ipcProgress(percent);
         });
 
         fileUploader.ready().then(() => {
-          fileUploader.upload(IpfsServiceInstance.api).then(hash => {
-            MuzikaConsole.log('IPFS Root Hash : ', hash);
-            const uploadHelper = IpfsServiceInstance.getRandomPeer();
-            MuzikaConsole.log('IPFS PROPAGATOR : ', uploadHelper);
+          fileUploader.upload(IpfsServiceInstance.api).then(async (objects) => {
+            const rootObject = IpfsUtil.flatArray2Tree(objects);
+            const ipfsObjects = IpfsUtil.tree2flatArray(rootObject);
+            let downloadCnt = 0;
+            MuzikaConsole.log('IPFS Root Hash : ', rootObject.hash);
 
-            request.post(
-              {
-                url: `${uploadHelper}/file/${hash}`,
-                json: true
-              },
-              (peerRequestError, res, body) => {
-                if (peerRequestError) {
-                  MuzikaConsole.error('Failed to request to prapagator.');
-                  ipcReject(peerRequestError);
-                } else if (res.statusCode !== 200) {
-                  MuzikaConsole.error(`Failed to request to prapagator. (ERROR CODE : ${res.statusCode})`);
-                  ipcReject(new Error('Response is not valid - failed with code: ' + res.statusCode));
-                } else {
-                  MuzikaConsole.log(`Success to request to prapagator! (https://ipfs.io/ipfs/${hash})`);
-                  ipcResolve(1, hash, aesKey);
-                }
-              }
-            );
+            // check uploaded files are all alive in IPFS network.
+            // test downloads synchronous since too many requests are sometimes rejected.
+            for (let i = 0; i < ipfsObjects.length; ++i) {
+              downloadProgress.setProgressPercent(++downloadCnt * (1 / ipfsObjects.length));
+              await IpfsServiceInstance.checkObjectAlive(ipfsObjects[i].hash, 10000, 3);
+            }
+
+            // success to upload
+            ipcResolve(1, rootObject.hash, aesKey);
+
           });
         }).catch(err => {
           MuzikaConsole.error('UPLOAD ERROR', err);

@@ -1,31 +1,75 @@
-import { MuzikaConsole } from '@muzika/core';
+import { IpfsObject, MuzikaConsole, IpfsUtil } from '@muzika/core';
 import { ipfsPath, IpfsProcess } from 'go-ipfs-wrapper';
 import * as IpfsAPI from 'ipfs-api';
 import * as path from 'path';
 import * as request from 'request';
 import { Observable } from 'rxjs';
-import { electronEnvironment } from './environment';
 
-const isDev = require('electron-is-dev');
-IpfsProcess.setIpfsPath(isDev ? ipfsPath : ipfsPath.replace('app.asar', 'app.asar.unpacked'));
 
 export class IpfsService {
   ipfsProcess: IpfsProcess;
   api: IpfsAPI;
-  muzikaPeers: string[] = [];
   isReady = false;
 
   constructor() {
   }
 
-  init(directoryPath) {
+  /**
+   * Sets the ipfs executable path.
+   * @param ipfsExecPath path of ipfs executable file.
+   */
+  static setIpfsExecPath(ipfsExecPath: string) {
+    IpfsProcess.setIpfsPath(ipfsExecPath);
+  }
+
+  /**
+   * Check a file (or a directory) is alive in IPFS network. It can take
+   * a long time to check the file is alive.
+   * @param hash the hash of the file.
+   * @param timeout the timeout to check
+   */
+  async checkObjectAlive(hash: string, timeout?: number, retry?: number) {
+    // if retry is not defined, don't retry
+    if (!Number.isInteger(retry)) {
+      retry = 1;
+    }
+
+    // retry checking but failed to response, reject
+    if (retry < 1) {
+      throw new Error('object is not alive');
+    }
+
+    return await new Promise((resolve, reject) => {
+      request.get(`https://ipfs.io/ipfs/${hash}`, { timeout })
+        .once('response', (response) => {
+          // if response from server, check status code and decide
+          // whether it is healthy (response code == 200) or not.
+          if (response.statusCode !== 200) {
+            throw new Error('object is not alive');
+          }
+
+          resolve();
+        })
+        .once('error', (err) => {
+          // if error (almost by TIMEOUT), try again
+          this.checkObjectAlive(hash, timeout, retry - 1)
+            .then(() => resolve());
+        });
+    });
+  }
+
+  /**
+   * Initialize ipfs service.
+   * @param directoryPath the directory path for IPFS service to work.
+   */
+  init(directoryPath: string) {
     this.ipfsProcess = new IpfsProcess(path.join(directoryPath, 'ipfs-muzika'));
     // if ipfs node generated, connect to a remote storage for speeding up file exchange.
     this.ipfsProcess.on('start', () => this.connectLocalIpfs());
-    this.ipfsProcess.on('error', (err) => {
 
-      // if ipfs occurs error when initializing daemon, it could be run ipfs already in os.
-      // so try to connect it instead.
+    // if ipfs occurs error when initializing daemon, it could be run ipfs already in os.
+    // so try to connect it instead.
+    this.ipfsProcess.on('error', (err) => {
       if (Object.values(IpfsProcess.ERROR).includes(err)) {
         this.connectLocalIpfs();
       }
@@ -46,32 +90,28 @@ export class IpfsService {
     this.api.pubsub.publish(arg, new this.api.types.Buffer(msg));
   }
 
-  connectPeer(peer): Promise<void> {
+  async connect(peer) {
     return this.api.swarm.connect(peer);
   }
 
-  peers(): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      this.api.swarm.peers()
-        .then((peerInfos) => resolve(peerInfos))
-        .catch(err => reject(err));
-    });
+  async peers() {
+    return this.api.swarm.peers();
   }
 
-  id(): Promise<any> {
+  async id() {
     return this.api.id();
   }
 
-  add(uploadQueue, options: any = {}): Promise<any> {
-    return this.api.files.add(uploadQueue, options);
+  async add(uploadQueue: IpfsObject | IpfsObject[], options?: any): Promise<IpfsObject> {
+    return IpfsUtil.flatArray2Tree(this.api.files.add(
+      // if tree structure, convert to flat array for ipfs
+      Array.isArray(uploadQueue) ? uploadQueue : IpfsUtil.tree2flatArray(uploadQueue),
+      options
+    ));
   }
 
-  get(hash): Promise<void> {
-    return this.api.files.get(hash);
-  }
-
-  getRandomPeer() {
-    return this.muzikaPeers[Math.floor(Math.random() * this.muzikaPeers.length)];
+  async get(hash): Promise<IpfsObject> {
+    return IpfsUtil.flatArray2Tree(this.api.files.get(hash));
   }
 
   /**
@@ -97,27 +137,7 @@ export class IpfsService {
   connectLocalIpfs() {
     MuzikaConsole.log('IPFS node is ready');
     this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
-    // get IPFS nodes list
-    request.get({
-        url: `${electronEnvironment.base_api_url}/seed/ipfs`,
-        json: true
-      },
-      (error, response, body) => {
-        if (!error) {
-          for (const ipfsNode of body) {
-            this.connectPeer(ipfsNode.ID)
-              .then(() => {
-                MuzikaConsole.log('CONNECTED WITH MUZIKA RELAY NODE : ', ipfsNode.ID);
-                // if one of the IPFS is connected, ready status to true
-                this.muzikaPeers.push(ipfsNode.APIServer);
-                this.isReady = true;
-              });
-          }
-        } else {
-          MuzikaConsole.error('Not connected with muzika-platform-server..');
-        }
-      }
-    );
+    this.isReady = true;
   }
 }
 

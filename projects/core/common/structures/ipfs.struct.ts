@@ -48,7 +48,7 @@ export class IpfsUtil {
   /**
    * Converts an flat array from `ipfs.files.add` to tree structure.
    */
-  static flatArray2Tree(files: any[]): IpfsObject {
+  static flatArray2Tree(files: IpfsObject[]): IpfsObject {
     let objects = files.map(file => <any>{
       // convert flat IpfsObject
       object: <IpfsObject>{
@@ -101,5 +101,74 @@ export class IpfsUtil {
     });
 
     return root.object;
+  }
+
+  /**
+   * Converts an tree structure to flat array structure.
+   */
+  static tree2flatArray(obj: IpfsObject, filter?: (obj: IpfsObject) => boolean): IpfsObject[] {
+    const queue = [obj];
+    const flatArr = [];
+
+    if (filter === undefined || filter === null) {
+      filter = (_) => true;
+    }
+
+    // search tree by BFS
+    while (queue.length > 0) {
+      const node = queue.pop();
+      if (filter(node)) {
+        flatArr.push({path: node.path, hash: node.hash, size: node.size, content: node.content});
+      }
+
+      // push child object to the object
+      Object.keys(node.childObjects).forEach((childHash) => {
+        queue.push(node.childObjects[childHash]);
+      });
+    }
+
+    return flatArr;
+  }
+
+  /**
+   * Get roots object in the flat array structure.
+   */
+  static getRootObject(objs: IpfsObject[]): IpfsObject {
+    // if object length is 1, it is just the root object
+    if (objs.length === 1) {
+      return objs[0];
+    }
+
+    for (const obj of objs) {
+      // root object path is '' or '/'
+      if (['', '/'].includes(obj.path)) {
+        return obj;
+      }
+    }
+
+    // cannot find root object
+    return null;
+  }
+
+  /**
+   * Returns only directories in the ipfs object tree. Empty directory
+   * will be ignored.
+   * @param obj root object.
+   */
+  static getDirectoriesOnly(obj: IpfsObject): IpfsObject[] {
+    return this.tree2flatArray(obj, (o) => {
+      // directory has child objects (file)
+      return (o.childObjects !== undefined && Object.keys(o.childObjects).length > 0);
+    });
+  }
+
+  /**
+   * Returns only files (leaf nodes) in the ipfs object tree.
+   * @param obj root object.
+   */
+  static getFilesOnly(obj: IpfsObject): IpfsObject[] {
+    return this.tree2flatArray(obj, (o) => {
+      return (o.childObjects === undefined || Object.keys(o.childObjects).length === 0);
+    })
   }
 }

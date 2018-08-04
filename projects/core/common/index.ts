@@ -7,3 +7,4 @@ export * from './utils';
 export * from './error';
 export * from './logger/logger.service';
 export * from './logger/logger.level';
+export * from './structures';
