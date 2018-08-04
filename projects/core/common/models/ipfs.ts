@@ -8,7 +8,7 @@ export interface IpfsObject {
   path: string;                           // path in ipfs
   hash: string;                           // object hash
   childObjects?: {                         // child objects of this object
-    [hash: string]: IpfsObject;
+    [basename: string]: IpfsObject;
   };
   size?: number;                          // size of the object
   content?: Buffer | ReadableStream;      // content of the object

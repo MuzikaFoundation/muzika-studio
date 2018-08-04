@@ -39,6 +39,11 @@ export class IpfsUtil {
         return '';
       }
 
+      // add root path if not existing.
+      if (filePath[0] !== '/') {
+        filePath = '/' + filePath;
+      }
+
       const normPath = path.posix.normalize(filePath);
       // remove the last character if it is separator and return
       return (normPath.length > 0 && normPath[normPath.length - 1] === path.posix.sep) ? normPath.slice(-1) : normPath;
@@ -97,7 +102,7 @@ export class IpfsUtil {
         }
       }
 
-      objects[i].object.childObjects[obj.object.hash] = obj.object;
+      objects[i].object.childObjects[IpfsUtil.path.basename(obj.object.path)] = obj.object;
     });
 
     return root.object;
@@ -122,8 +127,8 @@ export class IpfsUtil {
       }
 
       // push child object to the object
-      Object.keys(node.childObjects).forEach((childHash) => {
-        queue.push(node.childObjects[childHash]);
+      Object.keys(node.childObjects).forEach((childPath) => {
+        queue.push(node.childObjects[childPath]);
       });
     }
 
@@ -169,6 +174,6 @@ export class IpfsUtil {
   static getFilesOnly(obj: IpfsObject): IpfsObject[] {
     return this.tree2flatArray(obj, (o) => {
       return (o.childObjects === undefined || Object.keys(o.childObjects).length === 0);
-    })
+    });
   }
 }
