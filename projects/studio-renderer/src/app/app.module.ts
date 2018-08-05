@@ -33,6 +33,7 @@ import { ElectronService } from '../providers/electron.service';
 import { MuzikaConsole } from '@muzika/core';
 import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -52,6 +53,7 @@ declare const document;
     NavbarComponent,
     SpinnerComponent,
     FooterComponent,
+    LoadingScreenComponent,
     ArtistMusicComponent,
 
     /* Page Components */

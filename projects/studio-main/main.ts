@@ -3,7 +3,7 @@ import * as path from 'path';
 import * as url from 'url';
 import * as os from 'os';
 import { InstallMacDependencies } from './src/scripts/darwin/insall_magick';
-import { MuzikaApp } from './src/application';
+import { MuzikaAppInstance } from './src/application';
 import { IpcWalletServiceInstance } from './src/ipc-wallet.service';
 import { IpcMainServiceInstance } from './src/ipc.service';
 import { IpfsServiceInstance } from './src/ipfs.service';
@@ -13,8 +13,6 @@ import { MuzikaConsole } from '@muzika/core';
 const isDev = require('electron-is-dev');
 
 MuzikaConsole.chalk = require('chalk');
-
-let muzikaApp: MuzikaApp = null;
 
 try {
   require('dotenv').config();
@@ -55,8 +53,8 @@ async function waitForAppReady() {
   app.on('activate', () => {
     // On Mac OS, it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (muzikaApp !== null) {
-      muzikaApp.activate();
+    if (MuzikaAppInstance !== null) {
+      MuzikaAppInstance.activate();
     }
   });
 
@@ -73,8 +71,8 @@ async function main() {
     // wait for app ready
     await waitForAppReady();
 
-    muzikaApp = new MuzikaApp(isDev);
-    muzikaApp.activate();
+    MuzikaAppInstance.init(isDev);
+    MuzikaAppInstance.activate();
   } catch (err) {
     app.quit();
     process.exit(1);

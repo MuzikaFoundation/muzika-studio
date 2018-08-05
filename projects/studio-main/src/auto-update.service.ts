@@ -57,5 +57,6 @@ export class MuzikaUpdater extends EventEmitter {
     });
 
     autoUpdater.checkForUpdates();
+    return this;
   }
 }
