@@ -53,7 +53,7 @@ async function waitForAppReady() {
   app.on('activate', () => {
     // On Mac OS, it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    if (MuzikaAppInstance !== null) {
+    if (MuzikaAppInstance.mainWindow === null) {
       MuzikaAppInstance.activate();
     }
   });

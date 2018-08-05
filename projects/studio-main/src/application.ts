@@ -97,10 +97,15 @@ export class MuzikaApp {
             // close the loading screen, and remove closed listener
             this.mainWindow.hide();
             this.mainWindow.removeAllListeners('closed');
-            this.mainWindow.close();
 
             // change the main window reference
+            const loadingWindow = this.mainWindow;
             this.mainWindow = startWindow;
+
+            // when the main window is shown, finalize loading window.
+            this.mainWindow.once('show', () => loadingWindow.close());
+
+            this.mainWindow.on('closed', () => this.mainWindow = null);
           }
         });
 
@@ -134,36 +139,6 @@ export class MuzikaApp {
   }
 
   private _createMainWindow(): BrowserWindow {
-    // const mainWindow = new BrowserWindow({
-    //   width: 1340,
-    //   height: 700,
-    //   minWidth: 700,
-    //   minHeight: 400,
-    //   resizable: true,
-    //   titleBarStyle: 'hidden',
-    //   webPreferences: {
-    //     plugins: true,
-    //     nodeIntegration: true
-    //   }
-    // });
-    //
-    // if (this._isDevMode) {
-    //   // https://github.com/yan-foto/electron-reload/issues/16
-    //   require('electron-reload')(__dirname, {
-    //     electron: require(`${__dirname}/../../../node_modules/electron`)
-    //   });
-    //   mainWindow.loadURL('http://localhost:4200');
-    // } else {
-    //   mainWindow.loadURL(url.format({
-    //     pathname: path.join(__dirname, '../renderer/index.html'),
-    //     protocol: 'file:',
-    //     slashes: true
-    //   }));
-    // }
-    // mainWindow.webContents.openDevTools();
-    //
-    // return mainWindow;
-
     const mainWindow = new BrowserWindow({
       width: 300,
       height: 300,
