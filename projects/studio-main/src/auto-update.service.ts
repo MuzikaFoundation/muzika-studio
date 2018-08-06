@@ -1,6 +1,7 @@
 
 import { autoUpdater } from 'electron-updater';
 import { EventEmitter } from 'events';
+import { Actions } from './store.service';
 
 const isDev = require('electron-is-dev');
 
@@ -37,6 +38,7 @@ export class MuzikaUpdater extends EventEmitter {
     // if in development mode, don't check update and just emit not update available event.
     if (isDev) {
       this.emit('available', false);
+      Actions.app.setUpdatable(false);
       return;
     }
 
@@ -49,11 +51,14 @@ export class MuzikaUpdater extends EventEmitter {
     autoUpdater.once('update-not-available', () => {
       MuzikaUpdater._isChecking = false;
       this.emit('available', false);
+      Actions.app.setUpdatable(false);
+
     });
     autoUpdater.once('update-downloaded', () => {
       MuzikaUpdater._isChecking = false;
       MuzikaUpdater._updatable = true;
       this.emit('downloaded');
+      Actions.app.setUpdatable(true);
     });
 
     autoUpdater.checkForUpdates();

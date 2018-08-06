@@ -25,7 +25,8 @@
       "@muzika/core": ["projects/core/index.ts"],
       "@muzika/core/angular": ["projects/core/angular/index.ts"],
       "@muzika/core/nodejs": ["projects/core/nodejs/index.ts"],
-      "@muzika/core/browser": ["projects/core/browser/index.ts"]
+      "@muzika/core/browser": ["projects/core/browser/index.ts"],
+      "@muzika/core/electron": ["projects/core/electron/index.ts"]
     }
   },
   "files": [

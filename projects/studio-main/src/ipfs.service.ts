@@ -4,6 +4,7 @@ import * as IpfsAPI from 'ipfs-api';
 import * as path from 'path';
 import * as request from 'request';
 import { Observable } from 'rxjs';
+import { Actions } from './store.service';
 
 
 export class IpfsService {
@@ -138,6 +139,7 @@ export class IpfsService {
     MuzikaConsole.log('IPFS node is ready');
     this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
     this.isReady = true;
+    Actions.app.setServiceStatus('ipfs', true);
   }
 }
 

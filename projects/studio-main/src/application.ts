@@ -11,6 +11,8 @@ import { StorageServiceInstance } from './storage.service';
 import * as ms from 'ms';
 import { MuzikaUpdater } from './auto-update.service';
 import { MuzikaConsole } from '@muzika/core';
+import { StoreServiceInstance, Actions } from './store.service';
+import { combineLatest } from 'rxjs';
 
 export class MuzikaApp {
   mainWindow: BrowserWindow;
@@ -42,6 +44,7 @@ export class MuzikaApp {
     // initialize main service.
     IpcMainServiceInstance.init();
     StorageServiceInstance.init();
+    StoreServiceInstance.init(this._options.state);
 
     // set ipfs path
     IpfsService.setIpfsExecPath((_isDevMode) ? ipfsPath : ipfsPath.replace('app.asar', 'app.asar.unpacked'));
@@ -58,57 +61,58 @@ export class MuzikaApp {
       this._healthyCheckHandler = setInterval(() => this.restoreInstances(),
         this._options.healthyTimeInterval || ms('10s'));
 
-      MuzikaConsole.log('Check for update!');
-      this._updateChecker.once('available', (available) => {
-          MuzikaConsole.log('Updatable : ', available);
-
-          // if no need to update, close the loading screen and show the main window
-          if (!available) {
-            const startWindow = new BrowserWindow({
-              width: 1340,
-              height: 700,
-              minWidth: 700,
-              minHeight: 400,
-              resizable: true,
-              titleBarStyle: 'hidden',
-              webPreferences: {
-                plugins: true,
-                nodeIntegration: true
-              }
-            });
-
-            startWindow.setMenu(null);
-
-            if (this._isDevMode) {
-              // https://github.com/yan-foto/electron-reload/issues/16
-              require('electron-reload')(__dirname, {
-                electron: require(`${__dirname}/../../../node_modules/electron`)
-              });
-              startWindow.loadURL('http://localhost:4200');
-            } else {
-              startWindow.loadURL(url.format({
-                pathname: path.join(__dirname, '../renderer/index.html'),
-                protocol: 'file:',
-                slashes: true
-              }));
+      // if not updatable and ipfs is ready, close the loading screen and open the main window
+      combineLatest(
+        StoreServiceInstance.select('app', 'updatable'),
+        StoreServiceInstance.select('app', 'serviceStatus', 'ipfs')
+      ).subscribe(([updatable, ipfsStatus]) => {
+        if (updatable === false && ipfsStatus === true) {
+          const startWindow = new BrowserWindow({
+            width: 1340,
+            height: 700,
+            minWidth: 700,
+            minHeight: 400,
+            resizable: true,
+            titleBarStyle: 'hidden',
+            webPreferences: {
+              plugins: true,
+              nodeIntegration: true
             }
-            startWindow.webContents.openDevTools();
+          });
 
-            // close the loading screen, and remove closed listener
-            this.mainWindow.hide();
-            this.mainWindow.removeAllListeners('closed');
+          startWindow.setMenu(null);
 
-            // change the main window reference
-            const loadingWindow = this.mainWindow;
-            this.mainWindow = startWindow;
-
-            // when the main window is shown, finalize loading window.
-            this.mainWindow.once('show', () => loadingWindow.close());
-
-            this.mainWindow.on('closed', () => this.mainWindow = null);
+          if (this._isDevMode) {
+            // https://github.com/yan-foto/electron-reload/issues/16
+            require('electron-reload')(__dirname, {
+              electron: require(`${__dirname}/../../../node_modules/electron`)
+            });
+            startWindow.loadURL('http://localhost:4200');
+          } else {
+            startWindow.loadURL(url.format({
+              pathname: path.join(__dirname, '../renderer/index.html'),
+              protocol: 'file:',
+              slashes: true
+            }));
           }
-        });
+          startWindow.webContents.openDevTools();
 
+          // close the loading screen, and remove closed listener
+          this.mainWindow.hide();
+          this.mainWindow.removeAllListeners('closed');
+
+          // change the main window reference
+          const loadingWindow = this.mainWindow;
+          this.mainWindow = startWindow;
+
+          // when the main window is shown, finalize loading window.
+          this.mainWindow.once('show', () => loadingWindow.close());
+
+          this.mainWindow.on('closed', () => this.mainWindow = null);
+        }
+      });
+
+      MuzikaConsole.log('Check for update!');
       setTimeout(() => this._updateChecker.checkUpdate(), 2000);
     });
     this.mainWindow.on('closed', () => this.mainWindow = null);
@@ -123,6 +127,7 @@ export class MuzikaApp {
     // try to restore all unhealthy instances.
     Promise.all(unhealthyInstances.map((instance) => instance.restore()))
       .then((successes) => {
+        // TODO: how to do when restore failed
       });
   }
 

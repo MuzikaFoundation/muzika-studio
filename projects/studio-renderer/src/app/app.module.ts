@@ -30,10 +30,12 @@ import { WebviewDirective } from '../providers/webview.directive';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ElectronService } from '../providers/electron.service';
-import { MuzikaConsole } from '@muzika/core';
+import { IAppState, MuzikaConsole, rootReducer } from '@muzika/core';
 import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
+import { createStore } from 'redux';
+import { NgRedux } from '@angular-redux/store';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -117,9 +119,9 @@ export class AppModule {
   constructor(ipcService: IpcRendererService,
               electronService: ElectronService,
               private zone: NgZone,
+              private ngRedux: NgRedux<IAppState>,
               @Inject(PLATFORM_ID) private platformId: string) {
     ipcService.init();
-
     if (isPlatformBrowser(this.platformId)) {
       document.ondragover = document.ondrop = (ev) => {
         ev.preventDefault();
