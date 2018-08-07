@@ -38,7 +38,7 @@ export class MuzikaUpdater extends EventEmitter {
     // if in development mode, don't check update and just emit not update available event.
     if (isDev) {
       this.emit('available', false);
-      Actions.app.setUpdatable(false);
+      Actions.app.setUpdatable('not-available');
       return;
     }
 
@@ -47,18 +47,21 @@ export class MuzikaUpdater extends EventEmitter {
     autoUpdater.removeAllListeners('update-available');
     autoUpdater.removeAllListeners('update-not-available');
 
-    autoUpdater.once('update-available', () => this.emit('available', true));
+    autoUpdater.once('update-available', () => {
+      this.emit('available', true);
+      Actions.app.setUpdatable('downloading');
+    });
     autoUpdater.once('update-not-available', () => {
       MuzikaUpdater._isChecking = false;
       this.emit('available', false);
-      Actions.app.setUpdatable(false);
+      Actions.app.setUpdatable('not-available');
 
     });
     autoUpdater.once('update-downloaded', () => {
       MuzikaUpdater._isChecking = false;
       MuzikaUpdater._updatable = true;
       this.emit('downloaded');
-      Actions.app.setUpdatable(true);
+      Actions.app.setUpdatable('updatable');
     });
 
     autoUpdater.checkForUpdates();

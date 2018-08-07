@@ -1,6 +1,4 @@
-
-import { app } from 'electron';
-import { BrowserWindow } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import * as url from 'url';
 import * as path from 'path';
 import { ipfsPath } from 'go-ipfs-wrapper';
@@ -10,29 +8,33 @@ import { IpcWalletServiceInstance } from './ipc-wallet.service';
 import { StorageServiceInstance } from './storage.service';
 import * as ms from 'ms';
 import { MuzikaUpdater } from './auto-update.service';
-import { MuzikaConsole } from '@muzika/core';
-import { StoreServiceInstance, Actions } from './store.service';
-import { combineLatest } from 'rxjs';
+import { StoreServiceInstance } from './store.service';
+import {combineLatest, from, Observable, timer} from 'rxjs';
+import { filter, map, timeout, mergeMap, take, takeWhile } from 'rxjs/operators';
+import { WinOpts } from './util/window-options';
+
+export interface MuzikaAppOptions {
+  healthyTimeCheck?: number;                        // the interval time for checking all services alive and restoring
+}
 
 export class MuzikaApp {
-  mainWindow: BrowserWindow;
-  instancesForCheck = [IpfsServiceInstance];
-  private _updateChecker: MuzikaUpdater;
-  private _healthyCheckHandler;
+  mainWindow: BrowserWindow;                        // current main window
+  instancesForCheck = [IpfsServiceInstance];        // instances that should be always alive for service
 
-  private _isDevMode: boolean;
-  private _options: any;
+  private _updateChecker: MuzikaUpdater;            // update checker
+  private _isDevMode: boolean;                      // whether it is develop environment or not
+  private _options: any;                            // application options
+  private _isAlive = false;                         // whether the application is activated or not
 
   constructor() {
   }
 
-
   /**
-   * Constructs an application manager.
+   * Initializes an application manager.
    * @param {boolean} _isDevMode whether it is development mode or not
    * @param {any} _options
    */
-  init(_isDevMode: boolean, _options?: any) {
+  init(_isDevMode: boolean, _options?: MuzikaAppOptions) {
     this._isDevMode = _isDevMode;
     this._options = _options;
     this._updateChecker = new MuzikaUpdater();
@@ -50,129 +52,141 @@ export class MuzikaApp {
     IpfsService.setIpfsExecPath((_isDevMode) ? ipfsPath : ipfsPath.replace('app.asar', 'app.asar.unpacked'));
   }
 
-  public activate() {
-    this.mainWindow = this._createMainWindow();
+  activate() {
+    this.mainWindow = this._createLoadingWindow();
     this.mainWindow.on('show', () => {
+      this._isAlive = true;
+
       // initialize service instances.
       IpfsServiceInstance.init((this._isDevMode) ? '' : app.getPath('userData'));
       IpcWalletServiceInstance.init();
 
       // for every 10 seconds, check instances that are healthy.
-      this._healthyCheckHandler = setInterval(() => this.restoreInstances(),
-        this._options.healthyTimeInterval || ms('10s'));
+      timer(10000, this._options.healthyTimeCheck || ms('10s')).pipe(
+        takeWhile(() => this._isAlive)
+      ).subscribe(() => this.restoreInstances());
 
       // if not updatable and ipfs is ready, close the loading screen and open the main window
+      const updatable$ = StoreServiceInstance.select('app', 'updatable');
+      const ipfsStatus$ = StoreServiceInstance.select('app', 'serviceStatus', 'ipfs');
+
       combineLatest(
-        StoreServiceInstance.select('app', 'updatable'),
-        StoreServiceInstance.select('app', 'serviceStatus', 'ipfs')
-      ).subscribe(([updatable, ipfsStatus]) => {
-        if (updatable === false && ipfsStatus === true) {
-          const startWindow = new BrowserWindow({
-            width: 1340,
-            height: 700,
-            minWidth: 700,
-            minHeight: 400,
-            resizable: true,
-            titleBarStyle: 'hidden',
-            webPreferences: {
-              plugins: true,
-              nodeIntegration: true
-            }
-          });
-
-          startWindow.setMenu(null);
-
-          if (this._isDevMode) {
-            // https://github.com/yan-foto/electron-reload/issues/16
-            require('electron-reload')(__dirname, {
-              electron: require(`${__dirname}/../../../node_modules/electron`)
-            });
-            startWindow.loadURL('http://localhost:4200');
+        updatable$, ipfsStatus$
+      ).pipe(
+        filter(([updatable, ipfsStatus]) => updatable !== undefined && ipfsStatus === true),
+        timeout(10000),
+        take(1)
+      ).subscribe(
+        // if ready to service, close the loading screen and open the main window to user
+        // if update available, wait for update and restart
+        ([updatable]) => {
+          if (updatable === 'not-available') {
+            // no need to update, ready to service
+            this._convertWindow(WinOpts.getMainWindowOpts(), 'index.html').setMenu(null);
           } else {
-            startWindow.loadURL(url.format({
-              pathname: path.join(__dirname, '../renderer/index.html'),
-              protocol: 'file:',
-              slashes: true
-            }));
+            // if updatable, wait for downloading update file
+            updatable$.pipe(
+              filter(updateStatus => updateStatus === 'available')
+            ).subscribe(() => {
+              // if finished to download update file,
+              // TODO: procedure after downloading update file
+            });
           }
-          startWindow.webContents.openDevTools();
+        },
 
-          // close the loading screen, and remove closed listener
-          this.mainWindow.hide();
-          this.mainWindow.removeAllListeners('closed');
-
-          // change the main window reference
-          const loadingWindow = this.mainWindow;
-          this.mainWindow = startWindow;
-
-          // when the main window is shown, finalize loading window.
-          this.mainWindow.once('show', () => loadingWindow.close());
-
-          this.mainWindow.on('closed', () => this.mainWindow = null);
+        // error would be raised almost by timeout
+        (err) => {
+          // TODO: handle timeout error
         }
-      });
+      );
 
-      MuzikaConsole.log('Check for update!');
       setTimeout(() => this._updateChecker.checkUpdate(), 2000);
     });
+
     this.mainWindow.on('closed', () => this.mainWindow = null);
   }
 
   /**
    * Try to restore unhealthy instances.
    */
-  public async restoreInstances() {
-    const unhealthyInstances = await this.getUnhealthyInstances();
-
-    // try to restore all unhealthy instances.
-    Promise.all(unhealthyInstances.map((instance) => instance.restore()))
-      .then((successes) => {
-        // TODO: how to do when restore failed
-      });
+  restoreInstances() {
+    this.getUnhealthyInstances().subscribe((unhealthyInstance) => {
+      // TODO: restore instance
+    });
   }
 
   /**
    * Returns all unhealthy instances.
    */
-  public async getUnhealthyInstances() {
-    // check all instances healthy and get boolean array
-    // that represents whether they are healthy respectively
-    const healthy = await Promise.all(this.instancesForCheck.map(instance => instance.isHealthy));
-
-    // return only unhealthy instances
-    return this.instancesForCheck.filter((_, index) => !healthy[index]);
+  getUnhealthyInstances(): Observable<any> {
+    return from(this.instancesForCheck).pipe(
+      mergeMap(instance => instance.isHealthy().pipe(
+        map(healthy => [instance, healthy])
+      )),
+      filter((instance, healthy) => !healthy)
+    );
   }
 
-  private _createMainWindow(): BrowserWindow {
-    const mainWindow = new BrowserWindow({
-      width: 300,
-      height: 300,
-      resizable: true,
-      titleBarStyle: 'hidden',
-      frame: false,
-      show: false,
-    });
-
-    if (this._isDevMode) {
-      // https://github.com/yan-foto/electron-reload/issues/16
-      require('electron-reload')(__dirname, {
-        electron: require(`${__dirname}/../../../node_modules/electron`)
-      });
-      mainWindow.loadURL('http://localhost:4200/index.html#/loading-screen');
-    } else {
-      mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, '../renderer/index.html#/loading-screen'),
-        protocol: 'file:',
-        slashes: true
-      }));
-    }
-
+  private _createLoadingWindow(): BrowserWindow {
+    const mainWindow = new BrowserWindow(WinOpts.getLoadingScreenOpts());
+    this._loadURL(mainWindow, 'index.html#/loading-screen');
     return mainWindow;
   }
 
   private _createAboutWindow() {
   }
 
+  /**
+   * let browser window load an URL.
+   * @param window browser window to load
+   * @param renderPath relative path from the renderer.
+   */
+  private _loadURL(window: BrowserWindow, renderPath: string) {
+    if (this._isDevMode) {
+      // https://github.com/yan-foto/electron-reload/issues/16
+      require('electron-reload')(__dirname, {
+        electron: require(`${__dirname}/../../../node_modules/electron`)
+      });
+      window.loadURL('http://localhost:4200/' + renderPath);
+    } else {
+      window.loadURL(url.format({
+        pathname: path.join(__dirname, '../renderer', renderPath),
+        protocol: 'file:',
+        slashes: true
+      }));
+    }
+  }
+
+  /**
+   * Converts the current main window to other window.
+   * @param options window options
+   * @param renderPath file path for rendering
+   * @private
+   */
+  private _convertWindow(options: BrowserWindowConstructorOptions, renderPath: string) {
+    const startWindow = new BrowserWindow(options);
+
+    this._loadURL(startWindow, renderPath);
+
+    // if develop mode, open the dev tools
+    if (this._isDevMode) {
+      startWindow.webContents.openDevTools();
+    }
+
+    // close the loading screen, and remove closed listener
+    this.mainWindow.hide();
+    this.mainWindow.removeAllListeners('closed');
+
+    // change the main window reference
+    const loadingWindow = this.mainWindow;
+    this.mainWindow = startWindow;
+
+    // when the main window is shown, finalize loading window.
+    this.mainWindow.once('show', () => loadingWindow.close());
+
+    this.mainWindow.on('closed', () => this.mainWindow = null);
+    return this.mainWindow;
+  }
 }
 
 export const MuzikaAppInstance = new MuzikaApp();

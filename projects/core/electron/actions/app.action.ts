@@ -7,9 +7,11 @@ export class AppActions {
 
   /**
    * Sets the application is updatable or not.
-   * @param updatable true if updatable or false if not.
+   * @param updatable "downloading" represents that it is downloading the update file,
+   * "not-available" if no need to update, and "updatable" if finished to download
+   * update file so ready to update.
    */
-  setUpdatable(updatable: boolean) {
+  setUpdatable(updatable: 'downloading' | 'not-available' | 'updatable') {
     this.store.dispatch({
       type: AppActionType.SET_UPDATABLE,
       payload: { updatable }

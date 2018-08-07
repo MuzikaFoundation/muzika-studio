@@ -1,9 +1,10 @@
-import { IpfsObject, MuzikaConsole, IpfsUtil } from '@muzika/core';
+import { IpfsObject, IpfsUtil, MuzikaConsole } from '@muzika/core';
 import { ipfsPath, IpfsProcess } from 'go-ipfs-wrapper';
 import * as IpfsAPI from 'ipfs-api';
 import * as path from 'path';
 import * as request from 'request';
-import { Observable } from 'rxjs';
+import { from, Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { Actions } from './store.service';
 
 
@@ -28,6 +29,7 @@ export class IpfsService {
    * a long time to check the file is alive.
    * @param hash the hash of the file.
    * @param timeout the timeout to check
+   * @param retry the number of retires when timeout
    */
   async checkObjectAlive(hash: string, timeout?: number, retry?: number) {
     // if retry is not defined, don't retry
@@ -127,19 +129,27 @@ export class IpfsService {
   /**
    * Returns true if interacting successfully with IPFS or false if not.
    */
-  async isHealthy() {
-    return await new Promise((resolve, reject) => {
-      this.id()
-        .then(() => resolve(true))
-        .catch((err) => resolve(false));
-    });
+  isHealthy(): Observable<boolean> {
+    return from(this.id()).pipe(
+      // if response from ipfs
+      map(() => {
+        Actions.app.setServiceStatus('ipfs', true);
+        return true;
+      }),
+      catchError(err => {
+        Actions.app.setServiceStatus('ipfs', false);
+        return of(false);
+      })
+    );
   }
 
   connectLocalIpfs() {
     MuzikaConsole.log('IPFS node is ready');
     this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
     this.isReady = true;
-    Actions.app.setServiceStatus('ipfs', true);
+
+    // healthy check
+    this.isHealthy().subscribe();
   }
 }
 

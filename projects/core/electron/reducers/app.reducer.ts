@@ -7,7 +7,7 @@ export class AppActionType {
 }
 
 export interface AppState {
-  updatable: boolean;
+  updatable: string;
   serviceStatus: {
     [serviceName: string]: boolean
   };
