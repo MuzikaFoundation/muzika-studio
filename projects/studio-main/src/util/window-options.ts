@@ -22,6 +22,7 @@ export class WinOpts {
       backgroundColor: '#2e2c29',
       resizable: true,
       titleBarStyle: 'hidden',
+      show: false,
       webPreferences: {
         plugins: true,
         nodeIntegration: true

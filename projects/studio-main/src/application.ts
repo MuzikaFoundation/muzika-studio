@@ -1,4 +1,4 @@
-import { app, BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions, remote } from 'electron';
 import * as url from 'url';
 import * as path from 'path';
 import { ipfsPath } from 'go-ipfs-wrapper';
@@ -185,30 +185,31 @@ export class MuzikaApp {
    * Converts the current main window to other window.
    * @param options window options
    * @param renderPath file path for rendering
+   * @param renderOptions rendering options for a new window
    * @private
    */
-  private _convertWindow(options: BrowserWindowConstructorOptions, renderPath: string) {
-    const startWindow = this._createWindow(options);
+  private _convertWindow(options: BrowserWindowConstructorOptions, renderPath: string, renderOptions?: RenderOptions) {
+    const startWindow = this._createWindow(options, renderOptions);
 
     this._loadURL(startWindow, renderPath);
 
     // if develop mode, open the dev tools
     // if (this._isDevMode) {
-      startWindow.webContents.openDevTools();
+    //   startWindow.webContents.openDevTools();
     // }
 
-    // close the loading screen, and remove closed listener
-    this.mainWindow.hide();
+    // remove closed listener
     this.mainWindow.removeAllListeners('closed');
 
     // change the main window reference
-    const loadingWindow = this.mainWindow;
+    const prevWindow = this.mainWindow;
     this.mainWindow = startWindow;
 
     // when the main window is shown, finalize loading window.
-    this.mainWindow.once('show', () => loadingWindow.close());
+    this.mainWindow.once('show', () => prevWindow.close());
 
-    this.mainWindow.on('closed', () => this.mainWindow = null);
+    this.mainWindow.once('closed', () => this.mainWindow = null);
+
     return this.mainWindow;
   }
 }

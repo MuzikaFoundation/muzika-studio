@@ -74,6 +74,12 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
     if (isPlatformBrowser(this.platformId)) {
       this.web3.setProvider(this.walletProvider);
     }
+
+    // when this option is false, let the current electron BrowserWindow instance
+    // call `show()` function, so user sees the completely rendered windows.
+    if (!this.renderOptions.disableShowAfterInitView) {
+      remote.getCurrentWindow().show();
+    }
   }
 
   closeFloating() {

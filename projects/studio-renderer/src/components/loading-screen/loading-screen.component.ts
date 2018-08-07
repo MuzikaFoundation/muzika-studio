@@ -1,7 +1,4 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { remote } from 'electron';
-import { IpcRendererService } from '../../providers/ipc-renderer.service';
-import { IPCUtil } from '../../util/ipc-utils';
 
 
 @Component({
@@ -11,14 +8,12 @@ import { IPCUtil } from '../../util/ipc-utils';
 })
 export class LoadingScreenComponent implements OnInit, AfterViewInit {
 
-  constructor(private ipcRendererService: IpcRendererService) {
+  constructor() {
   }
 
   ngOnInit(): void {
   }
 
   ngAfterViewInit() {
-    // don't show before view initialized.
-    remote.getCurrentWindow().show();
   }
 }
