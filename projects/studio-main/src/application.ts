@@ -87,7 +87,8 @@ export class MuzikaApp {
           } else {
             // if updatable, wait for downloading update file
             updatable$.pipe(
-              filter(updateStatus => updateStatus === 'available')
+              filter(updateStatus => updateStatus === 'available'),
+              take(1)
             ).subscribe(() => {
               // if finished to download update file,
               // TODO: procedure after downloading update file
@@ -129,7 +130,7 @@ export class MuzikaApp {
   }
 
   private _createLoadingWindow(): BrowserWindow {
-    const mainWindow = this._createWindow(WinOpts.getLoadingScreenOpts(), { hideNavBar: true });
+    const mainWindow = this._createWindow(WinOpts.getLoadingScreenOpts(), { hideNavBar: true, hideTitleBar: true });
     this._loadURL(mainWindow, 'index.html', 'loading-screen');
     return mainWindow;
   }

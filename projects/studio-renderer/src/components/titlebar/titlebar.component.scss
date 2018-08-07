@@ -1,0 +1,52 @@
+@import '../../theme/variables';
+
+:host {
+  background-color: $titlebar-background;
+  height: $titlebar-height;
+  display: block;
+}
+
+.titlebar {
+  height: $titlebar-height;
+  -webkit-app-region: drag;
+
+  .title {
+    position: fixed;
+    color: #fff;
+    height: $titlebar-height;
+    line-height: $titlebar-height;
+    padding-left: 12px;
+    font-size: 12px;
+    vertical-align: middle;
+  }
+
+  .btns {
+    -webkit-app-region: no-drag;
+    position: fixed;
+    padding: 0;
+    margin: 0;
+    right: 0;
+
+    button {
+      width: $titlebar-height + 12;
+      height: $titlebar-height;
+      color: white;
+      padding: 0;
+      margin: 0;
+      background: transparent;
+      border: 0 none;
+
+      &:hover {
+        background-color: #4e4e4e;
+      }
+
+      svg {
+        width: 10px;
+        height: 10px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 1.5px;
+      }
+    }
+  }
+}

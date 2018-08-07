@@ -1,13 +1,6 @@
-import { app, BrowserWindow, screen } from 'electron';
+import { app } from 'electron';
 import * as path from 'path';
-import * as url from 'url';
-import * as os from 'os';
-import { InstallMacDependencies } from './src/scripts/darwin/insall_magick';
 import { MuzikaAppInstance } from './src/application';
-import { IpcWalletServiceInstance } from './src/ipc-wallet.service';
-import { IpcMainServiceInstance } from './src/ipc.service';
-import { IpfsServiceInstance } from './src/ipfs.service';
-import { StorageServiceInstance } from './src/storage.service';
 import { MuzikaConsole } from '@muzika/core';
 
 const isDev = require('electron-is-dev');

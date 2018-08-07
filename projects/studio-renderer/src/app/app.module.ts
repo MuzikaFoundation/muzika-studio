@@ -35,10 +35,11 @@ import { IAppState, rootReducer } from '@muzika/core/electron';
 import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
-import {NgRedux, NgReduxModule} from '@angular-redux/store';
+import { NgRedux, NgReduxModule } from '@angular-redux/store';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
 import { applyMiddleware, createStore } from 'redux';
+import { TitleBarComponent } from '../components/titlebar/titlebar.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -55,6 +56,7 @@ declare const document;
     WebviewDirective,
 
     /* Reusable Components */
+    TitleBarComponent,
     NavbarComponent,
     SpinnerComponent,
     FooterComponent,

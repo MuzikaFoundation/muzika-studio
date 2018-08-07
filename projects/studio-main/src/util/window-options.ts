@@ -23,6 +23,7 @@ export class WinOpts {
       resizable: true,
       titleBarStyle: 'hidden',
       show: false,
+      frame: false,
       webPreferences: {
         plugins: true,
         nodeIntegration: true
