@@ -7,9 +7,12 @@ export class WinOpts {
       width: 300,
       height: 300,
       resizable: true,
-      titleBarStyle: 'hidden',
+      titleBarStyle: 'customButtonsOnHover',
       frame: false,
       show: false,
+      minimizable: false,
+      fullscreenable: false,
+      skipTaskbar: true,
     };
   }
 
@@ -21,7 +24,7 @@ export class WinOpts {
       minHeight: 400,
       backgroundColor: '#2e2c29',
       resizable: true,
-      titleBarStyle: 'hidden',
+      titleBarStyle: 'customButtonsOnHover',
       show: false,
       frame: false,
       webPreferences: {
