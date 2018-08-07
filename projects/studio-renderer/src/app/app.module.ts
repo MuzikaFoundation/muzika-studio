@@ -30,12 +30,15 @@ import { WebviewDirective } from '../providers/webview.directive';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ElectronService } from '../providers/electron.service';
-import { IAppState, MuzikaConsole, rootReducer } from '@muzika/core';
+import { MuzikaConsole } from '@muzika/core';
+import { IAppState, rootReducer } from '@muzika/core/electron';
 import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
-import { createStore } from 'redux';
-import { NgRedux } from '@angular-redux/store';
+import {NgRedux, NgReduxModule} from '@angular-redux/store';
+import {forwardToMain, replayActionRenderer} from 'electron-redux';
+import { remote } from 'electron';
+import {applyMiddleware, createStore} from 'redux';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -72,6 +75,7 @@ declare const document;
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgReduxModule,
 
     WalletModule,
     AppRoutingModule,
@@ -122,6 +126,7 @@ export class AppModule {
               private ngRedux: NgRedux<IAppState>,
               @Inject(PLATFORM_ID) private platformId: string) {
     ipcService.init();
+
     if (isPlatformBrowser(this.platformId)) {
       document.ondragover = document.ondrop = (ev) => {
         ev.preventDefault();
@@ -135,5 +140,16 @@ export class AppModule {
         ev.preventDefault();
       };
     }
+
+    const store = createStore(
+      rootReducer,
+      (remote.getCurrentWindow() as any).store,         // initialize state with main state
+      applyMiddleware(
+        forwardToMain
+      )
+    );
+
+    this.ngRedux.provideStore(store);
+    replayActionRenderer(store);
   }
 }

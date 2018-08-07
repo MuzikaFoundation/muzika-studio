@@ -13,7 +13,7 @@ export interface AppState {
   };
 }
 
-const initialState: AppState = {
+export const initialState: AppState = {
   updatable: undefined,
   serviceStatus: {}
 };

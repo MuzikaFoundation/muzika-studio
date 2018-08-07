@@ -3,6 +3,7 @@ export class IPCUtil {
   public static EVENT_PDF_VIEWER_OPEN = 'PDFViewer:open';
   public static EVENT_CHECK_FOR_UPDATE = 'checkForUpdate';
   public static EVENT_QUIT_AND_UPDATE = 'quitAndUpdate';
+  public static EVENT_REDUX_SYNC_WITH_MAIN = '[redux] sync with main';
 
   static readonly uuid = (): string => {
     const s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);

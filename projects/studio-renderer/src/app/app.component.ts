@@ -3,12 +3,17 @@ import { AfterViewInit, Component, Inject, NgZone, PLATFORM_ID } from '@angular/
 import { Router } from '@angular/router';
 import { BaseComponent, ExtendedWeb3, UserActions } from '@muzika/core/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { interval } from 'rxjs';
+import {interval, timer} from 'rxjs';
 import { environment } from '../environments/environment';
 import { ElectronService } from '../providers/electron.service';
 import { MuzikaWalletProvider } from '../providers/muzika-wallet.provider';
 import { MuzikaTabs, TabService } from '../providers/tab.service';
 import { MuzikaConsole } from '@muzika/core';
+import {NgRedux} from '@angular-redux/store';
+import {IAppState, rootReducer} from '@muzika/core/electron';
+import {applyMiddleware, createStore} from 'redux';
+import { remote } from 'electron';
+import { forwardToMain, replayActionRenderer } from 'electron-redux';
 
 @Component({
   selector: 'app-root',
@@ -26,6 +31,7 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
               private web3: ExtendedWeb3,
               private tabService: TabService,
               private router: Router,
+              private ngRedux: NgRedux<IAppState>,
               private walletProvider: MuzikaWalletProvider) {
     super();
     translate.setDefaultLang('en');

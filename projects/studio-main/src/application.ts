@@ -9,9 +9,10 @@ import { StorageServiceInstance } from './storage.service';
 import * as ms from 'ms';
 import { MuzikaUpdater } from './auto-update.service';
 import { StoreServiceInstance } from './store.service';
-import {combineLatest, from, Observable, timer} from 'rxjs';
+import {combineLatest, from, fromEvent, Observable, timer} from 'rxjs';
 import { filter, map, timeout, mergeMap, take, takeWhile } from 'rxjs/operators';
 import { WinOpts } from './util/window-options';
+import {IPCUtil} from './util/ipc-utils';
 
 export interface MuzikaAppOptions {
   healthyTimeCheck?: number;                        // the interval time for checking all services alive and restoring
@@ -128,8 +129,8 @@ export class MuzikaApp {
   }
 
   private _createLoadingWindow(): BrowserWindow {
-    const mainWindow = new BrowserWindow(WinOpts.getLoadingScreenOpts());
-    this._loadURL(mainWindow, 'index.html#/loading-screen');
+    const mainWindow = this._createWindow(WinOpts.getLoadingScreenOpts());
+    this._loadURL(mainWindow, 'index.html', 'loading-screen');
     return mainWindow;
   }
 
@@ -140,8 +141,9 @@ export class MuzikaApp {
    * let browser window load an URL.
    * @param window browser window to load
    * @param renderPath relative path from the renderer.
+   * @param hash fragment portion of URL.
    */
-  private _loadURL(window: BrowserWindow, renderPath: string) {
+  private _loadURL(window: BrowserWindow, renderPath: string, hash?: string) {
     if (this._isDevMode) {
       // https://github.com/yan-foto/electron-reload/issues/16
       require('electron-reload')(__dirname, {
@@ -149,12 +151,27 @@ export class MuzikaApp {
       });
       window.loadURL('http://localhost:4200/' + renderPath);
     } else {
+      console.log(path.join(__dirname, '../renderer', renderPath));
       window.loadURL(url.format({
         pathname: path.join(__dirname, '../renderer', renderPath),
         protocol: 'file:',
-        slashes: true
+        slashes: true,
+        hash
       }));
     }
+  }
+
+  // noinspection JSMethodCanBeStatic
+  /**
+   * Constructs a new window with parameter options."store" variable is injected
+   * to the browser window object for syncing the redux state.
+   * @param options options for browser window creation
+   * @private
+   */
+  private _createWindow(options: BrowserWindowConstructorOptions) {
+    const window = new BrowserWindow(options);
+    (window as any).store = StoreServiceInstance.store.getState();
+    return window;
   }
 
   /**
@@ -164,14 +181,14 @@ export class MuzikaApp {
    * @private
    */
   private _convertWindow(options: BrowserWindowConstructorOptions, renderPath: string) {
-    const startWindow = new BrowserWindow(options);
+    const startWindow = this._createWindow(options);
 
     this._loadURL(startWindow, renderPath);
 
     // if develop mode, open the dev tools
-    if (this._isDevMode) {
+    // if (this._isDevMode) {
       startWindow.webContents.openDevTools();
-    }
+    // }
 
     // close the loading screen, and remove closed listener
     this.mainWindow.hide();

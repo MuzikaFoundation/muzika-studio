@@ -70,20 +70,20 @@ export class MuzikaCoreModule {
               private transferState: TransferState,
               private ngRedux: NgRedux<IAppState>) {
 
-    if (isPlatformServer(this.platformId)) { // In Server
-      this.ngRedux.provideStore(createStore(rootReducer));
-      if (!this.transferState.hasKey(MUZIKA_REDUX_STATE_KEY)) {
-        this.transferState.onSerialize(MUZIKA_REDUX_STATE_KEY, () => this.ngRedux.getState());
-      }
-    }
-
-    if (isPlatformBrowser(this.platformId)) {
-      const state = this.transferState.get<any>(MUZIKA_REDUX_STATE_KEY, null);
-      if (state) { // Server side rendering을 통해 REDUX_STATE_KEY를 받아온 경우
-        this.ngRedux.configureStore(rootReducer, state);
-      } else {
-        this.ngRedux.provideStore(createStore(rootReducer));
-      }
-    }
+    // if (isPlatformServer(this.platformId)) { // In Server
+    //   this.ngRedux.provideStore(createStore(rootReducer));
+    //   if (!this.transferState.hasKey(MUZIKA_REDUX_STATE_KEY)) {
+    //     this.transferState.onSerialize(MUZIKA_REDUX_STATE_KEY, () => this.ngRedux.getState());
+    //   }
+    // }
+    //
+    // if (isPlatformBrowser(this.platformId)) {
+    //   const state = this.transferState.get<any>(MUZIKA_REDUX_STATE_KEY, null);
+    //   if (state) { // Server side rendering을 통해 REDUX_STATE_KEY를 받아온 경우
+    //     this.ngRedux.configureStore(rootReducer, state);
+    //   } else {
+    //     this.ngRedux.provideStore(createStore(rootReducer));
+    //   }
+    // }
   }
 }
