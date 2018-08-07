@@ -6,16 +6,15 @@ import { PayloadAction } from '../models/redux-action';
 import { BasePostDraft } from '../models/draftbox';
 
 export class PostActionType {
-  static INSERT_POSTS_LIST = '[posts] Insert posts list';
-  static INSERT_POSTS_BEFORE_LIST = '[posts] Insert posts into bottom of list';
-  static INSERT_POSTS_AFTER_LIST = '[posts] Insert posts into top of list';
-  static INSERT_POSTS_RESULT = '[posts] Insert post result';
-  static RESET_POSTS_RESULT = '[posts] Reset posts result';
-  static RESET_INF_POSTS = '[posts] Reset inf posts list';
-  static LIKE_TOGGLE_POST = '[posts] like toggle post';
-  static SAVE_POSTS = '[posts] save posts';
-
-  static INSERT_POST_DRAFTS = '[posts] save post drafts';
+  static INSERT_POSTS_LIST = '/posts/insert-posts-list';
+  static INSERT_POSTS_BEFORE_LIST = '/posts/insert-posts-before-list';
+  static INSERT_POSTS_AFTER_LIST = '/posts/insert-post-after-list';
+  static INSERT_POSTS_RESULT = '/posts/insert-posts-result';
+  static RESET_POSTS_RESULT = '/posts/reset-posts-result';
+  static RESET_INF_POSTS = '/posts/reset-inf-posts';
+  static LIKE_TOGGLE_POST = '/posts/like-toggle-post';
+  static SAVE_POSTS = '/posts/save-posts';
+  static INSERT_POST_DRAFTS = '/posts/insert-post-drafts';
 
   static PurchasedPosts(boardType: string) {
     return 'purchased-' + boardType;

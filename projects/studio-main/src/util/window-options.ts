@@ -19,6 +19,7 @@ export class WinOpts {
       height: 700,
       minWidth: 700,
       minHeight: 400,
+      backgroundColor: '#2e2c29',
       resizable: true,
       titleBarStyle: 'hidden',
       webPreferences: {

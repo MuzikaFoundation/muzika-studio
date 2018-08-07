@@ -1,9 +1,8 @@
-import {applyMiddleware, createStore, Store} from 'redux';
+import { applyMiddleware, createStore, Store } from 'redux';
 import { IAppState, rootReducer } from '@muzika/core/electron';
 import { AppActions } from '@muzika/core/electron';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { distinctUntilChanged } from 'rxjs/internal/operators/distinctUntilChanged';
+import { map, distinctUntilChanged } from 'rxjs/operators';
 import { Comparator } from '@angular-redux/store';
 import { forwardToRenderer, replayActionMain } from 'electron-redux';
 

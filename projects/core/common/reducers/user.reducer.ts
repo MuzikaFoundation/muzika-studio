@@ -3,9 +3,9 @@ import { User } from '../models';
 import { PayloadAction } from '../models/redux-action';
 
 export class UserActionType {
-  static SET_CURRENT_USER = '[user][SET_CURRENT_USER]';
-  static SET_BOARD_LIKES = '[user] SET_BOARD_LIKES';
-  static SET_COMMENT_LIKES = '[user] SET_COMMENT_LIKES';
+  static SET_CURRENT_USER = '/user/set-current-user';
+  static SET_BOARD_LIKES = '/user/set-board-likes';
+  static SET_COMMENT_LIKES = '/user/set-comment-likes';
 }
 
 export interface UserState {

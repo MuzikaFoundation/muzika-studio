@@ -3,17 +3,16 @@ import { AfterViewInit, Component, Inject, NgZone, PLATFORM_ID } from '@angular/
 import { Router } from '@angular/router';
 import { BaseComponent, ExtendedWeb3, UserActions } from '@muzika/core/angular';
 import { TranslateService } from '@ngx-translate/core';
-import {interval, timer} from 'rxjs';
+import { interval } from 'rxjs';
 import { environment } from '../environments/environment';
 import { ElectronService } from '../providers/electron.service';
 import { MuzikaWalletProvider } from '../providers/muzika-wallet.provider';
 import { MuzikaTabs, TabService } from '../providers/tab.service';
 import { MuzikaConsole } from '@muzika/core';
-import {NgRedux} from '@angular-redux/store';
-import {IAppState, rootReducer} from '@muzika/core/electron';
-import {applyMiddleware, createStore} from 'redux';
-import { remote } from 'electron';
+import { NgRedux } from '@angular-redux/store';
+import { IAppState, RenderOptions } from '@muzika/core/electron';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
+import { remote } from 'electron';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +21,7 @@ import { forwardToMain, replayActionRenderer } from 'electron-redux';
 })
 export class AppComponent extends BaseComponent implements AfterViewInit {
   currentTab: MuzikaTabs = 'viewer';
+  renderOptions: RenderOptions;
 
   constructor(public electronService: ElectronService,
               @Inject(PLATFORM_ID) private platformId: any,
@@ -48,6 +48,7 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
 
   ngOnInit() {
     super.ngOnInit();
+    this.renderOptions = (<any>remote.getCurrentWindow()).renderOptions;
 
     if (isPlatformBrowser(this.platformId)) {
       // Angular Zone Change Detection Wait 문제 해결

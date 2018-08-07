@@ -9,10 +9,10 @@ import { StorageServiceInstance } from './storage.service';
 import * as ms from 'ms';
 import { MuzikaUpdater } from './auto-update.service';
 import { StoreServiceInstance } from './store.service';
-import {combineLatest, from, fromEvent, Observable, timer} from 'rxjs';
+import {combineLatest, from, Observable, timer} from 'rxjs';
 import { filter, map, timeout, mergeMap, take, takeWhile } from 'rxjs/operators';
 import { WinOpts } from './util/window-options';
-import {IPCUtil} from './util/ipc-utils';
+import { RenderOptions } from '@muzika/core/electron';
 
 export interface MuzikaAppOptions {
   healthyTimeCheck?: number;                        // the interval time for checking all services alive and restoring
@@ -129,7 +129,7 @@ export class MuzikaApp {
   }
 
   private _createLoadingWindow(): BrowserWindow {
-    const mainWindow = this._createWindow(WinOpts.getLoadingScreenOpts());
+    const mainWindow = this._createWindow(WinOpts.getLoadingScreenOpts(), { hideNavBar: true });
     this._loadURL(mainWindow, 'index.html', 'loading-screen');
     return mainWindow;
   }
@@ -149,9 +149,14 @@ export class MuzikaApp {
       require('electron-reload')(__dirname, {
         electron: require(`${__dirname}/../../../node_modules/electron`)
       });
-      window.loadURL('http://localhost:4200/' + renderPath);
+      // window.loadURL('http://localhost:4200/' + renderPath + '#/' + hash);
+      window.loadURL(url.format({
+        pathname: `localhost:4200/${renderPath}`,
+        protocol: 'http:',
+        slashes: true,
+        hash
+      }));
     } else {
-      console.log(path.join(__dirname, '../renderer', renderPath));
       window.loadURL(url.format({
         pathname: path.join(__dirname, '../renderer', renderPath),
         protocol: 'file:',
@@ -166,11 +171,13 @@ export class MuzikaApp {
    * Constructs a new window with parameter options."store" variable is injected
    * to the browser window object for syncing the redux state.
    * @param options options for browser window creation
+   * @param renderOptions options for muzika renderer
    * @private
    */
-  private _createWindow(options: BrowserWindowConstructorOptions) {
+  private _createWindow(options: BrowserWindowConstructorOptions, renderOptions?: RenderOptions) {
     const window = new BrowserWindow(options);
     (window as any).store = StoreServiceInstance.store.getState();
+    (window as any).renderOptions = Object.assign({}, renderOptions);
     return window;
   }
 

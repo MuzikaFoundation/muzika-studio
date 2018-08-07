@@ -36,9 +36,9 @@ import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
 import {NgRedux, NgReduxModule} from '@angular-redux/store';
-import {forwardToMain, replayActionRenderer} from 'electron-redux';
+import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
-import {applyMiddleware, createStore} from 'redux';
+import { applyMiddleware, createStore } from 'redux';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
