@@ -18,7 +18,6 @@ export class TitleBarComponent extends BaseComponent {
   ngOnInit() {
     const window = remote.getCurrentWindow();
     this.isMaximized = window.isMaximized();
-    console.log(this.isMaximized);
 
     this._sub.push(
       fromEvent(window, 'maximize').subscribe(() => this.isMaximized = true)
@@ -37,14 +36,11 @@ export class TitleBarComponent extends BaseComponent {
   // noinspection JSMethodCanBeStatic
   toggleMaximize() {
     const window = remote.getCurrentWindow();
-    const platform = (window as any).platform;
-    const maximized = (platform === 'darwin') ? window.isFullScreen() : window.isMaximized();
 
-    // On mac OS, let window to be full screen instead of maximizing.
-    if (!maximized) {
-      (platform === 'darwin') ? window.setFullScreen(true) : window.maximize();
+    if (!this.isMaximized) {
+      window.maximize();
     } else {
-      (platform === 'darwin') ? window.setFullScreen(false) : window.unmaximize();
+      window.unmaximize();
     }
   }
 
