@@ -10,9 +10,16 @@
       </svg>
     </button>
 
-    <button (click)="maximize()">
+    <button (click)="toggleMaximize()" *ngIf="!isMaximized">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
         <rect x="0" y="0" width="10" height="10"></rect>
+      </svg>
+    </button>
+
+    <button (click)="toggleMaximize()" *ngIf="isMaximized">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
+        <polygon class="cls-1" points="10.13 0.13 2.63 0.13 2.63 2.63 7.63 2.63 7.63 7.63 10.13 7.63 10.13 0.13"></polygon>
+        <polygon class="cls-1" points="2.63 2.63 0.13 2.63 0.13 10.13 7.63 10.13 7.63 7.63 7.63 2.63 2.63 2.63"></polygon>
       </svg>
     </button>
 

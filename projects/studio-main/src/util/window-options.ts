@@ -4,6 +4,11 @@ import * as path from 'path';
 import { platform } from 'os';
 import { env } from 'process';
 
+export class WindowType {
+  static LOADING_SCREEN = 'loading-screen';
+  static MAIN = 'main-window';
+}
+
 export class WinOpts {
   static WINDOW_TITLE = 'Muzika - Artist Studio';
 

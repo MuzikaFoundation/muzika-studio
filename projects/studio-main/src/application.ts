@@ -1,6 +1,4 @@
 import { app, BrowserWindow, BrowserWindowConstructorOptions, remote } from 'electron';
-import { platform } from 'os';
-import { env } from 'process';
 import * as url from 'url';
 import * as path from 'path';
 import { ipfsPath } from 'go-ipfs-wrapper';
@@ -11,9 +9,9 @@ import { StorageServiceInstance } from './storage.service';
 import * as ms from 'ms';
 import { MuzikaUpdater } from './auto-update.service';
 import { StoreServiceInstance } from './store.service';
-import {combineLatest, from, Observable, timer} from 'rxjs';
+import { combineLatest, from, Observable, timer } from 'rxjs';
 import { filter, map, timeout, mergeMap, take, takeWhile } from 'rxjs/operators';
-import { WinOpts } from './util/window-options';
+import { WindowType, WinOpts } from './util/window-options';
 import { RenderOptions } from '@muzika/core/electron';
 
 export interface MuzikaAppOptions {
@@ -87,7 +85,7 @@ export class MuzikaApp {
           if (updatable === 'not-available') {
             // no need to update, ready to service
             this.mainWindow.removeAllListeners('close');
-            this._convertWindow(WinOpts.getMainWindowOpts(), 'index.html').setMenu(null);
+            this._convertWindow(WindowType.MAIN, WinOpts.getMainWindowOpts(), 'index.html').setMenu(null);
           } else {
             // if updatable, wait for downloading update file
             updatable$.pipe(
@@ -134,9 +132,13 @@ export class MuzikaApp {
   }
 
   private _createLoadingWindow(): BrowserWindow {
-    const loadingWindow = this._createWindow(WinOpts.getLoadingScreenOpts(), { hideNavBar: true, hideTitleBar: true });
-    this._loadURL(loadingWindow, 'index.html', 'loading-screen');
+    const loadingWindow = this._createWindow(
+      WindowType.LOADING_SCREEN,
+      WinOpts.getLoadingScreenOpts(),
+      { hideNavBar: true, hideTitleBar: true }
+    );
     loadingWindow.on('close', app.quit);
+    this._loadURL(loadingWindow, 'index.html', 'loading-screen');
     return loadingWindow;
   }
 
@@ -177,11 +179,12 @@ export class MuzikaApp {
    * Constructs a new window with parameter options and inject additional
    * variable is injected to the browser window object for syncing the
    * redux state.
+   * @param windowType window type
    * @param options options for browser window creation
    * @param renderOptions options for muzika renderer
    * @private
    */
-  private _createWindow(options: BrowserWindowConstructorOptions, renderOptions?: RenderOptions) {
+  private _createWindow(windowType: string, options: BrowserWindowConstructorOptions, renderOptions?: RenderOptions) {
     const window = new BrowserWindow(options);
 
     // inject some main info to the browser window instance
@@ -190,19 +193,20 @@ export class MuzikaApp {
     (window as any).store = StoreServiceInstance.store.getState();
     (window as any).platform = WinOpts.getRenderingPlatform();
     (window as any).renderOptions = Object.assign({}, renderOptions);
-
+    (window as any).windowType = windowType;
     return window;
   }
 
   /**
    * Converts the current main window to other window.
+   * @param windowType window type
    * @param options window options
    * @param renderPath file path for rendering
    * @param renderOptions rendering options for a new window
    * @private
    */
-  private _convertWindow(options: BrowserWindowConstructorOptions, renderPath: string, renderOptions?: RenderOptions) {
-    const startWindow = this._createWindow(options, renderOptions);
+  private _convertWindow(windowType: string, options: BrowserWindowConstructorOptions, renderPath: string, renderOptions?: RenderOptions) {
+    const startWindow = this._createWindow(windowType, options, renderOptions);
 
     this._loadURL(startWindow, renderPath);
 
