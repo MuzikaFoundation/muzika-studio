@@ -24,10 +24,14 @@ export class TitleBarComponent extends BaseComponent {
   // noinspection JSMethodCanBeStatic
   maximize() {
     const window = remote.getCurrentWindow();
-    if (!window.isMaximized()) {
-      window.maximize();
+    const platform = (window as any).platform;
+    const maximized = (platform === 'darwin') ? window.isFullScreen() : window.isMaximized();
+
+    // On mac OS, let window to be full screen instead of maximizing.
+    if (!maximized) {
+      (platform === 'darwin') ? window.setFullScreen(true) : window.maximize();
     } else {
-      window.unmaximize();
+      (platform === 'darwin') ? window.setFullScreen(false) : window.unmaximize();
     }
   }
 

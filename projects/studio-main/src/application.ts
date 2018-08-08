@@ -1,4 +1,6 @@
 import { app, BrowserWindow, BrowserWindowConstructorOptions, remote } from 'electron';
+import { platform } from 'os';
+import { env } from 'process';
 import * as url from 'url';
 import * as path from 'path';
 import { ipfsPath } from 'go-ipfs-wrapper';
@@ -28,6 +30,7 @@ export class MuzikaApp {
   private _isAlive = false;                         // whether the application is activated or not
 
   constructor() {
+    this.mainWindow = null;
   }
 
   /**
@@ -83,6 +86,7 @@ export class MuzikaApp {
         ([updatable]) => {
           if (updatable === 'not-available') {
             // no need to update, ready to service
+            this.mainWindow.removeAllListeners('close');
             this._convertWindow(WinOpts.getMainWindowOpts(), 'index.html').setMenu(null);
           } else {
             // if updatable, wait for downloading update file
@@ -130,9 +134,10 @@ export class MuzikaApp {
   }
 
   private _createLoadingWindow(): BrowserWindow {
-    const mainWindow = this._createWindow(WinOpts.getLoadingScreenOpts(), { hideNavBar: true, hideTitleBar: true });
-    this._loadURL(mainWindow, 'index.html', 'loading-screen');
-    return mainWindow;
+    const loadingWindow = this._createWindow(WinOpts.getLoadingScreenOpts(), { hideNavBar: true, hideTitleBar: true });
+    this._loadURL(loadingWindow, 'index.html', 'loading-screen');
+    loadingWindow.on('close', app.quit);
+    return loadingWindow;
   }
 
   private _createAboutWindow() {
@@ -169,16 +174,23 @@ export class MuzikaApp {
 
   // noinspection JSMethodCanBeStatic
   /**
-   * Constructs a new window with parameter options."store" variable is injected
-   * to the browser window object for syncing the redux state.
+   * Constructs a new window with parameter options and inject additional
+   * variable is injected to the browser window object for syncing the
+   * redux state.
    * @param options options for browser window creation
    * @param renderOptions options for muzika renderer
    * @private
    */
   private _createWindow(options: BrowserWindowConstructorOptions, renderOptions?: RenderOptions) {
     const window = new BrowserWindow(options);
+
+    // inject some main info to the browser window instance
+    // this variables can be used in the electron renderer by `
+    // remote.getCurrentWindow().[variable name]`.
     (window as any).store = StoreServiceInstance.store.getState();
+    (window as any).platform = WinOpts.getRenderingPlatform();
     (window as any).renderOptions = Object.assign({}, renderOptions);
+
     return window;
   }
 
@@ -195,19 +207,23 @@ export class MuzikaApp {
     this._loadURL(startWindow, renderPath);
 
     // if develop mode, open the dev tools
-    // if (this._isDevMode) {
-    //   startWindow.webContents.openDevTools();
-    // }
+    if (this._isDevMode) {
+      startWindow.webContents.openDevTools();
+    }
 
     // remove closed listener
-    this.mainWindow.removeAllListeners('closed');
+    if (this.mainWindow !== null) {
+      this.mainWindow.removeAllListeners('closed');
+    }
 
     // change the main window reference
     const prevWindow = this.mainWindow;
     this.mainWindow = startWindow;
 
     // when the main window is shown, finalize loading window.
-    this.mainWindow.once('show', () => prevWindow.close());
+    if (prevWindow !== null) {
+      this.mainWindow.once('show', () => prevWindow.close());
+    }
 
     this.mainWindow.once('closed', () => this.mainWindow = null);
 
