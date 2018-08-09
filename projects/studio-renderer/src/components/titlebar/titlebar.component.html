@@ -1,7 +1,7 @@
 <div class="titlebar"
      [class.titlebar-default]="platform !== 'darwin'"
      [class.titlebar-mac]="platform === 'darwin'">
-  <div class="title">
+  <div class="title" *ngIf="platform !== 'darwin'">
     Muzika - Artist Studio
   </div>
 

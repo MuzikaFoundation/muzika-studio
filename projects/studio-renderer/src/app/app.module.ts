@@ -40,6 +40,7 @@ import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
 import { applyMiddleware, createStore } from 'redux';
 import { TitleBarComponent } from '../components/titlebar/titlebar.component';
+import { SideBarComponent } from '../components/sidebar/sidebar.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -57,6 +58,7 @@ declare const document;
 
     /* Reusable Components */
     TitleBarComponent,
+    SideBarComponent,
     NavbarComponent,
     SpinnerComponent,
     FooterComponent,

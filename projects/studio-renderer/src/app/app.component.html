@@ -1,12 +1,20 @@
 <div class="app-container h-100" [(ngClass)]="currentTab">
-  <app-titlebar *ngIf="!renderOptions.hideTitleBar"></app-titlebar>
-  <app-navbar *ngIf="!renderOptions.hideNavBar"></app-navbar>
-
-  <div class="main-content">
-    <router-outlet></router-outlet>
-  </div>
-  <div class="backdrop"></div>
-  <div class="wallet-content">
-    <router-outlet name="wallet"></router-outlet>
+  <app-titlebar *ngIf="!renderOptions.hideTitleBar" style="z-index: 10"></app-titlebar>
+    <!--<div class="main-content">-->
+      <!--<app-navbar *ngIf="!renderOptions.hideNavBar"></app-navbar>-->
+      <!--<router-outlet></router-outlet>-->
+    <!--</div>-->
+    <!--<div class="backdrop"></div>-->
+    <!--<div class="wallet-content">-->
+      <!--<router-outlet name="wallet"></router-outlet>-->
+    <!--</div>-->
+  <div class="program-area">
+    <app-sidebar *ngIf="!renderOptions.hideNavBar"></app-sidebar>
+    <div class="content-area">
+      <app-navbar *ngIf="!renderOptions.hideNavBar"></app-navbar>
+      <div class="body-area">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
   </div>
 </div>

@@ -37,7 +37,7 @@ export class MainPageComponent extends BaseComponent {
   ngOnInit() {
     this.muzikaCoin.deployed();
 
-    this.router.navigateByUrl('/board/streaming/write');
+    // this.router.navigateByUrl('/board/streaming/write');
 
     this._sub.push(
       combineLatest(

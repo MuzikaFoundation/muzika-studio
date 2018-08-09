@@ -1,0 +1,63 @@
+@import '../../theme/variables';
+
+:host {
+  background-color: rgba(44, 46, 56, 1);
+  top: 0;
+  bottom: 0;
+  z-index: 8;
+}
+
+.sidebar-items {
+  margin-top: 32px;
+}
+
+.item {
+  text-align: center;
+  vertical-align: middle;
+  height: 70px;
+  position: relative;
+
+  a {
+    text-decoration: none;
+  }
+
+  &:hover {
+    i {
+      font-size: 30px;
+      color: rgb(155, 174, 180);
+    }
+  }
+
+  i {
+    display: block;
+    color: rgb(147, 166, 172);
+    font-size: 28px;
+    line-height: 44px;
+  }
+
+  .item-text {
+    display: block;
+    font-size: 10px;
+    line-height: 10px;
+    color: rgb(147, 166, 172);
+    user-select: none;
+  }
+}
+
+.active {
+  i {
+    color: rgb(220, 239, 245);
+    font-size: 32px;
+  }
+
+  &:hover {
+    i {
+      color: rgb(220, 239, 245);
+      font-size: 32px;
+    }
+  }
+
+  .item-text {
+    color: #fff;
+  };
+}
