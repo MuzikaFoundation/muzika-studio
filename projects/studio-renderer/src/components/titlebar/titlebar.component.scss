@@ -47,6 +47,11 @@
 
 .titlebar-mac {
   height: $mac-titlebar-height;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 10;
+  background: transparent;
 
   .title {
     height: $mac-titlebar-height;
