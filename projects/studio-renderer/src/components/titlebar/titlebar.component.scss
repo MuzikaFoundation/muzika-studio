@@ -2,24 +2,16 @@
 
 :host {
   background-color: $titlebar-background;
-  height: $titlebar-height;
   display: block;
 }
 
-.titlebar {
-  height: $titlebar-height;
-  -webkit-app-region: drag;
+.titlebar-default {
+  height: $default-titlebar-height;
 
   .title {
-    position: fixed;
-    color: #fff;
-    height: $titlebar-height;
-    line-height: $titlebar-height;
+    height: $default-titlebar-height;
+    line-height: $default-titlebar-height;
     padding-left: 12px;
-    font-size: 12px;
-    vertical-align: middle;
-    cursor: default;
-    user-select: none;
   }
 
   .btns {
@@ -30,8 +22,8 @@
     right: 0;
 
     button {
-      width: $titlebar-height + 12;
-      height: $titlebar-height;
+      width: $default-titlebar-height + 12;
+      height: $default-titlebar-height;
       color: white;
       padding: 0;
       margin: 0;
@@ -50,5 +42,28 @@
         stroke-width: 1.5px;
       }
     }
+  }
+}
+
+.titlebar-mac {
+  height: $mac-titlebar-height;
+
+  .title {
+    height: $mac-titlebar-height;
+    line-height: $mac-titlebar-height;
+    padding-left: 68px;
+  }
+}
+
+.titlebar {
+  -webkit-app-region: drag;
+
+  .title {
+    position: fixed;
+    color: #fff;
+    font-size: 12px;
+    vertical-align: middle;
+    cursor: default;
+    user-select: none;
   }
 }

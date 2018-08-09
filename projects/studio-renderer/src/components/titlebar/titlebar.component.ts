@@ -10,6 +10,7 @@ import { fromEvent } from 'rxjs';
 })
 export class TitleBarComponent extends BaseComponent {
   isMaximized: boolean;
+  platform: string;
 
   constructor() {
     super();
@@ -18,6 +19,7 @@ export class TitleBarComponent extends BaseComponent {
   ngOnInit() {
     const window = remote.getCurrentWindow();
     this.isMaximized = window.isMaximized();
+    this.platform = (window as any).platform;
 
     this._sub.push(
       fromEvent(window, 'maximize').subscribe(() => this.isMaximized = true)

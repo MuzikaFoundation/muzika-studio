@@ -1,9 +1,11 @@
-<div class="titlebar">
+<div class="titlebar"
+     [class.titlebar-default]="platform !== 'darwin'"
+     [class.titlebar-mac]="platform === 'darwin'">
   <div class="title">
     Muzika - Artist Studio
   </div>
 
-  <div class="btns">
+  <div class="btns" *ngIf="platform !== 'darwin'">
     <button (click)="minimize()">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">
         <line x1="0" y1="5" x2="10" y2="5"></line>
