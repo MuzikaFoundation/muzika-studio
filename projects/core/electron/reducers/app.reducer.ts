@@ -1,5 +1,5 @@
 import { tassign } from 'tassign';
-import { PayloadAction } from '../../common/models/redux-action';
+import { PayloadAction } from '@muzika/core';
 
 export class AppActionType {
   static SET_SERVICE_STATUS = '/application/set-service-status';
