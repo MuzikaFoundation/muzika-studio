@@ -61,3 +61,5 @@ main.js.map
 
 # Logs
 lerna-debug.log
+
+package-lock.json
