@@ -23,8 +23,9 @@ import { PostStreamingItemDetailComponent } from './pages/post-item-detail/music
 import { PostSheetItemDetailComponent } from './pages/post-item-detail/sheets/post-sheet-item-detail.component';
 import { PostDraftListComponent } from './pages/post-draft-list/post-draft-list.component';
 import { PostLayoutComponent } from './layout/post-layout.component';
-import { PostLayoutSidebarComponent } from './layout/post-layout-sidebar.component';
+import { PostLayoutTopbarComponent } from './layout/post-layout-topbar.component';
 import { NgxUploaderModule } from 'ngx-uploader';
+import { PostNotReadyComponent } from './pages/post-not-ready/post-not-ready.component';
 
 @NgModule({
   imports: [
@@ -54,9 +55,11 @@ import { NgxUploaderModule } from 'ngx-uploader';
     YoutubeVideoCellComponent,
 
     PostLayoutComponent,
-    PostLayoutSidebarComponent,
+    PostLayoutTopbarComponent,
 
     /* Pages */
+    PostNotReadyComponent,
+
     PostDraftListComponent,
     PostCommunityListComponent,
     PostCommunityItemDetailComponent,

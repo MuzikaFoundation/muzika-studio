@@ -5,8 +5,8 @@ import { Component } from '@angular/core';
   selector: 'mzk-post-layout',
   template: `
     <div class="container">
+      <mzk-post-layout-topbar></mzk-post-layout-topbar>
       <div class="row">
-        <mzk-post-layout-sidebar></mzk-post-layout-sidebar>
         <div class="col">
           <router-outlet></router-outlet>
         </div>

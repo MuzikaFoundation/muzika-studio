@@ -22,8 +22,7 @@ export function InstallMacDependencies(): Promise<void> {
   return Promise.all([
     commandExists('convert'),
     commandExists('gs'),
-  ])
-    .then(() => {})
+  ]).then(() => {})
     .catch(() => {
       waterfall([
         (callback) => {

@@ -22,7 +22,7 @@ export class WinOpts {
    */
   static getRenderingPlatform(): string {
     const forceRenderPlatform = env['RENDER_PLATFORM'];
-    return (forceRenderPlatform === undefined) ? platform() : forceRenderPlatform;
+    return forceRenderPlatform || platform();
   }
 
   static getLoadingScreenOpts(): BrowserWindowConstructorOptions {
