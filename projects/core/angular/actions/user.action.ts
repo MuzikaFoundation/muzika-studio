@@ -35,18 +35,18 @@ export class UserActions {
               private web3: ExtendedWeb3,
               private localStorage: LocalStorage,
               @Inject(PLATFORM_TYPE_TOKEN) private platformType: MuzikaPlatformType) {
-    UserActions.currentUserObs = this.store.pipe<User>(select(['user', 'currentUser']));
+    UserActions.currentUserObs = this.store.pipe<User>(select(state => state.user.currentUser));
     UserActions.purchasedSheetPostsObs = this.store.pipe<MusicPost[]>(
-      select(['post', 'posts', PostActionType.PurchasedPosts('sheet')])
+      select(state => state.post.posts[PostActionType.PurchasedPosts('sheet')])
     );
     UserActions.purchasedStreamingPostsObs = this.store.pipe<MusicPost[]>(
-      select(['post', 'posts', PostActionType.PurchasedPosts('streaming')])
+      select(state => state.post.posts[PostActionType.PurchasedPosts('streaming')])
     );
     UserActions.mySheetPostsObs = this.store.pipe<PaginationResult<MusicPost>>(
-      select(['post', 'postResult', PostActionType.MyPosts('sheet')])
+      select(state => state.post.postResult[PostActionType.MyPosts('sheet')])
     );
     UserActions.myStreamingPostsObs = this.store.pipe<PaginationResult<MusicPost>>(
-      select(['post', 'postResult', PostActionType.MyPosts('streaming')])
+      select(state => state.post.postResult[PostActionType.MyPosts('streaming')])
     );
   }
 
