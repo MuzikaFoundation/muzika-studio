@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
-import { NgRedux, select } from '@angular-redux/store';
 import { BasePostDraft, IAppState, MuzikaConsole, PostActionType } from '@muzika/core';
 import { APIConfig, ParamsBuilder } from '../config';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { select, Store } from '@ngrx/store';
 
 
 @Injectable({ providedIn: 'root' })
 export class PostDraftAction {
-  @select(['post', 'postDrafts'])
   static postDraftsObs: Observable<{ [boardType: string]: { [draftId: string]: BasePostDraft } }>;
 
-  constructor(private store: NgRedux<IAppState>,
+  constructor(private store: Store<IAppState>,
               private apiConfig: APIConfig) {
+    PostDraftAction.postDraftsObs = this.store.pipe(select(['post', 'postDrafts']));
   }
 
   loadPostDrafts(boardType: string) {

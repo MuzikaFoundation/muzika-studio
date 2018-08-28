@@ -1,9 +1,9 @@
 import { Action } from 'redux';
 import { tassign } from 'tassign';
-import { InfPaginationResult, PaginationResult } from '../models/pagination';
-import { BasePost } from '../models/post';
-import { PayloadAction } from '../models/redux-action';
-import { BasePostDraft } from '../models/draftbox';
+import { InfPaginationResult, PaginationResult } from '../../models/pagination';
+import { BasePost } from '../../models/post';
+import { PayloadAction } from '../../models/redux-action';
+import { BasePostDraft } from '../../models/draftbox';
 
 export class PostActionType {
   static INSERT_POSTS_LIST = '/posts/insert-posts-list';

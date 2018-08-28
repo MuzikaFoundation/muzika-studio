@@ -1,5 +1,5 @@
 import { tassign } from 'tassign';
-import { PayloadAction } from '@muzika/core';
+import { PayloadAction } from '../../../index';
 
 export class AppActionType {
   static SET_SERVICE_STATUS = '/application/set-service-status';
@@ -13,12 +13,12 @@ export interface AppState {
   };
 }
 
-export const initialState: AppState = {
+export const appInitialState: AppState = {
   updatable: undefined,
   serviceStatus: {}
 };
 
-export function AppReducer(state: AppState = initialState, action: PayloadAction): AppState {
+export function AppReducer(state: AppState = appInitialState, action: PayloadAction): AppState {
   switch (action.type) {
     case AppActionType.SET_UPDATABLE:
       return tassign(state, {

@@ -9,8 +9,7 @@ import { ElectronService } from '../providers/electron.service';
 import { MuzikaWalletProvider } from '../providers/muzika-wallet.provider';
 import { MuzikaTabs, TabService } from '../providers/tab.service';
 import { MuzikaConsole } from '@muzika/core';
-import { NgRedux } from '@angular-redux/store';
-import { IAppState, RenderOptions } from '@muzika/core/electron';
+import { RenderOptions } from '@muzika/core/electron';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
 
@@ -31,7 +30,6 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
               private web3: ExtendedWeb3,
               private tabService: TabService,
               private router: Router,
-              private ngRedux: NgRedux<IAppState>,
               private walletProvider: MuzikaWalletProvider) {
     super();
     translate.setDefaultLang('en');

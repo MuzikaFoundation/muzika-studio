@@ -52,7 +52,10 @@ async function waitForAppReady() {
   });
 
   // wait for app ready
-  await new Promise((resolve) => app.once('ready', resolve));
+  await new Promise((resolve) => app.once('ready', () => {
+    console.log('app is ready');
+    resolve();
+  }));
 }
 
 

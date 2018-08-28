@@ -20,7 +20,7 @@
     <img [src]="comment.author.profile_image" class="profile-img">
 
     <ng-template [ngIf]="!modifyShow[comment.comment_id]">
-      <a class="float-right text-center like-btn" [class.active]="comment.my_like" (click)="like(comment)">
+      <a class="float-right text-center like-btn" [class.active]="comment.my_like">
         <i class="fal fa-thumbs-up"></i> {{comment.likes}}
       </a>
       <a [routerLink]="['/profile', comment.author.user_id]">
@@ -29,18 +29,6 @@
 
       <span class="comment-content"
             [innerHtml]="comment.content"></span>
-    </ng-template>
-
-    <ng-template [ngIf]="modifyShow[comment.comment_id]">
-      <form (ngSubmit)="modifyApply(comment.comment_id, modifyShow[comment.comment_id])">
-        <div class="comment-content-modify">
-                    <textarea mpTextarea matInput required="required" minlength="4"
-                              [ngModelOptions]="{standalone: true}"
-                              placeholder="Write here"
-                              [(ngModel)]="modifyShow[comment.comment_id]"></textarea>
-          <button type="submit" class="btn btn-primary">Edit</button>
-        </div>
-      </form>
     </ng-template>
 
     <div class="comment-extra small">
@@ -52,9 +40,6 @@
         Reply
       </a>
       <ng-template [ngIf]="comment.author.user_id == currentUser?.user_id">
-        <a (click)="modify(comment)">
-          {{modifyShow[comment.comment_id] ? 'Cancel' : 'Modify'}}
-        </a>
         <a (click)="remove(comment.comment_id)">
           Delete
         </a>
@@ -84,7 +69,7 @@
       <img [src]="reply.author.profile_image" class="profile-img">
       <div class="content">
         <ng-container *ngIf="!modifyShow[reply.comment_id]">
-          <a class="float-right text-center like-btn" [class.active]="reply.my_like" (click)="like(reply)">
+          <a class="float-right text-center like-btn" [class.active]="reply.my_like">
             <i class="fal fa-thumbs-up"></i> {{reply.likes}}
           </a>
           <a [routerLink]="['/profile', reply.author.id]">
@@ -92,19 +77,6 @@
           </a>
 
           <span class="comment-content" [innerHtml]="reply.content"></span>
-        </ng-container>
-
-        <ng-container *ngIf="modifyShow[reply.comment_id]">
-          <form (ngSubmit)="modifyApply(reply.comment_id, modifyShow[reply.comment_id])">
-            <div class="comment-content-modify">
-                            <textarea matInput required="required" minlength="4"
-                                      placeholder="Reply here"
-                                      [(ngModel)]="modifyShow[reply.comment_id]"
-                                      [ngModelOptions]="{standalone: true}"></textarea>
-              <button type="submit" class="btn btn-primary">Edit
-              </button>
-            </div>
-          </form>
         </ng-container>
 
         <div class="comment-extra small">

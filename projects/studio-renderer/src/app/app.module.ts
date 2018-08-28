@@ -31,16 +31,17 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ElectronService } from '../providers/electron.service';
 import { MuzikaConsole } from '@muzika/core';
-import { IAppState, rootReducer } from '@muzika/core/electron';
 import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
-import { NgRedux, NgReduxModule } from '@angular-redux/store';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
-import { applyMiddleware, createStore } from 'redux';
 import { TitleBarComponent } from '../components/titlebar/titlebar.component';
 import { SideBarComponent } from '../components/sidebar/sidebar.component';
+import { RendererAppState, RendererRootReducer } from '../reducers';
+import { Store, StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { ElectronNgrxEffects } from '../providers/electron-ngrx-effects';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -79,7 +80,12 @@ declare const document;
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
-    NgReduxModule,
+
+    StoreModule.forRoot(RendererRootReducer, {
+      initialState: (remote.getCurrentWindow() as any).store
+    }),
+
+    EffectsModule.forRoot([ElectronNgrxEffects]),
 
     WalletModule,
     AppRoutingModule,
@@ -126,10 +132,12 @@ declare const document;
 export class AppModule {
   constructor(ipcService: IpcRendererService,
               electronService: ElectronService,
+              private store: Store<RendererAppState>,
               private zone: NgZone,
-              private ngRedux: NgRedux<IAppState>,
               @Inject(PLATFORM_ID) private platformId: string) {
     ipcService.init();
+
+    replayActionRenderer(store);
 
     if (isPlatformBrowser(this.platformId)) {
       document.ondragover = document.ondrop = (ev) => {
@@ -144,16 +152,5 @@ export class AppModule {
         ev.preventDefault();
       };
     }
-
-    const store = createStore(
-      rootReducer,
-      (remote.getCurrentWindow() as any).store,         // initialize state with main state
-      applyMiddleware(
-        forwardToMain
-      )
-    );
-
-    this.ngRedux.provideStore(store);
-    replayActionRenderer(store);
   }
 }

@@ -1,7 +1,7 @@
 import { tassign } from 'tassign';
-import { PostComment } from '../models/comment';
-import { PaginationResult } from '../models/pagination';
-import { PayloadAction } from '../models/redux-action';
+import { PostComment } from '../../models/comment';
+import { PaginationResult } from '../../models/pagination';
+import { PayloadAction } from '../../models/redux-action';
 
 export class CommentActionType {
   public static SET_COMMENTS_RESULT = '/comments/set-comments-result';

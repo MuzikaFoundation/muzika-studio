@@ -16,6 +16,7 @@ import { RenderOptions } from '@muzika/core/electron';
 
 export interface MuzikaAppOptions {
   healthyTimeCheck?: number;                        // the interval time for checking all services alive and restoring
+  state?: any;
 }
 
 export class MuzikaApp {
@@ -36,14 +37,10 @@ export class MuzikaApp {
    * @param {boolean} _isDevMode whether it is development mode or not
    * @param {any} _options
    */
-  init(_isDevMode: boolean, _options?: MuzikaAppOptions) {
+  init(_isDevMode: boolean, _options: MuzikaAppOptions = {}) {
     this._isDevMode = _isDevMode;
     this._options = _options;
     this._updateChecker = new MuzikaUpdater();
-
-    if (!_options) {
-      this._options = {};
-    }
 
     // initialize main service.
     IpcMainServiceInstance.init();

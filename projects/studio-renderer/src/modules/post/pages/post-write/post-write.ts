@@ -6,8 +6,9 @@ import { AlertifyInstnace } from '@muzika/core/browser';
 import { FroalaEditorOptions } from '../../post.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
-import { NgRedux } from '@angular-redux/store';
 import { map } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
+import { RendererAppState } from '../../../../reducers';
 
 export class BasePostWriteComponent extends BaseComponent {
   options = FroalaEditorOptions;
@@ -19,7 +20,7 @@ export class BasePostWriteComponent extends BaseComponent {
   // override boardType in the classes extending this base component.
   boardType = '';
 
-  private _store: NgRedux<IAppState>;
+  private _store: Store<RendererAppState>;
   private _router: Router;
   private _route: ActivatedRoute;
   private _postActions: PostActions;
@@ -27,7 +28,7 @@ export class BasePostWriteComponent extends BaseComponent {
 
   constructor(injector: Injector) {
     super();
-    this._store = injector.get(NgRedux);
+    this._store = injector.get<Store<RendererAppState>>(Store);
     this._route = injector.get<ActivatedRoute>(ActivatedRoute);
     this._router = injector.get<Router>(Router);
     this._postActions = injector.get<PostActions>(PostActions);

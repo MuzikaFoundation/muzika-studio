@@ -1,8 +1,7 @@
-import {NgRedux} from '@angular-redux/store';
-import {Component, ElementRef, Inject, Input, NgZone, PLATFORM_ID} from '@angular/core';
-import {IAppState} from '@muzika/core';
-import {AbstractPostCommentComponent, CommentActions, PostActions} from '@muzika/core/angular';
-import {PostCommentsMock} from '../../../../mock/comments';
+import { Component, ElementRef, Inject, Input, NgZone, PLATFORM_ID } from '@angular/core';
+import { AbstractPostCommentComponent, CommentActions, PostActions } from '@muzika/core/angular';
+import { PostCommentsMock } from '../../../../mock/comments';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-post-comment',
@@ -17,7 +16,7 @@ export class PostCommentComponent extends AbstractPostCommentComponent {
 
   constructor(protected commentAction: CommentActions,
               protected postActions: PostActions,
-              protected store: NgRedux<IAppState>,
+              protected store: Store<WebAppState>,
               @Inject(PLATFORM_ID) protected platformId,
               protected element: ElementRef,
               protected zone: NgZone) {

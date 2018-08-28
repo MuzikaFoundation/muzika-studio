@@ -1,4 +1,3 @@
-import {select} from '@angular-redux/store';
 import {Component} from '@angular/core';
 import { CommunityPost, PaginationResult, MusicPost, VideoPost, MuzikaConsole } from '@muzika/core';
 import {BaseComponent, PostActions} from '@muzika/core/angular';
@@ -6,6 +5,8 @@ import {Observable} from 'rxjs';
 import {CommunityPostsMock, VideoPostsMock} from '../../../../mock/posts';
 import {CommunityTagsMock, VideoTagsMock} from '../../../../mock/tags';
 import {SheetMusicGenreSelections} from '../../post.constant';
+import { select, Store } from '@ngrx/store';
+import { RendererAppState } from '../../../../reducers';
 
 @Component({
   selector: 'app-post-list-community',
@@ -26,12 +27,12 @@ export class PostCommunityListComponent {
 export class PostMusicListComponent extends BaseComponent {
   tags: { name: string, value: string }[] = SheetMusicGenreSelections;
 
-  @select(['post', 'posts', 'music'])
   postsObs: Observable<PaginationResult<MusicPost>>;
   posts: PaginationResult<MusicPost>;
 
-  constructor(private postActions: PostActions) {
+  constructor(private postActions: PostActions, private store: Store<RendererAppState>) {
     super();
+    this.postsObs = this.store.pipe(select(['post', 'posts', 'music']));
   }
 
   ngOnInit() {

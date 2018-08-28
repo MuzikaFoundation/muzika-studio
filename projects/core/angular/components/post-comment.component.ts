@@ -1,13 +1,13 @@
-import {NgRedux} from '@angular-redux/store';
-import {isPlatformBrowser} from '@angular/common';
-import {ElementRef, NgZone, OnChanges, SimpleChanges} from '@angular/core';
-import { PostComment, PaginationResult, User, IAppState, MuzikaConsole } from '@muzika/core';
-import {AlertifyInstnace} from '@muzika/core/browser';
-import {Observable, combineLatest, Subscription} from 'rxjs';
-import {CommentActions} from '../actions/comment.action';
-import {PostActions} from '../actions/post.action';
-import {BaseComponent} from './base.component';
+import { isPlatformBrowser } from '@angular/common';
+import { ElementRef, NgZone, OnChanges, SimpleChanges } from '@angular/core';
+import { IAppState, MuzikaConsole, PaginationResult, PostComment, User } from '@muzika/core';
+import { AlertifyInstnace } from '@muzika/core/browser';
+import { combineLatest, Subscription } from 'rxjs';
+import { CommentActions } from '../actions/comment.action';
+import { PostActions } from '../actions/post.action';
+import { BaseComponent } from './base.component';
 import { UserActions } from '../actions';
+import { select, Store } from '@ngrx/store';
 
 export abstract class AbstractPostCommentComponent extends BaseComponent implements OnChanges {
   boardType: string;
@@ -28,7 +28,7 @@ export abstract class AbstractPostCommentComponent extends BaseComponent impleme
 
   constructor(protected commentAction: CommentActions,
               protected postActions: PostActions,
-              protected store: NgRedux<IAppState>,
+              protected store: Store<IAppState>,
               protected platformId: any,
               protected element: ElementRef,
               protected zone: NgZone) {
@@ -93,8 +93,8 @@ export abstract class AbstractPostCommentComponent extends BaseComponent impleme
     }
 
     this._commentSub = combineLatest<PaginationResult<PostComment>, number[]>(
-      this.store.select(['comment', this.boardType, this.boardID]),
-      this.store.select(['users', 'commentLikes', this.boardType])
+      this.store.pipe(select(['comment', this.boardType, this.boardID])),
+      this.store.pipe(select(['user', 'commentLikes', this.boardType]))
     ).subscribe(([commentResult, commentLikes]) => {
       if (!!commentResult) {
         commentResult.list = commentResult.list.map(comment => {
@@ -141,39 +141,6 @@ export abstract class AbstractPostCommentComponent extends BaseComponent impleme
     }
   }
 
-  like(comment: PostComment) {
-    this.commentAction.like(this.boardType, comment.comment_id)
-      .subscribe(data => {
-        if (data.result !== 'success') {
-          AlertifyInstnace.alert(data.msg);
-        } else {
-          this.loadComments();
-        }
-      });
-  }
-
-  violation(commentID) {
-    // AlertifyInstnace.openDialogConfirmMessage({
-    //   title: '신고',
-    //   content: '올바른 신고 시 감사의 의미로 포인트 지급되며, 허위 신고 시 일정 기간동안 신고 불가능합니다.',
-    //   confirmMessage: '신고하기',
-    //   cancelMessage: '취소하기',
-    //   placeholder: '신고 사유를 입력해주세요.'
-    // }).subscribe(message => {
-    //   if (message !== null) {
-    //     this.postActions
-    //       .violation(this.boardType, this.boardID, commentID, message)
-    //       .subscribe(res => {
-    //         if (res.result === 'success') {
-    //           AlertifyInstnace.alert('성공적으로 접수되었습니다. 2일 내로 의견 반영하겠습니다.');
-    //         } else {
-    //           AlertifyInstnace.alert(res.msg);
-    //         }
-    //       });
-    //   }
-    // });
-  }
-
   write(commentID, content) {
     if (!this.currentUser) {
       AlertifyInstnace.alert('로그인 후 이용 가능합니다.');
@@ -218,31 +185,5 @@ export abstract class AbstractPostCommentComponent extends BaseComponent impleme
             });
         }
       );
-  }
-
-  modify(comment: PostComment) {
-    if (!this.modifyShow[comment.comment_id]) {
-      this.modifyShow[comment.comment_id] = comment.content.split('<br />').join('\n');
-    } else {
-      AlertifyInstnace
-        .confirm('댓글 수정', '수정하신 정보가 모두 사라집니다. \n 계속하시겠습니까?', () => {
-          delete this.modifyShow[comment.comment_id];
-        });
-    }
-  }
-
-  modifyApply(commentID: number, content) {
-    if (this.modifyShow[commentID]) {
-      this.commentAction.modify(this.boardType, commentID, content)
-        .subscribe(res => {
-          AlertifyInstnace.alert(res.msg);
-
-          if (res.result === 'success') {
-            this.loadComments();
-
-            delete this.modifyShow[commentID];
-          }
-        });
-    }
   }
 }

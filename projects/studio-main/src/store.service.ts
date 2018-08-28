@@ -1,10 +1,9 @@
 import { applyMiddleware, createStore, Store } from 'redux';
-import { IAppState, rootReducer } from '@muzika/core/electron';
-import { AppActions } from '@muzika/core/electron';
 import { Observable } from 'rxjs';
-import { map, distinctUntilChanged } from 'rxjs/operators';
-import { Comparator } from '@angular-redux/store';
+import { map } from 'rxjs/operators';
 import { forwardToRenderer, replayActionMain } from 'electron-redux';
+import { MainAppState, MainRootReducer } from './reducers';
+import { AppActions } from '@muzika/core';
 
 export class StoreService {
   store: Store;
@@ -12,9 +11,9 @@ export class StoreService {
   constructor() {
   }
 
-  init(initialState: IAppState) {
+  init(initialState: MainAppState) {
     this.store = createStore(
-      rootReducer,
+      MainRootReducer,
       initialState,
       applyMiddleware(
         forwardToRenderer
@@ -41,11 +40,9 @@ export class StoreService {
   }
 
   private _select<T>(ob$: Observable<any>,
-                     selector: (string | number)[] | string | number,
-                     comparator?: Comparator) {
+                     selector: (string | number)[] | string | number) {
     return ob$.pipe(
-      map(state => this._enter(state, Array.isArray(selector) ? selector : [selector])),
-      distinctUntilChanged(comparator)
+      map(state => this._enter(state, Array.isArray(selector) ? selector : [selector]))
     );
   }
 

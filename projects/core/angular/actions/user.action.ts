@@ -1,4 +1,3 @@
-import { NgRedux, select } from '@angular-redux/store';
 import { Inject, Injectable } from '@angular/core';
 import {
   ERR,
@@ -17,57 +16,38 @@ import { APIConfig } from '../config/api.config';
 import { PLATFORM_TYPE_TOKEN } from '../config/injection.tokens';
 import { ExtendedWeb3 } from '../providers/extended-web3.provider';
 import { LocalStorage } from '../providers/local-storage.service';
+import { select, Store } from '@ngrx/store';
 
 @Injectable({ providedIn: 'root' })
 export class UserActions {
-  @select(['user', 'currentUser'])
   public static currentUserObs: Observable<User>;
 
-  @select(['post', 'posts', PostActionType.PurchasedPosts('sheet')])
   public static purchasedSheetPostsObs: Observable<MusicPost[]>;
 
-  @select(['post', 'posts', PostActionType.PurchasedPosts('streaming')])
   public static purchasedStreamingPostsObs: Observable<MusicPost[]>;
 
-  @select(['post', 'postResult', PostActionType.MyPosts('sheet')])
   public static mySheetPostsObs: Observable<PaginationResult<MusicPost>>;
 
-  @select(['post', 'postResult', PostActionType.MyPosts('streaming')])
   public static myStreamingPostsObs: Observable<PaginationResult<MusicPost>>;
 
-  constructor(private store: NgRedux<IAppState>,
+  constructor(private store: Store<IAppState>,
               private apiConfig: APIConfig,
               private web3: ExtendedWeb3,
               private localStorage: LocalStorage,
               @Inject(PLATFORM_TYPE_TOKEN) private platformType: MuzikaPlatformType) {
-  }
-
-  loadBoardLikes(boardType: string) {
-    if (!this.store.getState().user.currentUser) {
-      return;
-    }
-    const userID = this.store.getState().user.currentUser.user_id;
-    this.apiConfig.get<any>(`/user/${userID}/board/${boardType}/like`)
-      .subscribe(likes => {
-        this.store.dispatch({
-          type: UserActionType.SET_BOARD_LIKES,
-          payload: { likes, boardType }
-        });
-      });
-  }
-
-  loadCommentLikes(boardType) {
-    if (!this.store.getState().user.currentUser) {
-      return;
-    }
-    const userID = this.store.getState().user.currentUser.user_id;
-    this.apiConfig.get<any>(`/user/${userID}/board/${boardType}/comment/likes`)
-      .subscribe(likes => {
-        this.store.dispatch({
-          type: UserActionType.SET_COMMENT_LIKES,
-          payload: { likes, boardType }
-        });
-      });
+    UserActions.currentUserObs = this.store.pipe<User>(select(['user', 'currentUser']));
+    UserActions.purchasedSheetPostsObs = this.store.pipe<MusicPost[]>(
+      select(['post', 'posts', PostActionType.PurchasedPosts('sheet')])
+    );
+    UserActions.purchasedStreamingPostsObs = this.store.pipe<MusicPost[]>(
+      select(['post', 'posts', PostActionType.PurchasedPosts('streaming')])
+    );
+    UserActions.mySheetPostsObs = this.store.pipe<PaginationResult<MusicPost>>(
+      select(['post', 'postResult', PostActionType.MyPosts('sheet')])
+    );
+    UserActions.myStreamingPostsObs = this.store.pipe<PaginationResult<MusicPost>>(
+      select(['post', 'postResult', PostActionType.MyPosts('streaming')])
+    );
   }
 
   loadPurchasedPosts(boardType: 'sheet' | 'streaming') {

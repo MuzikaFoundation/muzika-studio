@@ -1,6 +1,6 @@
 import { tassign } from 'tassign';
-import { User } from '../models';
-import { PayloadAction } from '../models/redux-action';
+import { User } from '../../models/index';
+import { PayloadAction } from '../../models/redux-action';
 
 export class UserActionType {
   static SET_CURRENT_USER = '/user/set-current-user';
