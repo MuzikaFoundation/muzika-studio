@@ -51,11 +51,7 @@ plugins/
 www/
 
 # Electron & Tsc compiled artifacts
-projects/core/**/*.js
-projects/core/**/*.js.map
 projects/core/package-lock.json
-projects/studio-main/**/*.js.map
-projects/studio-main/**/*.js
 main.js
 main.js.map
 
