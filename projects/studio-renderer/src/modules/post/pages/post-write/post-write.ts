@@ -1,9 +1,8 @@
 import { Component, Injector } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { BasePost, BasePostDraft, CommunityPost, CommunityPostDraft, IAppState, VideoPost, VideoPostDraft } from '@muzika/core';
+import { BasePost, BasePostDraft, CommunityPost, CommunityPostDraft, VideoPost, VideoPostDraft } from '@muzika/core';
 import { BaseComponent, PostActions, PostDraftAction, UserActions } from '@muzika/core/angular';
 import { AlertifyInstnace } from '@muzika/core/browser';
-import { FroalaEditorOptions } from '../../post.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,7 +10,6 @@ import { Store } from '@ngrx/store';
 import { RendererAppState } from '../../../../reducers';
 
 export class BasePostWriteComponent extends BaseComponent {
-  options = FroalaEditorOptions;
 
   post: BasePostDraft = {
     tags: []

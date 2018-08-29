@@ -72,9 +72,12 @@ import 'core-js/es7/reflect';
 import 'zone.js/dist/zone-mix';  // Included with Angular CLI.
 import 'zone.js/dist/zone-patch-electron';
 
-
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+import * as jQuery from 'jquery';
+declare const window;
+window.jQuery = window.$ = jQuery;
 
 // (window as any).Buffer = require('buffer/').Buffer;

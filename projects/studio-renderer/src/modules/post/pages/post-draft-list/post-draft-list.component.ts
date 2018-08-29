@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { BasePostDraft } from '@muzika/core';
 import { BaseComponent, PostDraftAction, UserActions } from '@muzika/core/angular';
-import { FroalaEditorOptions } from '../../post.constant';
 import { ActivatedRoute, Router } from '@angular/router';
 import { combineLatest } from 'rxjs';
 
@@ -14,7 +13,6 @@ import { combineLatest } from 'rxjs';
   ]
 })
 export class PostDraftListComponent extends BaseComponent {
-  options = FroalaEditorOptions;
   boardType: string;
 
   drafts: {

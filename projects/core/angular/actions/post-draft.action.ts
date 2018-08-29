@@ -12,7 +12,7 @@ export class PostDraftAction {
 
   constructor(private store: Store<IAppState>,
               private apiConfig: APIConfig) {
-    PostDraftAction.postDraftsObs = this.store.pipe(select(['post', 'postDrafts']));
+    PostDraftAction.postDraftsObs = this.store.pipe(select(state => state.post.postDrafts));
   }
 
   loadPostDrafts(boardType: string) {

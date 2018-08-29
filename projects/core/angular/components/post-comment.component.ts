@@ -93,8 +93,8 @@ export abstract class AbstractPostCommentComponent extends BaseComponent impleme
     }
 
     this._commentSub = combineLatest<PaginationResult<PostComment>, number[]>(
-      this.store.pipe(select(['comment', this.boardType, this.boardID])),
-      this.store.pipe(select(['user', 'commentLikes', this.boardType]))
+      this.store.pipe(select(state => state.comment[this.boardType][this.boardID])),
+      this.store.pipe(select(state => state.user.commentLikes[this.boardType]))
     ).subscribe(([commentResult, commentLikes]) => {
       if (!!commentResult) {
         commentResult.list = commentResult.list.map(comment => {
