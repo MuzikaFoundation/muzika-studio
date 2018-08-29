@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.9",
   "license": "MIT",
-  "main": "main.js",
+  "main": "es6-init.js",
   "author": "Muzika Foundation",
   "description": "Muzika platform Minimum Viable Product",
   "scripts": {
@@ -47,6 +47,8 @@
     "safe-buffer": "^5.1.2",
     "serialize-error": "^2.1.0",
     "stream-browserify": "^2.0.1",
+    "ts-node": "^6.2.0",
+    "typescript": "2.7.2",
     "tassign": "^1.0.0",
     "tempfile": "^2.0.0",
     "vm-browserify": "^1.1.0",

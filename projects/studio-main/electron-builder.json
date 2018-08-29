@@ -8,7 +8,7 @@
     "allowToChangeInstallationDirectory": true
   },
   "npmRebuild": false,
-  "asar": true,
+  "asar": false,
   "win": {
     "icon": "assets/muzika.png",
     "target": [
@@ -110,8 +110,10 @@
     }]
   },
   "files": [
-    "main.js",
-    "src/**/*.js",
+    "es6-init.js",
+    "tsconfig.build.json",
+    "main.ts",
+    "src/**/*.ts",
     {
       "from": "../../dist/muzika-studio-renderer",
       "to": "./renderer"
