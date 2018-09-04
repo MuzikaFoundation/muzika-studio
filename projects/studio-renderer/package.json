@@ -17,7 +17,6 @@
     "@angular/platform-browser": "^6.1.4",
     "@angular/platform-browser-dynamic": "^6.1.4",
     "@angular/router": "^6.1.4",
-    "@muzika/core": "*",
     "@ngx-translate/core": "^10.0.2",
     "@ngx-translate/http-loader": "^3.0.1",
     "alertify.js": "^1.0.12",

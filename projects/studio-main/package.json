@@ -7,7 +7,7 @@
   "author": "Muzika Foundation",
   "description": "Muzika platform Minimum Viable Product",
   "scripts": {
-    "build": "electron-builder build",
+    "build": "sh build-studio.sh",
     "publish": "electron-builder build --publish always"
   },
   "dependencies": {
@@ -15,7 +15,6 @@
     "@0xproject/typescript-typings": "^0.3.2",
     "@ledgerhq/hw-transport-u2f": "^4.20.0",
     "@ledgerhq/web3-subprovider": "^4.20.0",
-    "@muzika/core": "0.0.8",
     "aes-js": "^3.1.1",
     "bignumber.js": "^5.0.0",
     "chalk": "^2.4.1",
