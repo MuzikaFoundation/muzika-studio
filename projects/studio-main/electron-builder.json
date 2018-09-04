@@ -111,12 +111,18 @@
   },
   "files": [
     "es6-init.js",
+    "src/util/process-helper.js",
     "tsconfig.build.json",
     "main.ts",
     "src/**/*.ts",
-    {
-      "from": "../../dist/muzika-studio-renderer",
-      "to": "./renderer"
-    }
+    "renderer/**/*",
+    ".compilerc",
+    ".cache/**/*",
+    "assets/**/*",
+    "build/**/*"
+//    {
+//      "from": "../../dist/renderer",
+//      "to": "./renderer"
+//    }
   ]
 }

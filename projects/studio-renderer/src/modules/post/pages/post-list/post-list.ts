@@ -32,7 +32,7 @@ export class PostMusicListComponent extends BaseComponent {
 
   constructor(private postActions: PostActions, private store: Store<RendererAppState>) {
     super();
-    this.postsObs = this.store.pipe<PaginationResult<MusicPost>>(select(state => state.post.posts.music));
+    // this.postsObs = this.store.pipe<PaginationResult<MusicPost>>(select(state => state.post.posts.music));
   }
 
   ngOnInit() {

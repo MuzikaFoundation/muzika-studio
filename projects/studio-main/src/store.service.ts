@@ -11,7 +11,7 @@ export class StoreService {
   constructor() {
   }
 
-  init(initialState: MainAppState) {
+  init(initialState?: MainAppState) {
     this.store = createStore(
       MainRootReducer,
       initialState,

@@ -37,16 +37,16 @@ export class UserActions {
               @Inject(PLATFORM_TYPE_TOKEN) private platformType: MuzikaPlatformType) {
     UserActions.currentUserObs = this.store.pipe<User>(select(state => state.user.currentUser));
     UserActions.purchasedSheetPostsObs = this.store.pipe<MusicPost[]>(
-      select(state => state.post.posts[PostActionType.PurchasedPosts('sheet')])
+      select<IAppState>(state => state.post.posts[PostActionType.PurchasedPosts('sheet')])
     );
     UserActions.purchasedStreamingPostsObs = this.store.pipe<MusicPost[]>(
-      select(state => state.post.posts[PostActionType.PurchasedPosts('streaming')])
+      select<IAppState>(state => state.post.posts[PostActionType.PurchasedPosts('streaming')])
     );
     UserActions.mySheetPostsObs = this.store.pipe<PaginationResult<MusicPost>>(
-      select(state => state.post.postResult[PostActionType.MyPosts('sheet')])
+      select<IAppState>(state => state.post.postResult[PostActionType.MyPosts('sheet')])
     );
     UserActions.myStreamingPostsObs = this.store.pipe<PaginationResult<MusicPost>>(
-      select(state => state.post.postResult[PostActionType.MyPosts('streaming')])
+      select<IAppState>(state => state.post.postResult[PostActionType.MyPosts('streaming')])
     );
   }
 

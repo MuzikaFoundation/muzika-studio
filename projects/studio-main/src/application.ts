@@ -104,6 +104,8 @@ export class MuzikaApp {
       setTimeout(() => this._updateChecker.checkUpdate(), 2000);
     });
 
+    this.mainWindow.show();
+    this.mainWindow.webContents.openDevTools();
     this.mainWindow.on('closed', () => this.mainWindow = null);
   }
 
@@ -163,7 +165,7 @@ export class MuzikaApp {
       }));
     } else {
       window.loadURL(url.format({
-        pathname: path.join(__dirname, '../renderer', renderPath),
+        pathname: path.join(__dirname, '..', 'renderer', renderPath),
         protocol: 'file:',
         slashes: true,
         hash

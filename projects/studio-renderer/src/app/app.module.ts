@@ -35,17 +35,23 @@ import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
-import { remote } from 'electron';
+
 import { TitleBarComponent } from '../components/titlebar/titlebar.component';
 import { SideBarComponent } from '../components/sidebar/sidebar.component';
 import { RendererAppState, RendererRootReducer } from '../reducers';
 import { Store, StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { ElectronNgrxEffects } from '../providers/electron-ngrx-effects';
+import { remote } from 'electron';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
+export function getInitialState() {
+  console.log((<any>remote.getCurrentWindow()).store);
+  return Object.assign({}, (<any>remote.getCurrentWindow()).store);
 }
 
 declare const document;
@@ -74,7 +80,7 @@ declare const document;
   imports: [
     /* Angular modules */
     CommonModule,
-    BrowserModule.withServerTransition({ appId: 'muzika-universal' }),
+    BrowserModule.withServerTransition({appId: 'muzika-universal'}),
     BrowserTransferStateModule,
     BrowserAnimationsModule,
     FormsModule,
@@ -82,7 +88,7 @@ declare const document;
     HttpClientModule,
 
     StoreModule.forRoot(RendererRootReducer, {
-      initialState: (remote.getCurrentWindow() as any).store
+      initialState: getInitialState
     }),
 
     EffectsModule.forRoot([ElectronNgrxEffects]),

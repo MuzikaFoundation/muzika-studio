@@ -1,0 +1,61 @@
+{
+  "env": {
+    "development": {
+      "application/javascript": {
+        "presets": ["es2016-node5"],
+        "plugins": ["transform-class-properties", "transform-async-to-generator", "transform-runtime"],
+        "sourceMaps": "inline"
+      },
+      "text/typescript": {
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "declaration": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "strictNullChecks": true,
+        "noUnusedLocals": true,
+        "noImplicitThis": true,
+        "noUnusedParameters": true,
+        "inlineSourceMap": true,
+        "inlineSources": true,
+        "importHelpers": true,
+        "noEmitHelpers": true,
+        "module": "commonjs",
+        "target": "es2017",
+        "lib": [
+          "es2016",
+          "dom"
+        ]
+      }
+    },
+    "production": {
+      "application/javascript": {
+        "presets": ["es2016-node5"],
+        "plugins": ["transform-class-properties", "transform-async-to-generator", "transform-runtime"],
+        "sourceMaps": false
+      },
+      "text/typescript": {
+        "removeComments": false,
+        "preserveConstEnums": true,
+        "declaration": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "strictNullChecks": true,
+        "noUnusedLocals": true,
+        "noImplicitThis": true,
+        "noUnusedParameters": true,
+        "sourceMap": false,
+        "importHelpers": true,
+        "noEmitHelpers": true,
+        "module": "commonjs",
+        "target": "es2017",
+        "lib": [
+          "es2017",
+          "dom"
+        ]
+      }
+    }
+  }
+}

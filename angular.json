@@ -48,7 +48,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/muzika-studio-renderer",
+            "outputPath": "projects/studio-main/renderer",
             "index": "projects/studio-renderer/src/index.html",
             "main": "projects/studio-renderer/src/main.ts",
             "tsConfig": "projects/studio-renderer/tsconfig.json",
@@ -98,11 +98,11 @@
             "production": {
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": true,
+              "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
               "aot": true,
-              "extractLicenses": true,
+              "extractLicenses": false,
               "vendorChunk": false,
               "buildOptimizer": true,
               "fileReplacements": [
