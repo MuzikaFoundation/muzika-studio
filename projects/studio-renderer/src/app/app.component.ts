@@ -9,9 +9,9 @@ import { ElectronService } from '../providers/electron.service';
 import { MuzikaWalletProvider } from '../providers/muzika-wallet.provider';
 import { MuzikaTabs, TabService } from '../providers/tab.service';
 import { MuzikaConsole } from '@muzika/core';
-import { RenderOptions } from '@muzika/core/electron';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
+import { RenderOptions } from '../../../studio-main/src/models/render-options';
 
 @Component({
   selector: 'app-root',

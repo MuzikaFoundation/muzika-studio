@@ -1,7 +1,7 @@
 import * as crypto from 'crypto';
 import * as secp256k1 from 'secp256k1';
-import { Block } from '@muzika/core';
 import * as cipherUtil from '../cipher/cipher-util';
+import { Block } from '../../../../core/common/models/block';
 
 
 export class BlockKey {

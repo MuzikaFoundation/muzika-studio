@@ -2,9 +2,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as im from 'imagemagick';
-import { promisify } from '@muzika/core';
 import { EventEmitter } from 'events';
 import * as os from "os";
+import { promisify } from '../../../../core/common';
 
 /**
  * GenPreview converts a PDF file into preview pages.

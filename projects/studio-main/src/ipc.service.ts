@@ -1,14 +1,17 @@
-import { BlockUtil, MuzikaConsole, MuzikaFilePath, IpfsUtil } from '@muzika/core';
 import { BrowserWindow, ipcMain } from 'electron';
 import * as fs from 'fs';
 import * as request from 'request';
 import * as tempfile from 'tempfile';
 import { IPCUtil } from './util/ipc-utils';
-import { BlockKey, ManualProgress, MuzikaFileUploader, ProgressSet } from '@muzika/core/nodejs';
 import { electronEnvironment } from './environment';
 import { IpfsServiceInstance } from './ipfs.service';
 import { StorageServiceInstance } from './storage.service';
 import { MuzikaUpdater } from './auto-update.service';
+import { BlockUtil, MuzikaFilePath } from '../../core/common/models';
+import { IpfsUtil, MuzikaConsole } from '../../core/common';
+import { MuzikaFileUploader } from './nodejs/file/muzika-file-uploader';
+import { BlockKey } from './nodejs/block/block-key';
+import { ManualProgress, ProgressSet } from './nodejs/utils';
 
 // ipcMain.on('synchronous-message', (event, arg) => {
 //   console.log(arg); // prints "ping"

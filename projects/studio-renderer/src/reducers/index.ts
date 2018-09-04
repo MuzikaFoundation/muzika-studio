@@ -1,4 +1,4 @@
-import { IAppState, rootReducer } from '@muzika/core';
+import { IAppState, RootReducer } from '@muzika/core';
 
 export interface RendererAppState extends IAppState {
 
@@ -6,4 +6,4 @@ export interface RendererAppState extends IAppState {
 
 export const RendererRootReducer = Object.assign({
 
-}, rootReducer);
+}, RootReducer);

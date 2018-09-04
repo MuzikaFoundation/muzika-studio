@@ -1,5 +1,4 @@
-import {BlockUtil, MuzikaConsole, MuzikaContractSummary, promisify} from '@muzika/core';
-import {ManualProgress, ProgressSet, ProgressStream, StreamingUtil} from '../utils';
+import {ManualProgress, ProgressSet, ProgressStream, StreamingUtil} from '../utils/index';
 import * as path from 'path';
 import { BlockPaddingStream } from '../cipher/block-stream';
 import { AESCBCEncryptionStream } from '../cipher/aes-stream';
@@ -10,6 +9,8 @@ import { MuzikaFileUtil } from './ipfs-upload.interface';
 import * as os from 'os';
 import * as IpfsAPI from 'ipfs-api';
 import { GenCoverimage } from '../utils/gen-coverimage';
+import { BlockUtil } from '../../../../core/common/models/block';
+import { MuzikaConsole, MuzikaContractSummary, promisify } from '../../../../core/common';
 
 export interface IpfsUploadTask {
   path: string;

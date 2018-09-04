@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { forwardToRenderer, replayActionMain } from 'electron-redux';
 import { MainAppState, MainRootReducer } from './reducers';
-import { AppActions } from '@muzika/core';
+import { AppActions } from '../../core/common';
 
 export class StoreService {
   store: Store;

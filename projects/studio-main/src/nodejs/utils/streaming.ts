@@ -2,7 +2,7 @@ import * as ffmpegStatic from 'ffmpeg-static';
 import * as ffprobeStatic from 'ffprobe-static';
 import {Observable, throwError} from 'rxjs';
 import * as path from 'path';
-import {MuzikaConsole} from '@muzika/core';
+import { MuzikaConsole } from '../../../../core/common';
 
 const isDev = require('electron-is-dev');
 const ffmpeg = require('fluent-ffmpeg');

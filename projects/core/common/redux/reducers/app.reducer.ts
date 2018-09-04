@@ -1,5 +1,5 @@
 import { tassign } from 'tassign';
-import { PayloadAction } from '../../../index';
+import { PayloadAction } from '../../models';
 
 export class AppActionType {
   static SET_SERVICE_STATUS = '/application/set-service-status';

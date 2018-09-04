@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import * as path from 'path';
 import { MuzikaAppInstance } from './src/application';
-import { MuzikaConsole } from '@muzika/core';
+import { MuzikaConsole } from '../core/common';
 
 const isDev = require('electron-is-dev');
 

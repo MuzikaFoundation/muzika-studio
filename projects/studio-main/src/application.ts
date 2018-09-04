@@ -1,4 +1,4 @@
-import { app, BrowserWindow, BrowserWindowConstructorOptions, remote } from 'electron';
+import { app, BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import * as url from 'url';
 import * as path from 'path';
 import { ipfsPath } from 'go-ipfs-wrapper';
@@ -10,9 +10,9 @@ import * as ms from 'ms';
 import { MuzikaUpdater } from './auto-update.service';
 import { StoreServiceInstance } from './store.service';
 import { combineLatest, from, Observable, timer } from 'rxjs';
-import { filter, map, timeout, mergeMap, take, takeWhile } from 'rxjs/operators';
+import { filter, map, mergeMap, take, takeWhile, timeout } from 'rxjs/operators';
 import { WindowType, WinOpts } from './util/window-options';
-import { RenderOptions } from '@muzika/core/electron';
+import { RenderOptions } from './models/render-options';
 
 export interface MuzikaAppOptions {
   healthyTimeCheck?: number;                        // the interval time for checking all services alive and restoring

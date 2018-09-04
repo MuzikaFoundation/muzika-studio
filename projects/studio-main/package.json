@@ -7,8 +7,8 @@
   "author": "Muzika Foundation",
   "description": "Muzika platform Minimum Viable Product",
   "scripts": {
-    "build": "sh build-studio.sh",
-    "publish": "electron-builder build --publish always"
+    "build": "sh scripts/build-studio.sh && cd ../../dist/studio-main/ && electron-builder build",
+    "publish": "sh scripts/build-studio.sh && cd ../../dist/studio-main/ && electron-builder build --publish always"
   },
   "dependencies": {
     "@0xproject/types": "^0.6.1",

@@ -1,5 +1,5 @@
-import { MuzikaLoggerLevel } from '@muzika/core';
 import chalk from 'chalk';
+import { MuzikaLoggerLevel } from '../../../../core/common';
 
 export function getChalkColor(level: MuzikaLoggerLevel): any {
   switch (level) {

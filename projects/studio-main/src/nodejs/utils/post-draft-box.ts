@@ -1,5 +1,5 @@
-import { MusicPostDraft, MuzikaConsole, promisify } from '@muzika/core';
 import * as fs from 'fs';
+import { MusicPostDraft, MuzikaConsole, promisify } from '../../../../core/common';
 
 export class PostDraftBox {
 

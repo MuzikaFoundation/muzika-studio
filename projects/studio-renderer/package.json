@@ -19,6 +19,7 @@
     "@angular/router": "^6.1.4",
     "@ngx-translate/core": "^10.0.2",
     "@ngx-translate/http-loader": "^3.0.1",
+    "@muzika/core": "*",
     "alertify.js": "^1.0.12",
     "angular-froala-wysiwyg": "^2.8.4",
     "bignumber.js": "^5.0.0",

@@ -1,4 +1,3 @@
-import { IpfsObject, IpfsUtil, MuzikaConsole } from '@muzika/core';
 import { ipfsPath, IpfsProcess } from 'go-ipfs-wrapper';
 import * as IpfsAPI from 'ipfs-api';
 import * as path from 'path';
@@ -6,6 +5,9 @@ import * as request from 'request';
 import { from, Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 import { Actions } from './store.service';
+import { IpfsObject } from '../../core/common/models';
+import { IpfsUtil } from '../../core/common/structures';
+import { MuzikaConsole } from '../../core/common';
 
 
 export class IpfsService {

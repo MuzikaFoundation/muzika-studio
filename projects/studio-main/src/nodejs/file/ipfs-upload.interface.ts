@@ -1,7 +1,7 @@
 import { ProgressSet } from '../utils/progress';
 import * as path from 'path';
 import * as fs from 'fs';
-import { MuzikaConsole, MuzikaContractSummary, promisify } from '@muzika/core';
+import { MuzikaContractSummary } from '../../../../core/common/models';
 
 /**
  * This class generates parameter in add function in js-ipfs node instance.

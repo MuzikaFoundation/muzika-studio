@@ -3,10 +3,10 @@
  * of initializer vector length (default 16)
  */
 
-import { BlockUtil } from '@muzika/core';
 import * as aesjs from 'aes-js';
 import * as crypto from 'crypto';
 import { Transform } from 'stream';
+import { BlockUtil } from '../../../../core/common/models/block';
 
 
 export class AESCBCEncryptionStream extends Transform {

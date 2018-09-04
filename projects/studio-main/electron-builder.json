@@ -115,6 +115,7 @@
     "tsconfig.build.json",
     "main.ts",
     "src/**/*.ts",
+    "core/**/*",
     "renderer/**/*",
     ".compilerc",
     ".cache/**/*",
