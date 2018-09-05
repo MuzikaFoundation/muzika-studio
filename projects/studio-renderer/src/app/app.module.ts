@@ -54,6 +54,10 @@ export function getInitialState() {
   return Object.assign({}, (<any>remote.getCurrentWindow()).store);
 }
 
+export function reducer() {
+  return RendererRootReducer;
+}
+
 declare const document;
 
 @NgModule({
@@ -87,7 +91,7 @@ declare const document;
     ReactiveFormsModule,
     HttpClientModule,
 
-    StoreModule.forRoot(RendererRootReducer, {
+    StoreModule.forRoot(reducer, {
       initialState: getInitialState
     }),
 

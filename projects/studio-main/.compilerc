@@ -8,23 +8,16 @@
       },
       "text/typescript": {
         "removeComments": false,
-        "preserveConstEnums": true,
-        "declaration": true,
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "strictNullChecks": true,
-        "noUnusedLocals": true,
-        "noImplicitThis": true,
-        "noUnusedParameters": true,
-        "inlineSourceMap": true,
-        "inlineSources": true,
-        "importHelpers": true,
-        "noEmitHelpers": true,
+        "declaration": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
         "module": "commonjs",
-        "target": "es2017",
+        "target": "es5",
         "lib": [
+          "es2017",
           "es2016",
+          "es2015",
           "dom"
         ]
       }
@@ -36,23 +29,18 @@
         "sourceMaps": false
       },
       "text/typescript": {
-        "removeComments": false,
-        "preserveConstEnums": true,
-        "declaration": true,
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "strictNullChecks": true,
-        "noUnusedLocals": true,
-        "noImplicitThis": true,
-        "noUnusedParameters": true,
+        "removeComments": true,
+        "declaration": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
         "sourceMap": false,
-        "importHelpers": true,
-        "noEmitHelpers": true,
+        "moduleResolution": "node",
         "module": "commonjs",
-        "target": "es2017",
+        "target": "es5",
         "lib": [
           "es2017",
+          "es2016",
+          "es2015",
           "dom"
         ]
       }
