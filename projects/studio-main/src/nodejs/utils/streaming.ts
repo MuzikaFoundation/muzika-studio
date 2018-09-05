@@ -1,6 +1,6 @@
 import * as ffmpegStatic from 'ffmpeg-static';
 import * as ffprobeStatic from 'ffprobe-static';
-import {Observable, throwError} from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import * as path from 'path';
 import { MuzikaConsole } from '../../../../core/common';
 
@@ -52,19 +52,19 @@ export class StreamingUtil {
     masterName = masterName || 'master.m3u8';
 
     return Observable.create((observer) => {
-        ffmpeg(filePath).addOptions(options).output(path.join(outputDir, masterName))
-          .on('error', (err) => {
-            MuzikaConsole.error(err);
-            return throwError(err);
-          })
-          .on('progress', (progress) => {
-            observer.next(progress);
-          })
-          .on('end', () => {
-            MuzikaConsole.info('End to generate streaming files.');
-            observer.complete();
-          })
-          .run();
+      ffmpeg(filePath).addOptions(options).output(path.join(outputDir, masterName))
+        .on('error', (err) => {
+          MuzikaConsole.error(err);
+          return throwError(err);
+        })
+        .on('progress', (progress) => {
+          observer.next(progress);
+        })
+        .on('end', () => {
+          MuzikaConsole.info('End to generate streaming files.');
+          observer.complete();
+        })
+        .run();
     });
   }
 }
