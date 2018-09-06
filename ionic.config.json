@@ -1,7 +1,0 @@
-{
-  "name": "muzika-wallet",
-  "type": "angular",
-  "integrations": {
-    "cordova": {}
-  }
-}

@@ -5,7 +5,6 @@ image: node:8
 # Deploy - Deploy application to S3/ElasticBeanstalk
 stages:
   - build
-  - deploy
 
 before_script:
   - apt-get update && apt-get install -y libmagick++-dev
@@ -51,12 +50,11 @@ before_script:
 # Job: Build
 # Installs npm packages, transpiles ES6 -> ES5
 # Passes node_modules/, dist/ onto next steps using artifacts
-test:contract:
+test:core:
   stage: build
   script:
     - npm run lint
     - npm run build:core
-    - npm run build:web:prod
   tags:
     - frontend
 
@@ -67,24 +65,5 @@ test:web:
   stage: build
   script:
     - npm run build:studio
-    - npm run build:intro
-  artifacts:
-    paths:
-      - dist/intro/
   tags:
     - frontend
-
-deploy:stage:
-  image: python:3.6
-  stage: deploy
-  before_script:
-    - python -m pip install awscli
-  script:
-    - aws s3 sync ./dist/intro/ s3://$AWS_BUCKET --delete
-    - aws cloudfront create-invalidation --distribution-id $CDN_DISTRIBUTION_ID --paths "/index.html" "/assets/i18n/*" "/assets/*.pdf"
-    - aws cloudfront create-invalidation --distribution-id $CDN_DISTRIBUTION_ID_2 --paths "/index.html" "/assets/i18n/*" "/assets/*.pdf"
-  only:
-    - master
-  tags:
-    - frontend
-
