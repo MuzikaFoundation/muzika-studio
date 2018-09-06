@@ -1,0 +1,49 @@
+{
+  "env": {
+    "development": {
+      "application/javascript": {
+        "presets": ["es2016-node5"],
+        "plugins": ["transform-class-properties", "transform-async-to-generator", "transform-runtime"],
+        "sourceMaps": "inline"
+      },
+      "text/typescript": {
+        "removeComments": false,
+        "declaration": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "target": "es5",
+        "lib": [
+          "es2017",
+          "es2016",
+          "es2015",
+          "dom"
+        ]
+      }
+    },
+    "production": {
+      "application/javascript": {
+        "presets": ["es2016-node5"],
+        "plugins": ["transform-class-properties", "transform-async-to-generator", "transform-runtime"],
+        "sourceMaps": false
+      },
+      "text/typescript": {
+        "removeComments": true,
+        "declaration": false,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "sourceMap": false,
+        "moduleResolution": "node",
+        "module": "commonjs",
+        "target": "es5",
+        "lib": [
+          "es2017",
+          "es2016",
+          "es2015",
+          "dom"
+        ]
+      }
+    }
+  }
+}

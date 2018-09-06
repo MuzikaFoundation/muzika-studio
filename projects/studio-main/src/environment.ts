@@ -2,9 +2,9 @@ import {EnvironmentType} from './env_types';
 
 export const electronEnvironment: EnvironmentType = {
   production: false,
-  base_api_url: 'http://127.0.0.1:7001/api',
-  env: 'dev',
-  infuraAccessToken: '',
-  rpcUrl: 'http://localhost:8545',
-  networkId: 5777,
+  base_api_url: 'https://py-stage.muzikacoin.io/api',
+  env: 'stage',
+  infuraAccessToken: 'BHFyoHFDkG2NGioaIlf4',
+  rpcUrl: 'https://ropsten.infura.io',
+  networkId: 3,
 };

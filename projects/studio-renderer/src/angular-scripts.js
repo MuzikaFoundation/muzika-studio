@@ -1,5 +1,5 @@
 process.browser = true;
-window.jQuery = window.$ = require("jquery/dist/jquery.min");
+window.jQuery = window.$ = require("jquery");
 [
   "froala-editor",
   "froala-editor/js/languages/ko",

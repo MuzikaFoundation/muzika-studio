@@ -1,8 +1,7 @@
-import {Inject, Injectable, PLATFORM_ID} from '@angular/core';
-import {isPlatformBrowser} from '@angular/common';
-import {ElectronService} from './electron.service';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { ElectronService } from './electron.service';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class ElectronLocalStorage {
 
   constructor(@Inject(PLATFORM_ID) protected platformId: Object,
@@ -15,23 +14,16 @@ export class ElectronLocalStorage {
   }
 
   setItem(key: string, value: any) {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.setItem(key, value);
-      this.electronService.storage.set(key, value);
-    }
+    localStorage.setItem(key, value);
+    this.electronService.storage.set(key, value);
   }
 
   getItem(key: string, defaultValue?: string) {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem(key) || defaultValue;
-    }
-    return defaultValue;
+    return localStorage.getItem(key) || defaultValue;
   }
 
   removeItem(key: string) {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem(key);
-      this.electronService.storage.remove(key);
-    }
+    localStorage.removeItem(key);
+    this.electronService.storage.remove(key);
   }
 }

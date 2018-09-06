@@ -1,0 +1,55 @@
+:host {
+  display: block;
+  font-size: 13px;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+}
+
+ul {
+  margin: 14px 0;
+  padding: 0;
+  display: flex;
+}
+
+li {
+  display: inline-block;
+  text-align: center;
+  flex: 1;
+  max-width: 200px;
+}
+
+.sidebar-branding {
+  padding: 0;
+  margin: 0 0 0 10px;
+  color: #18b76f;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 50px;
+}
+
+a {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  font-size: 13px;
+  padding: 13px 17px;
+  box-sizing: border-box;
+  height: 50px;
+  line-height: 24px;
+}
+
+a span.text {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+a:hover {
+  background: #f6f6f6;
+  text-decoration: none;
+}
+
+.fa-chevron-down {
+  position: absolute;
+  right: 18px;
+  top: 20px;
+}

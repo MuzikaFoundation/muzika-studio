@@ -1,11 +1,10 @@
 import { Component, Injector } from '@angular/core';
-import { MuzikaCoin, MuzikaPaperContract, PostActions } from '@muzika/core/angular';
-import { IAppState } from '@muzika/core';
-import { ActivatedRoute } from '@angular/router';
-import { NgRedux } from '@angular-redux/store';
+import { PostActions } from '@muzika/core/angular';
 import { IpcRendererService } from '../../../../../providers/ipc-renderer.service';
 import { AlertifyInstnace } from '@muzika/core/browser';
 import { AbstractPostMusicItemDetail } from '../post-music-item-detail';
+import { RendererAppState } from '../../../../../reducers';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-post-music-item-detail',
@@ -15,7 +14,7 @@ import { AbstractPostMusicItemDetail } from '../post-music-item-detail';
 export class PostStreamingItemDetailComponent extends AbstractPostMusicItemDetail {
 
   constructor(public postActions: PostActions,
-              public store: NgRedux<IAppState>,
+              public store: Store<RendererAppState>,
               public ipcRenderer: IpcRendererService,
               private injector: Injector) {
     super('music', injector);

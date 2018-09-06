@@ -45,19 +45,19 @@ ipfs-muzika/
 app-builds/
 main.js
 projects/studio-main/node_src/**/*.js
+projects/studio-main/renderer
+projects/studio-main/.cache
 
 platforms/
 plugins/
 www/
 
 # Electron & Tsc compiled artifacts
-projects/core/**/*.js
-projects/core/**/*.js.map
 projects/core/package-lock.json
-projects/studio-main/**/*.js.map
-projects/studio-main/**/*.js
 main.js
 main.js.map
 
 # Logs
 lerna-debug.log
+
+package-lock.json

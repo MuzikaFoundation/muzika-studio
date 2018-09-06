@@ -1,0 +1,13 @@
+<div class="sidebar-items">
+  <a [class.active]="currentTab === 'wallet'" (click)="changeTab('wallet')">
+  </a>
+    <div class="item" [class.active]="currentTab === 'wallet'" (click)="changeTab('wallet')">
+      <a routerLink="/"><i class="fas fa-wallet"></i></a>
+      <span class="item-text">Wallet</span>
+    </div>
+
+    <div class="item" [class.active]="currentTab === 'upload'" (click)="changeTab('upload')">
+      <a routerLink="/board/sheet/write"><i class="fas fa-bezier-curve"></i></a>
+      <span class="item-text">Studio</span>
+    </div>
+</div>

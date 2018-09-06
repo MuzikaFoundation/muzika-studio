@@ -9,6 +9,9 @@ import { ElectronService } from '../providers/electron.service';
 import { MuzikaWalletProvider } from '../providers/muzika-wallet.provider';
 import { MuzikaTabs, TabService } from '../providers/tab.service';
 import { MuzikaConsole } from '@muzika/core';
+import { forwardToMain, replayActionRenderer } from 'electron-redux';
+import { remote } from 'electron';
+import { RenderOptions } from '../../../studio-main/src/models/render-options';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +20,7 @@ import { MuzikaConsole } from '@muzika/core';
 })
 export class AppComponent extends BaseComponent implements AfterViewInit {
   currentTab: MuzikaTabs = 'viewer';
+  renderOptions: RenderOptions;
 
   constructor(public electronService: ElectronService,
               @Inject(PLATFORM_ID) private platformId: any,
@@ -42,6 +46,7 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
 
   ngOnInit() {
     super.ngOnInit();
+    this.renderOptions = (<any>remote.getCurrentWindow()).renderOptions;
 
     if (isPlatformBrowser(this.platformId)) {
       // Angular Zone Change Detection Wait 문제 해결
@@ -66,6 +71,12 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.web3.setProvider(this.walletProvider);
+    }
+
+    // when this option is false, let the current electron BrowserWindow instance
+    // call `show()` function, so user sees the completely rendered windows.
+    if (!this.renderOptions.disableShowAfterInitView) {
+      remote.getCurrentWindow().show();
     }
   }
 

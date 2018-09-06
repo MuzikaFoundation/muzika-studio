@@ -45,7 +45,6 @@
 // Used for reflect-metadata in JIT. If you use AOT (and only Angular decorators), you can remove.
 import 'core-js/es7/reflect';
 
-
 /**
  * Required to support Web Animations `@angular/platform-browser/animations`.
  * Needed for: All but Chrome, Firefox and Opera. http://caniuse.com/#feat=web-animation
@@ -73,9 +72,12 @@ import 'core-js/es7/reflect';
 import 'zone.js/dist/zone-mix';  // Included with Angular CLI.
 import 'zone.js/dist/zone-patch-electron';
 
-
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+import * as jQuery from 'jquery';
+declare const window;
+window.jQuery = window.$ = jQuery;
 
 // (window as any).Buffer = require('buffer/').Buffer;

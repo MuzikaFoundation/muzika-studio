@@ -33,10 +33,29 @@ import { ElectronService } from '../providers/electron.service';
 import { MuzikaConsole } from '@muzika/core';
 import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
+import { forwardToMain, replayActionRenderer } from 'electron-redux';
+
+import { TitleBarComponent } from '../components/titlebar/titlebar.component';
+import { SideBarComponent } from '../components/sidebar/sidebar.component';
+import { RendererAppState, RendererRootReducer } from '../reducers';
+import { Store, StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
+import { ElectronNgrxEffects } from '../providers/electron-ngrx-effects';
+import { remote } from 'electron';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http, './assets/i18n/', '.json');
+}
+
+export function getInitialState() {
+  console.log((<any>remote.getCurrentWindow()).store);
+  return Object.assign({}, (<any>remote.getCurrentWindow()).store);
+}
+
+export function reducer() {
+  return RendererRootReducer;
 }
 
 declare const document;
@@ -49,9 +68,12 @@ declare const document;
     WebviewDirective,
 
     /* Reusable Components */
+    TitleBarComponent,
+    SideBarComponent,
     NavbarComponent,
     SpinnerComponent,
     FooterComponent,
+    LoadingScreenComponent,
     ArtistMusicComponent,
 
     /* Page Components */
@@ -62,12 +84,18 @@ declare const document;
   imports: [
     /* Angular modules */
     CommonModule,
-    BrowserModule.withServerTransition({ appId: 'muzika-universal' }),
+    BrowserModule.withServerTransition({appId: 'muzika-universal'}),
     BrowserTransferStateModule,
     BrowserAnimationsModule,
     FormsModule,
     ReactiveFormsModule,
     HttpClientModule,
+
+    StoreModule.forRoot(reducer, {
+      initialState: getInitialState
+    }),
+
+    EffectsModule.forRoot([ElectronNgrxEffects]),
 
     WalletModule,
     AppRoutingModule,
@@ -114,9 +142,12 @@ declare const document;
 export class AppModule {
   constructor(ipcService: IpcRendererService,
               electronService: ElectronService,
+              private store: Store<RendererAppState>,
               private zone: NgZone,
               @Inject(PLATFORM_ID) private platformId: string) {
     ipcService.init();
+
+    replayActionRenderer(store);
 
     if (isPlatformBrowser(this.platformId)) {
       document.ondragover = document.ondrop = (ev) => {

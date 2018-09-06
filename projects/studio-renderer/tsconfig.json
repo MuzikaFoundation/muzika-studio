@@ -1,4 +1,7 @@
 {
+  "angularCompilerOptions": {
+//    "fullTemplateTypeCheck": true
+  },
   "compileOnSave": false,
   "compilerOptions": {
     "baseUrl": "./",
@@ -30,7 +33,8 @@
       "@muzika/core/browser": ["../core/browser/public_api.ts"],
       "@muzika/core/nodejs": [
         "../core/nodejs/public_api.ts"
-      ]
+      ],
+      "@muzika/core/electron": ["../core/electron/index.ts"]
     }
   },
   "exclude": [

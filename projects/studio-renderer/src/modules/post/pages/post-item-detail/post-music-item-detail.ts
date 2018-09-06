@@ -3,7 +3,8 @@ import { Injector } from '@angular/core';
 import { combineLatest, Subscription } from 'rxjs';
 import { IAppState, MusicPost, unitUp, User } from '@muzika/core';
 import { ActivatedRoute } from '@angular/router';
-import { NgRedux } from '@angular-redux/store';
+import { select, Store } from '@ngrx/store';
+import { RendererAppState } from '../../../../reducers';
 
 
 export class AbstractPostMusicItemDetail extends BaseComponent {
@@ -19,7 +20,7 @@ export class AbstractPostMusicItemDetail extends BaseComponent {
   private _muzikaPaper: MuzikaPaperContract;
   private _muzikaCoin: MuzikaCoin;
   private _postActions: PostActions;
-  private _store: NgRedux<IAppState>;
+  private _store: Store<IAppState>;
 
   constructor(private boardType: string,
               injector: Injector) {
@@ -28,7 +29,7 @@ export class AbstractPostMusicItemDetail extends BaseComponent {
     this._muzikaPaper = injector.get<MuzikaPaperContract>(MuzikaPaperContract);
     this._muzikaCoin = injector.get<MuzikaCoin>(MuzikaCoin);
     this._postActions = injector.get<PostActions>(PostActions);
-    this._store = injector.get(NgRedux);
+    this._store = injector.get<Store<RendererAppState>>(Store);
   }
 
   ngOnInit() {
@@ -50,7 +51,7 @@ export class AbstractPostMusicItemDetail extends BaseComponent {
         }
 
         this.postSub = combineLatest(
-          this._store.select<MusicPost>(['post', 'post', 'music', postId]),
+          this._store.pipe<MusicPost>(select(['post', 'post', 'music', postId])),
           UserActions.currentUserObs
         ).subscribe(async ([post, user]) => {
           this.post = post;

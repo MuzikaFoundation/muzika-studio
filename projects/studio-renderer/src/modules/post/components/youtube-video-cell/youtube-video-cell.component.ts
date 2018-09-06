@@ -11,7 +11,7 @@ import {PostActions} from '@muzika/core/angular';
 })
 export class YoutubeVideoCellComponent implements OnInit {
   @Input()
-  post: VideoPost;
+  post: VideoPost & { customTime: any };
 
   youtubeThumnnail: string;
 

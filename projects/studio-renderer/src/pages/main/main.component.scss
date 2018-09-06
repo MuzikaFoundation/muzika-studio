@@ -16,3 +16,19 @@
     }
   }
 }
+
+.own-coin {
+  height: 250px;
+  font-size: 50px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  span {
+    display: block;
+  }
+
+  small {
+    font-size: 0.7em;
+  }
+}

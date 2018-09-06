@@ -7,6 +7,7 @@
   height: 100vh;
   width: 100vw;
   background-color: $background-color;
+  overflow: hidden;
 }
 
 .app-container {
@@ -29,7 +30,34 @@
     }
   }
 
+  .program-area {
+    width: 100%;
+    height: 100%;
+    display: flex;
+  }
+
+  .content-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .body-area {
+    overflow-y: auto;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+  }
+
+  app-sidebar {
+    flex: 0 0 $sidebar-width;
+  }
+
   .main-content {
+    //position: absolute;
+    //top: 32px;
+    //left: 70px;
+    //right: 0;
     height: 100%;
     flex-grow: 1;
     overflow-y: auto;

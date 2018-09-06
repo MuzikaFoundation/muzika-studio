@@ -71,13 +71,13 @@
         <div class="music-video-form">
           <div class="btn-group">
             <button type="button" class="btn btn-xs"
-                    (click)="musicVideo = {type: 'youtube', path: undefined}"
+                    (click)="post.music_video = {type: 'youtube', path: undefined}"
                     [class.btn-default]="post.music_video.type !== 'youtube'"
                     [class.btn-primary]="post.music_video.type === 'youtube'">
               <i class="fab fa-youtube"></i> Youtube URL
             </button>
             <button type="button" class="btn btn-xs"
-                    (click)="musicVideo = {type: 'ipfs', path: undefined}"
+                    (click)="post.music_video = {type: 'ipfs', path: undefined}"
                     [class.btn-default]="post.music_video.type !== 'ipfs'"
                     [class.btn-primary]="post.music_video.type === 'ipfs'">
               <i class="fal fa-file-video"></i> File
@@ -125,7 +125,7 @@
         </div>
 
         <div class="description">
-          <div [froalaEditor]="options" [(froalaModel)]="post.content"></div>
+          <textarea></textarea>
         </div>
       </div>
     </div>
