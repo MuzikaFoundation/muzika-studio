@@ -61,7 +61,7 @@ test:core:
 # Job: Build
 # Installs npm packages, transpiles ES6 -> ES5
 # Passes node_modules/, dist/ onto next steps using artifacts
-test:web:
+test:studio:
   stage: build
   script:
     - npm run build:studio
