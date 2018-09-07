@@ -109,7 +109,8 @@
         </div>
 
         <div class="description">
-          <textarea [(ngModel)]="post.content"></textarea>
+          <!--<div [froalaEditor]="options" #froalaEditor required [(froalaModel)]="post.content">123</div>-->
+          <textarea [(ngModel)]="post.content" name="content" placeholder="description"></textarea>
         </div>
       </div>
     </div>

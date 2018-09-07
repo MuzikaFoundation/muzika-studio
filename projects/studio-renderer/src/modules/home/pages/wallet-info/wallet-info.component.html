@@ -1,0 +1,109 @@
+<div class="content">
+  <span class="title"><i class="far fa-wallet"></i>Address</span>
+
+  <div class="address-info">
+    <span class="address">
+      <ng-container *ngIf="user">{{user.address}}</ng-container>
+      <ng-container *ngIf="!user">-</ng-container>
+    </span>
+    <a href="https://etherscan.io/address/{{user.address}}" *ngIf="user" target="_blank">
+      <button type="button" class="btn btn-xs btn-success view-etherscan" *ngIf="!!user.address">view</button>
+    </a>
+  </div>
+</div>
+
+<div class="content own-coin bg-transparent">
+  <div class="value mr-1">
+    <ng-container *ngIf="balances.eth !== ''">{{balances.eth | number: '1.0-2'}} </ng-container>
+    <ng-container *ngIf="balances.eth === ''">- </ng-container>
+    <small>ETH</small>
+    <span class="dollar-price">
+      <ng-container *ngIf="balances.ethDollar !== ''">($ {{ balances.ethDollar | number:'1.2' }})</ng-container>
+      <ng-container *ngIf="balances.ethDollar === ''">($ -)</ng-container>
+    </span>
+  </div>
+
+  <div class="value mr-1 ml-1">
+    <ng-container *ngIf="balances.mzk !== ''">{{balances.mzk | number: '1.0-2'}} </ng-container>
+    <ng-container *ngIf="balances.mzk === ''">- </ng-container>
+    <small>MZK</small>
+    <span class="dollar-price">
+      <ng-container *ngIf="balances.mzk !== ''">($ {{ balances.dollar | number:'1.2' }})</ng-container>
+      <ng-container *ngIf="balances.mzk === ''">($ -)</ng-container>
+    </span>
+  </div>
+
+  <div class="value ml-1">
+    <ng-container *ngIf="balances.loyalty !== ''">{{balances.loyalty | number: '1.0-2'}} </ng-container>
+    <ng-container *ngIf="balances.loyalty === ''">- </ng-container>
+    <small>LP</small>
+  </div>
+</div>
+
+<div class="content">
+  <span class="title"><i class="far fa-address-card"></i>My Info</span>
+
+  <div class="my-info">
+    <img src="../../../assets/muzika.png" class="profile-image">
+
+    <div class="profile">
+      <div class="row">
+        <div class="col">
+          <label for="name">Artist Name</label>
+          <span class="profile-value" id="name">
+          <ng-container *ngIf="user && user.name">{{ user.name }}</ng-container>
+          <ng-container *ngIf="!user || !user.name">-</ng-container>
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label for="youtube_url">Youtube</label>
+          <span class="profile-value" id="youtube_url">
+            <ng-container *ngIf="user && user.youtube_url">{{ user.youtube_url }}</ng-container>
+            <ng-container *ngIf="!user || !user.youtube_url">-</ng-container>
+          </span>
+        </div>
+
+        <div class="col">
+          <label for="spotify_url">Spotify</label>
+          <span class="profile-value" id="spotify_url">
+            <ng-container *ngIf="user && user.spotify_url">{{ user.spotify_url }}</ng-container>
+            <ng-container *ngIf="!user || !user.spotify_url">-</ng-container>
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <label for="facebook_url">Facebook</label>
+          <span class="profile-value" id="facebook_url">
+            <ng-container *ngIf="user && user.facebook_url">{{ user.facebook_url }}</ng-container>
+            <ng-container *ngIf="!user || !user.facebook_url">-</ng-container>
+          </span>
+        </div>
+
+        <div class="col">
+          <label for="soundcloud_url">SoundCloud</label>
+          <span class="profile-value" id="soundcloud_url">
+            <ng-container *ngIf="user && user.soundcloud_url">{{ user.soundcloud_url }}</ng-container>
+            <ng-container *ngIf="!user || !user.soundcloud_url">-</ng-container>
+          </span>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col text-right">
+          <button type="button" class="btn btn-xs btn-success">Edit</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<div class="content">
+  <span class="title"><i class="far fa-bars"></i>Transactions</span>
+</div>

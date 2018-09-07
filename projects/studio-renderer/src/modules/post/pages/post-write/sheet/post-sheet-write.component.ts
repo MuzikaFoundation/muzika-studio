@@ -26,6 +26,8 @@ export class PostSheetMusicWriteComponent extends BasePostWriteComponent {
     tags: [],
     price: 0,
     files: [],
+    title: '',
+    content: '',
     cover_image_path: null,
     music_video: null
   };

@@ -1,13 +1,13 @@
 <div class="sidebar-items">
-  <a [class.active]="currentTab === 'wallet'" (click)="changeTab('wallet')">
-  </a>
-    <div class="item" [class.active]="currentTab === 'wallet'" (click)="changeTab('wallet')">
-      <a routerLink="/"><i class="fas fa-wallet"></i></a>
+  <!--<a [class.active]="currentTab === 'wallet'" (click)="changeTab('wallet')">-->
+  <!--</a>-->
+    <div class="item" [class.active]="currentTab === 'home'" (click)="changeTab('home', '/home')">
+      <i class="fas fa-wallet"></i>
       <span class="item-text">Wallet</span>
     </div>
 
-    <div class="item" [class.active]="currentTab === 'upload'" (click)="changeTab('upload')">
-      <a routerLink="/board/sheet/write"><i class="fas fa-bezier-curve"></i></a>
+    <div class="item" [class.active]="currentTab === 'upload'" (click)="changeTab('upload', '/board/sheet/write')" *ngIf="currentUser !== null">
+      <i class="fas fa-bezier-curve"></i>
       <span class="item-text">Studio</span>
     </div>
 </div>

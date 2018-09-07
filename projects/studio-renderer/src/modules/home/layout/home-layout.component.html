@@ -1,0 +1,20 @@
+<div class="container">
+  <!--<home-layout-topbar></home-layout-topbar>-->
+
+  <div class="topbar">
+
+    <ul>
+      <li class="sidebar-branding">Info</li>
+    </ul>
+
+    <div class="topbar-userinfo">
+      <a (click)="logout()">Logout</a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

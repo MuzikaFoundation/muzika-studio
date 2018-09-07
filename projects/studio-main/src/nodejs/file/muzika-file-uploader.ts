@@ -101,15 +101,18 @@ export class MuzikaFileTask {
    * @returns {Promise<IpfsUploadTask[]>}
    */
   ready(): Promise<IpfsUploadTask[]> {
+    // TODO: generate preview and cover image. It is already implemented but it needs imagemagick.
     switch (this._mode) {
       case 'ipfs':
         return this._readyIpfs();
       case 'preview':
-        return this._readyPreview();
+        return Promise.resolve([]);
+        // return this._readyPreview();
       case 'streaming':
         return this._readyStreaming();
       case 'coverImage':
-        return this._readyCover();
+        return Promise.resolve([]);
+        // return this._readyCover();
     }
   }
 

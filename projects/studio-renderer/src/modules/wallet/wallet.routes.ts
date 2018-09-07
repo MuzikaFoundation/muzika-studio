@@ -6,16 +6,16 @@ import { WalletListComponent } from './pages/wallet-list/wallet-list.component';
 import { NgModule } from '@angular/core';
 
 const routes: Routes = [
-  { path: 'home', component: WalletListComponent },
+  { path: 'wallet-list', component: WalletListComponent },
   { path: 'sign-message', component: WalletSignPersonalMessageComponent },
-  { path: 'sign-transaction', component: WalletSignTransactionComponent }
+  { path: 'sign-transaction', component: WalletSignTransactionComponent },
   // { path: '**', component: WalletHomeComponent }
 ];
 
 @NgModule({
   imports: [
     RouterModule.forChild([
-      { path: '', pathMatch: 'full', redirectTo: '/(wallet:home)' },
+      { path: '', pathMatch: 'full', redirectTo: '/(wallet:wallet-list)' },
       {
         path: '',
         outlet: 'wallet',

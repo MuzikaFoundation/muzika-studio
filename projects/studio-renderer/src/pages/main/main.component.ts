@@ -26,6 +26,7 @@ export class MainPageComponent extends BaseComponent {
 
   constructor(private muzikaCoin: MuzikaCoin,
               private router: Router,
+              private userActions: UserActions,
               private web3: ExtendedWeb3) {
     super();
     this.topMusicSheets = this.musicSheets.slice(0, 3);
@@ -34,25 +35,6 @@ export class MainPageComponent extends BaseComponent {
   }
 
   ngOnInit() {
-    this.muzikaCoin.deployed();
-
-    // this.router.navigateByUrl('/board/streaming/write');
-
-    this._sub.push(
-      combineLatest(
-        from(this.muzikaCoin.deployed()),
-        UserActions.currentUserObs
-      ).subscribe(async ([coin, user]) => {
-        MuzikaConsole.log('33', user);
-        if (user) {
-          const rawBalance = await coin.balanceOf(user.address);
-          this.balances = {
-            mzk: unitUp(rawBalance),
-            // @TODO deploy muzika loyalty point
-            dollar: 0
-          };
-        }
-      })
-    );
+    this.router.navigate(['/home']);
   }
 }

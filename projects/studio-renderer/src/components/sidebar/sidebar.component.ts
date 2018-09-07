@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import {BaseComponent, UserActions} from '@muzika/core/angular';
 import { User } from '@muzika/core';
+import {MuzikaTabs, TabService} from '../../providers/tab.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,7 +13,10 @@ export class SideBarComponent extends BaseComponent {
   currentUser: User = null;
   currentTab: string;
 
-  constructor() {
+  constructor(
+    private tabService: TabService,
+    private router: Router,
+  ) {
     super();
   }
 
@@ -19,9 +24,15 @@ export class SideBarComponent extends BaseComponent {
     this._sub.push(
       UserActions.currentUserObs.subscribe((user) => this.currentUser = user)
     );
+
+    this._sub.push(
+      this.tabService.tabChange.subscribe(tabName => this.currentTab = tabName)
+    );
   }
 
-  changeTab(tapName: string) {
-    this.currentTab = tapName;
+  changeTab(tabName: MuzikaTabs, link: string) {
+    this.currentTab = tabName;
+    this.tabService.changeTab(tabName);
+    this.router.navigate([link]);
   }
 }

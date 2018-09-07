@@ -43,6 +43,7 @@ import { Store, StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { ElectronNgrxEffects } from '../providers/electron-ngrx-effects';
 import { remote } from 'electron';
+import {HomeModule} from '../modules/home/home.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -50,12 +51,7 @@ export function HttpLoaderFactory(http: HttpClient) {
 }
 
 export function getInitialState() {
-  console.log((<any>remote.getCurrentWindow()).store);
   return Object.assign({}, (<any>remote.getCurrentWindow()).store);
-}
-
-export function reducer() {
-  return RendererRootReducer;
 }
 
 declare const document;
@@ -91,7 +87,7 @@ declare const document;
     ReactiveFormsModule,
     HttpClientModule,
 
-    StoreModule.forRoot(reducer, {
+    StoreModule.forRoot(RendererRootReducer, {
       initialState: getInitialState
     }),
 
@@ -121,7 +117,8 @@ declare const document;
     MuzikaCoreModule,
 
     /* Sub-modules */
-    PostModule
+    HomeModule,
+    PostModule,
   ],
   providers: [
     {

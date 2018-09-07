@@ -104,8 +104,6 @@ export class MuzikaApp {
       setTimeout(() => this._updateChecker.checkUpdate(), 2000);
     });
 
-    this.mainWindow.show();
-    this.mainWindow.webContents.openDevTools();
     this.mainWindow.on('closed', () => this.mainWindow = null);
   }
 

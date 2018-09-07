@@ -66,5 +66,19 @@
       {{account}}
     </option>
   </select>
-  <button type="button" class="btn btn-primary mt-3" (click)="login()"> Login </button>
+
+  <div class="row mt-3 login-btns">
+    <button type="button" class="btn btn-success mr-1" (click)="login()"> Login </button>
+    <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Account </button>
+  </div>
+
+  <div class="warning" *ngIf="warningMessage !== ''">
+    {{ warningMessage }}
+  </div>
+
+  <div class="row other-link mt-1">
+    <div>
+      <a href="#" (click)="goToWalletManager()">Want to Manage all your accounts?</a>
+    </div>
+  </div>
 </div>
