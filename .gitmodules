@@ -1,3 +1,6 @@
 [submodule "muzika-contract"]
 	path = muzika-contract
 	url = https://github.com/MuzikaFoundation/muzika-contract.git
+[submodule "projects/core"]
+	path = projects/core
+	url = https://github.com/MuzikaFoundation/muzika-core.git
