@@ -5,7 +5,7 @@ import { MuzikaConsole, promisify } from '@muzika/core';
 import { BaseComponent, ExtendedWeb3, MuzikaWeb3Service, UserActions } from '@muzika/core/angular';
 import {TabService} from '../../providers/tab.service';
 import * as ethWallet from 'ethereumjs-wallet';
-import * as ethUtil from "ethereumjs-util";
+import * as ethUtil from 'ethereumjs-util';
 import {WalletStorageService} from '../../modules/wallet/services/wallet-storage.service';
 
 @Component({
