@@ -146,7 +146,7 @@
     "command-line-args": "^5.0.2",
     "cross-env": "^5.1.6",
     "devtron": "^1.4.0",
-    "electron": "^2.0.8",
+    "electron": "^2.0.7",
     "electron-builder": "^20.28.3",
     "electron-compile": "^6.4.3",
     "electron-compilers": "^5.9.0",
