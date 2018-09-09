@@ -47,6 +47,7 @@ main.js
 projects/studio-main/node_src/**/*.js
 projects/studio-main/renderer
 projects/studio-main/.cache
+projects/.cache
 
 platforms/
 plugins/

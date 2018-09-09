@@ -1,7 +1,7 @@
 {
   "productName": "Muzika",
   "directories": {
-    "output": "../../app-builds"
+    "output": "../app-builds"
   },
   "nsis": {
     "oneClick": false,
@@ -110,15 +110,13 @@
     }]
   },
   "files": [
-    "es6-init.js",
-    "src/util/process-helper.js",
-    "tsconfig.build.json",
-    "main.ts",
-    "src/**/*.ts",
-    "renderer/**/*",
-    ".compilerc",
+    "studio-main/es6-init.js",
+    "studio-main/src/util/process-helper.js",
+    "studio-main/**/*.ts",
+    "studio-main/assets/*",
+    "studio-main/renderer/**/*",
+    "core/**/*.ts",
     ".cache/**/*",
-    "assets/**/*",
-    "build/**/*"
+    ".compilerc"
   ]
 }

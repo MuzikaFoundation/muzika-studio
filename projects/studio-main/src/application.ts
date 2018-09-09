@@ -9,7 +9,7 @@ import { StorageServiceInstance } from './storage.service';
 import * as ms from 'ms';
 import { MuzikaUpdater } from './auto-update.service';
 import { StoreServiceInstance } from './store.service';
-import { combineLatest, from, Observable, timer } from 'rxjs';
+import { Observable, combineLatest, from, timer } from 'rxjs/index';
 import { filter, map, mergeMap, take, takeWhile, timeout } from 'rxjs/operators';
 import { WindowType, WinOpts } from './util/window-options';
 import { RenderOptions } from './models/render-options';

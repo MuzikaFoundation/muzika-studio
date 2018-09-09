@@ -15,7 +15,7 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forChild([
-      { path: '', pathMatch: 'full', redirectTo: '/(wallet:wallet-list)' },
+      { path: 'wallet', pathMatch: 'full', redirectTo: '/(wallet:wallet-list)' },
       {
         path: '',
         outlet: 'wallet',

@@ -1,7 +1,8 @@
 {
   "lerna": "2.11.0",
   "packages": [
-    "projects/*"
+    "projects",
+    "projects/studio-renderer"
   ],
   "command": {
     "bootstrap": {

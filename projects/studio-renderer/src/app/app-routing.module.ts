@@ -5,8 +5,7 @@ import { UserSettingsComponent } from '../pages/settings/settings.component';
 import { LoadingScreenComponent } from '../components/loading-screen/loading-screen.component';
 
 const routes: Routes = [
-  // { path: '', component: MainPageComponent },
-  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'loading-screen', component: LoadingScreenComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'settings', component: UserSettingsComponent }
