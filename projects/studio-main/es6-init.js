@@ -5,7 +5,7 @@ const isPrebuilt = require('./src/util/process-helper').isPrebuilt;
 const readOnlyMode = !isPrebuilt();
 
 if (readOnlyMode) {
-  require('electron-compile').init(resolve(__dirname, '..'), resolve(__dirname, './main'));
+  require('electron-compile').init(resolve(__dirname, '..'), resolve(__dirname, './main'), true);
 } else {
   require('./main');
 }
