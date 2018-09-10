@@ -4,7 +4,21 @@
   <div class="topbar">
 
     <ul>
-      <li class="sidebar-branding">Info</li>
+      <li class="sidebar-branding">Home</li>
+
+      <li [class.active]="currentPage === '/home'">
+        <a routerLink="/home">
+          <span class="fas fa-user align-middle"></span>
+          <span class="text">Artist Info</span>
+        </a>
+      </li>
+
+      <li [class.active]="currentPage === '/home/modify'">
+        <a routerLink="/home/modify">
+          <span class="fas fa-user-edit align-middle"></span>
+          <span class="text">Edit Info</span>
+        </a>
+      </li>
     </ul>
 
     <div class="topbar-userinfo">

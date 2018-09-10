@@ -3,7 +3,7 @@ import {BehaviorSubject, Observable, Subject} from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class TabService {
-  private _tabEvent: Subject<MuzikaTabs> = new BehaviorSubject<MuzikaTabs>('viewer');
+  private _tabEvent: Subject<MuzikaTabs> = new BehaviorSubject<MuzikaTabs>('home');
   constructor() {
   }
 

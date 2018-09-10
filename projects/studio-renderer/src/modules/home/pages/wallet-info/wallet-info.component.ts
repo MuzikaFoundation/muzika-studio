@@ -3,6 +3,7 @@ import { APIConfig, BaseComponent, ExtendedWeb3, MuzikaCoin, UserActions } from 
 import { Router } from '@angular/router';
 import { combineLatest, from } from 'rxjs';
 import { promisify, unitUp, User } from '@muzika/core';
+import { ElectronService } from '../../../../providers/electron.service';
 
 
 @Component({
@@ -23,11 +24,14 @@ export class WalletInfoComponent extends BaseComponent {
   // TODO: update exchange price (by dollar)
   exchangePrice = 0.1;
 
-  constructor(private userActions: UserActions,
-              private router: Router,
-              private web3: ExtendedWeb3,
-              private apiConfig: APIConfig,
-              private muzikaCoin: MuzikaCoin) {
+  constructor(
+    private userActions: UserActions,
+    private router: Router,
+    private web3: ExtendedWeb3,
+    private apiConfig: APIConfig,
+    private muzikaCoin: MuzikaCoin,
+    private electronService: ElectronService,
+  ) {
     super();
   }
 
@@ -63,5 +67,9 @@ export class WalletInfoComponent extends BaseComponent {
         }
       })
     );
+  }
+
+  queryAddress() {
+    this.electronService.shell.openExternal(`https://etherscan.io/address/${this.user.address}`);
   }
 }
