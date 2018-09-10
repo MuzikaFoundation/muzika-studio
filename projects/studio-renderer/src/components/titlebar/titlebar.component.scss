@@ -3,6 +3,7 @@
 :host {
   background-color: $titlebar-background;
   display: block;
+  z-index: 100;
 }
 
 .titlebar-default {
