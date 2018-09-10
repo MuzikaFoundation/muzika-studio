@@ -6,7 +6,8 @@ import { MuzikaCommonModule, MuzikaCoreModule } from '@muzika/core/angular';
 import { FroalaEditorModule, FroalaViewModule } from 'angular-froala-wysiwyg';
 import { AppHomeRouteModule } from './home.routes';
 import { HomeLayoutComponent } from './layout/home-layout.component';
-import {WalletInfoComponent} from './pages/wallet-info/wallet-info.component';
+import { WalletInfoComponent } from './pages/wallet-info/wallet-info.component';
+import { ModifyInfoComponent } from './pages/modify-info/modify-info.component';
 
 @NgModule({
   imports: [
@@ -26,6 +27,7 @@ import {WalletInfoComponent} from './pages/wallet-info/wallet-info.component';
   declarations: [
     HomeLayoutComponent,
     WalletInfoComponent,
+    ModifyInfoComponent,
   ],
   exports: [
   ]

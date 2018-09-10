@@ -1,0 +1,89 @@
+<div class="content">
+  <span class="title"><i class="far fa-wallet"></i>Address</span>
+
+  <div class="address-info">
+    <span class="address">
+      <ng-container *ngIf="user">{{user.address}}</ng-container>
+      <ng-container *ngIf="!user">-</ng-container>
+    </span>
+  </div>
+</div>
+
+<div class="content">
+  <form>
+    <span class="title"><i class="far fa-address-card"></i>My Info</span>
+
+    <div class="my-info">
+      <div class="image-upload">
+        <label for="profile-image">
+          <img src="../../../../assets/muzika.png">
+        </label>
+
+        <input id="profile-image" class="image-upload-button" type="file">
+      </div>
+
+      <div class="profile">
+        <div class="row form-group">
+          <div class="col">
+            <label for="name">Artist Name</label>
+            <input type="text" class="form-control form-control-sm" id="name" name="name" [(ngModel)]="user.name">
+            <small class="warning" *ngIf="userNameWarning">Please input your artist user name.</small>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="youtube_url">Youtube</label>
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="youtube_basic_url">https://www.youtube.com/</span>
+              </div>
+              <input type="text" class="form-control" id="youtube_url" aria-describedby="youtube_basic_url">
+            </div>
+          </div>
+
+          <div class="col">
+            <label for="spotify_url">Spotify</label>
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="spotify_basic_url">https://www.spotify.com/</span>
+              </div>
+              <input type="text" class="form-control" id="spotify_url" aria-describedby="spotify_basic_url">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col">
+            <label for="facebook_url">Facebook</label>
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="facebook_basic_url">https://www.facebook.com/</span>
+              </div>
+              <input type="text" class="form-control" id="facebook_url" aria-describedby="facebook_basic_url">
+            </div>
+          </div>
+
+          <div class="col">
+            <label for="soundcloud_url">SoundCloud</label>
+            <div class="input-group input-group-sm">
+              <div class="input-group-prepend">
+                <span class="input-group-text" id="soundcloud_basic_url">https://www.soundcloud.com/</span>
+              </div>
+              <input type="text" class="form-control" id="soundcloud_url" aria-describedby="soundcloud_basic_url">
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col text-right">
+            <button type="button" class="btn btn-sm btn-success mr-1" (click)="edit()">Edit</button>
+            <button type="button" class="btn btn-sm btn-danger" (click)="goBack()">Cancel</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </form>
+</div>
