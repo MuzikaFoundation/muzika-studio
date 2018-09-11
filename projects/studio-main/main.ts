@@ -3,6 +3,7 @@ import * as path from 'path';
 import { MuzikaAppInstance } from './src/application';
 import { MuzikaConsole } from '../core/common';
 
+const debug = require('debug')('muzika:main:main');
 const isDev = require('electron-is-dev');
 
 MuzikaConsole.chalk = require('chalk');
@@ -17,6 +18,7 @@ try {
  * Adds environment before opening the window.
  */
 function AddEnvVariables() {
+  debug('add environments');
   if (!isDev) {
     // On Windows, add magick enviroment variables
     if (process.platform === 'win32') {
@@ -53,7 +55,7 @@ async function waitForAppReady() {
 
   // wait for app ready
   await new Promise((resolve) => app.once('ready', () => {
-    console.log('app is ready');
+    debug('electron is ready');
     resolve();
   }));
 }

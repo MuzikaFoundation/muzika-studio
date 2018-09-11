@@ -8,10 +8,12 @@ import { IpfsServiceInstance } from './ipfs.service';
 import { StorageServiceInstance } from './storage.service';
 import { MuzikaUpdater } from './auto-update.service';
 import { BlockUtil, MuzikaFilePath } from '../../core/common/models';
-import { IpfsUtil, MuzikaConsole } from '../../core/common';
+import { IpfsUtil } from '../../core/common';
 import { MuzikaFileUploader } from './nodejs/file/muzika-file-uploader';
 import { BlockKey } from './nodejs/block/block-key';
 import { ManualProgress, ProgressSet } from './nodejs/utils';
+
+const debug = require('debug')('muzika:main:ipc-service');
 
 // ipcMain.on('synchronous-message', (event, arg) => {
 //   console.log(arg); // prints "ping"
@@ -113,9 +115,10 @@ export class IpcMainService {
          */
 
           // if encryption parameter is set, generate random AES-256 key for encryption.
-        let aesKey = null;
+        let aesKey: Buffer | null = null;
         if (encryption) {
           aesKey = BlockUtil.generateAESKey();
+          debug(`generating AES key (${aesKey.toString('hex')})`);
         }
         const fileUploader = new MuzikaFileUploader(meta.type || 'sheet', aesKey, meta);
 
@@ -150,7 +153,7 @@ export class IpcMainService {
           downloadProgress
         ]);
         totalProgress.onChange.subscribe(percent => {
-          MuzikaConsole.log(`TOTAL PERCENT : ${percent}%`);
+          debug(`uploading (${Math.floor(percent * 100) / 100})`);
           ipcProgress(percent);
         });
 
@@ -159,7 +162,7 @@ export class IpcMainService {
             const rootObject = IpfsUtil.flatArray2Tree(objects);
             const ipfsObjects = IpfsUtil.tree2flatArray(rootObject);
             let downloadCnt = 0;
-            MuzikaConsole.log('IPFS Root Hash : ', rootObject.hash);
+            debug(`finished to upload (IPFS hash : ${rootObject.hash})`);
 
             // check uploaded files are all alive in IPFS network.
             // test downloads synchronous since too many requests are sometimes rejected.
@@ -173,7 +176,7 @@ export class IpcMainService {
 
           });
         }).catch(err => {
-          MuzikaConsole.error('UPLOAD ERROR', err);
+          debug(`failed to upload`, err);
           ipcReject(err);
         });
       });

@@ -7,7 +7,7 @@ import { map, catchError } from 'rxjs/operators';
 import { Actions } from './store.service';
 import { IpfsObject } from '../../core/common/models';
 import { IpfsUtil } from '../../core/common/structures';
-import { MuzikaConsole } from '../../core/common';
+const debug = require('debug')('muzika:main:ipfs-service');
 
 
 export class IpfsService {
@@ -23,6 +23,7 @@ export class IpfsService {
    * @param ipfsExecPath path of ipfs executable file.
    */
   static setIpfsExecPath(ipfsExecPath: string) {
+    debug('set ipfs program path :', ipfsExecPath);
     IpfsProcess.setIpfsPath(ipfsExecPath);
   }
 
@@ -35,12 +36,14 @@ export class IpfsService {
    */
   async checkObjectAlive(hash: string, timeout?: number, retry?: number) {
     // if retry is not defined, don't retry
+    debug(`check ipfs object alive (hash: ${hash}, timeout: ${timeout}, retry: ${retry}`);
     if (!Number.isInteger(retry)) {
       retry = 1;
     }
 
     // retry checking but failed to response, reject
     if (retry < 1) {
+      debug(`ipfs object is not alive because of timeout (hash: ${hash})`);
       throw new Error('object is not alive');
     }
 
@@ -50,6 +53,7 @@ export class IpfsService {
           // if response from server, check status code and decide
           // whether it is healthy (response code == 200) or not.
           if (response.statusCode !== 200) {
+            debug(`ipfs object is not alive because of fail response (hash: ${hash}`);
             throw new Error('object is not alive');
           }
 
@@ -68,6 +72,7 @@ export class IpfsService {
    * @param directoryPath the directory path for IPFS service to work.
    */
   init(directoryPath: string) {
+    debug('running ipfs process');
     this.ipfsProcess = new IpfsProcess(path.join(directoryPath, 'ipfs-muzika'));
     // if ipfs node generated, connect to a remote storage for speeding up file exchange.
     this.ipfsProcess.on('start', () => this.connectLocalIpfs());
@@ -135,10 +140,12 @@ export class IpfsService {
     return from(this.id()).pipe(
       // if response from ipfs
       map(() => {
+        debug('ipfs is healthy');
         Actions.app.setServiceStatus('ipfs', true);
         return true;
       }),
       catchError(err => {
+        debug('ipfs is not healthy');
         Actions.app.setServiceStatus('ipfs', false);
         return of(false);
       })
@@ -146,7 +153,7 @@ export class IpfsService {
   }
 
   connectLocalIpfs() {
-    MuzikaConsole.log('IPFS node is ready');
+    debug('Connecting to ipfs');
     this.api = IpfsAPI('localhost', '5001', {protocol: 'http'});
     this.isReady = true;
 

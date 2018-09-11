@@ -14,6 +14,8 @@ import { filter, map, mergeMap, take, takeWhile, timeout } from 'rxjs/operators'
 import { WindowType, WinOpts } from './util/window-options';
 import { RenderOptions } from './models/render-options';
 
+const debug = require('debug')('muzika:main:application');
+
 export interface MuzikaAppOptions {
   healthyTimeCheck?: number;                        // the interval time for checking all services alive and restoring
   state?: any;
@@ -38,6 +40,7 @@ export class MuzikaApp {
    * @param {any} _options
    */
   init(_isDevMode: boolean, _options: MuzikaAppOptions = {}) {
+    debug(`initializing application (Develop Mode: ${_isDevMode})`);
     this._isDevMode = _isDevMode;
     this._options = _options;
     this._updateChecker = new MuzikaUpdater();
@@ -52,6 +55,7 @@ export class MuzikaApp {
   }
 
   activate() {
+    debug('activating the application');
     this.mainWindow = this._createLoadingWindow();
     this.mainWindow.on('show', () => {
       this._isAlive = true;
@@ -98,6 +102,7 @@ export class MuzikaApp {
         // error would be raised almost by timeout
         (err) => {
           // TODO: handle timeout error
+          debug('fail to activate (timeout)');
         }
       );
 
@@ -149,26 +154,30 @@ export class MuzikaApp {
    * @param hash fragment portion of URL.
    */
   private _loadURL(window: BrowserWindow, renderPath: string, hash?: string) {
+    let loadURL;
     if (this._isDevMode) {
       // https://github.com/yan-foto/electron-reload/issues/16
       require('electron-reload')(__dirname, {
         electron: require(`${__dirname}/../../../node_modules/electron`)
       });
-      // window.loadURL('http://localhost:4200/' + renderPath + '#/' + hash);
+      loadURL = `localhost:4200/${renderPath}`
       window.loadURL(url.format({
-        pathname: `localhost:4200/${renderPath}`,
+        pathname: loadURL,
         protocol: 'http:',
         slashes: true,
         hash
       }));
     } else {
+      loadURL = path.join(__dirname, '..', 'renderer', renderPath)
       window.loadURL(url.format({
-        pathname: path.join(__dirname, '..', 'renderer', renderPath),
+        pathname: loadURL,
         protocol: 'file:',
         slashes: true,
         hash
       }));
     }
+
+    debug(`loading URL ${loadURL}`);
   }
 
   // noinspection JSMethodCanBeStatic
@@ -182,13 +191,15 @@ export class MuzikaApp {
    * @private
    */
   private _createWindow(windowType: string, options: BrowserWindowConstructorOptions, renderOptions?: RenderOptions) {
+    const renderPlatform = WinOpts.getRenderingPlatform();
     const window = new BrowserWindow(options);
+    debug(`create window (type: ${windowType}, render: ${renderPlatform})`);
 
     // inject some main info to the browser window instance
     // this variables can be used in the electron renderer by `
     // remote.getCurrentWindow().[variable name]`.
     (window as any).store = StoreServiceInstance.store.getState();
-    (window as any).platform = WinOpts.getRenderingPlatform();
+    (window as any).platform = renderPlatform;
     (window as any).renderOptions = Object.assign({}, renderOptions);
     (window as any).windowType = windowType;
     return window;

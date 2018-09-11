@@ -1,9 +1,11 @@
 import { applyMiddleware, createStore, Store } from 'redux';
-import { Observable } from 'rxjs';
+import { Observable } from 'rxjs/index';
 import { map } from 'rxjs/operators';
 import { forwardToRenderer, replayActionMain } from 'electron-redux';
 import { MainAppState, MainRootReducer } from './reducers';
 import { AppActions } from '../../core/common';
+
+const debug = require('debug')('muzika:main:store-service');
 
 export class StoreService {
   store: Store;
@@ -23,6 +25,8 @@ export class StoreService {
     replayActionMain(this.store);
 
     Actions.app = new AppActions(this.store);
+    debug('initializing store');
+    console.dir(this.store.getState(), { depth: null, colors: true });
   }
 
   /**
