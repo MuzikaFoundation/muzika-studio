@@ -44,6 +44,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { ElectronNgrxEffects } from '../providers/electron-ngrx-effects';
 import { remote } from 'electron';
 import {HomeModule} from '../modules/home/home.module';
+import { PopupModule } from '../modules/popup/popup.module';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -119,6 +120,7 @@ declare const document;
     /* Sub-modules */
     HomeModule,
     PostModule,
+    PopupModule,
   ],
   providers: [
     {

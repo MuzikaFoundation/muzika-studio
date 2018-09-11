@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component, Inject, NgZone, PLATFORM_ID } from '@angular/core';
-import { Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { BaseComponent, ExtendedWeb3, UserActions } from '@muzika/core/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { interval } from 'rxjs';
@@ -12,6 +12,7 @@ import { MuzikaConsole } from '@muzika/core';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
 import { RenderOptions } from '../../../studio-main/src/models/render-options';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',

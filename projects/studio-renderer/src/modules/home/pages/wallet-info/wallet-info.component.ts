@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { combineLatest, from } from 'rxjs';
 import { promisify, unitUp, User } from '@muzika/core';
 import { ElectronService } from '../../../../providers/electron.service';
+import { TabService } from '../../../../providers/tab.service';
 
 
 @Component({
@@ -30,6 +31,7 @@ export class WalletInfoComponent extends BaseComponent {
     private web3: ExtendedWeb3,
     private apiConfig: APIConfig,
     private muzikaCoin: MuzikaCoin,
+    private tabService: TabService,
     private electronService: ElectronService,
   ) {
     super();
@@ -64,12 +66,15 @@ export class WalletInfoComponent extends BaseComponent {
           });
         } else {
           this.router.navigate(['/login']);
+
         }
       })
     );
   }
 
   queryAddress() {
-    this.electronService.shell.openExternal(`https://etherscan.io/address/${this.user.address}`);
+    this.tabService.changeTab('popup');
+    this.router.navigate([{outlets: { popup: 'web' }}], { queryParams: { url: `https://etherscan.io/address/${this.user.address}` } });
+    // this.electronService.shell.openExternal(`https://etherscan.io/address/${this.user.address}`);
   }
 }

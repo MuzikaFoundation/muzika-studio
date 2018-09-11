@@ -6,9 +6,7 @@
       <ng-container *ngIf="user">{{user.address}}</ng-container>
       <ng-container *ngIf="!user">-</ng-container>
     </span>
-    <a href="#" *ngIf="user" (click)="queryAddress()">
-      <button type="button" class="btn btn-sm btn-success view-etherscan" *ngIf="!!user.address">View</button>
-    </a>
+      <button type="button" class="btn btn-sm btn-success view-etherscan" *ngIf="user && !!user.address" (click)="queryAddress()">View</button>
   </div>
 </div>
 

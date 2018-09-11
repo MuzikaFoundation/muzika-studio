@@ -16,4 +16,4 @@ export class TabService {
   }
 }
 
-export type MuzikaTabs = 'viewer' | 'wallet' | 'floating-wallet' | 'home';
+export type MuzikaTabs = 'viewer' | 'wallet' | 'floating-wallet' | 'home' | 'popup';
