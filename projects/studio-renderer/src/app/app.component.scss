@@ -31,6 +31,12 @@
       }
     }
 
+    &:not(.popup) {
+      .popup {
+        display: none;
+      }
+    }
+
     &:not(.floating-wallet) {
       .wallet-content {
         .floating-close {

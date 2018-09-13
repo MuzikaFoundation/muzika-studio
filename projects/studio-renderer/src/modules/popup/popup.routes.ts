@@ -10,19 +10,12 @@ const routes: Routes = [
 @NgModule({
   imports: [
     RouterModule.forChild([
-      // { path: 'popup', pathMatch: 'full', redirectTo: '/(popup:web)' },
       {
         path: '',
         outlet: 'popup',
         component: PopupLayoutComponent,
         children: [...routes]
       },
-      // {
-      //   path: 'web',
-      //   pathMatch: 'full',
-      //   outlet: 'popup',
-      //   component: WebPopupComponent,
-      // }
     ])
   ],
   exports: [

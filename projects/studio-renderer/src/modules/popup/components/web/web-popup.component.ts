@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class WebPopupComponent extends BaseComponent {
   url: string;
+  webview: any;
 
   constructor(
    private route: ActivatedRoute
@@ -18,10 +19,18 @@ export class WebPopupComponent extends BaseComponent {
   }
 
   ngOnInit() {
+    this.webview = document.querySelector('webview');
+
     this._sub.push(
       this.route.queryParams.subscribe(params => {
         this.url = params.url;
       })
     );
+
+    this.webview.addEventListener('did-finish-load', this.onFinishLoad);
+  }
+
+  onFinishLoad() {
+    console.log('finished!');
   }
 }

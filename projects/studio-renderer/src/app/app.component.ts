@@ -81,6 +81,10 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
     }
   }
 
+  closePopup() {
+    this.tabService.changeTab('viewer');
+  }
+
   closeFloating() {
     this.tabService.changeTab('viewer');
   }

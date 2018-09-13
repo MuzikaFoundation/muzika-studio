@@ -51,7 +51,7 @@ export class LoginPageComponent extends BaseComponent {
       user => {
         const redirectTo = this.route.snapshot.queryParams['redirectTo'] || '/home';
         this.router.navigateByUrl(redirectTo);
-        this.tabService.changeTab('home');
+        this.tabService.changeTab('viewer');
       },
       error => {
         MuzikaConsole.error(error);

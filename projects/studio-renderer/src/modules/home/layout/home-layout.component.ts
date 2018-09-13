@@ -3,7 +3,6 @@ import {BaseComponent, UserActions} from '@muzika/core/angular';
 import { NavigationStart, Router } from '@angular/router';
 import { User } from '@muzika/core';
 
-
 @Component({
   selector: 'home-layout',
   templateUrl: './home-layout.component.html',
@@ -28,12 +27,12 @@ export class HomeLayoutComponent extends BaseComponent {
       })
     );
 
-    this.currentPage = this.router.url;
+    this.currentPage = this.router.url.replace(/(\(.*\))|([?&].*=.*)/gi, '');
 
     this._sub.push(
       this.router.events.subscribe((event) => {
         if (event instanceof NavigationStart) {
-          this.currentPage = event.url;
+          this.currentPage = event.url.replace(/(\(.*\))|([?&].*=.*)/gi, '');
         }
       })
     );

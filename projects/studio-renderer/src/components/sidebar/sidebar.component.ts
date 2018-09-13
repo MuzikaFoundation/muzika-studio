@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import {BaseComponent, UserActions} from '@muzika/core/angular';
 import { User } from '@muzika/core';
 import {MuzikaTabs, TabService} from '../../providers/tab.service';
-import {Router} from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,7 +11,7 @@ import {Router} from '@angular/router';
 })
 export class SideBarComponent extends BaseComponent {
   currentUser: User = null;
-  currentTab: string;
+  currentMenu = 'home';
 
   constructor(
     private tabService: TabService,
@@ -26,13 +26,21 @@ export class SideBarComponent extends BaseComponent {
     );
 
     this._sub.push(
-      this.tabService.tabChange.subscribe(tabName => this.currentTab = tabName)
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationEnd) {
+          const url = event.url;
+          if (url.startsWith('/home')) {
+            this.currentMenu = 'home';
+          } else if (url.startsWith('/board')) {
+            this.currentMenu = 'studio';
+          }
+        }
+      })
     );
+
   }
 
-  changeTab(tabName: MuzikaTabs, link: string) {
-    this.currentTab = tabName;
-    this.tabService.changeTab(tabName);
-    this.router.navigate([link]);
+  changeMenu(link: any[]) {
+    this.router.navigate(link);
   }
 }

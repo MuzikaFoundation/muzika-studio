@@ -17,7 +17,7 @@
           <router-outlet name="wallet"></router-outlet>
         </div>
 
-        <div class="popup">
+        <div class="popup" (click)="closePopup()" *ngIf="currentTab === 'popup'">
           <router-outlet name="popup"></router-outlet>
         </div>
 
