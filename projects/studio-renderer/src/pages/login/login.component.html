@@ -59,26 +59,50 @@
 </div>
 -->
 
-<div class="select-account">
-  <h2> Select your account </h2>
-  <select class="form-control mt-3" id="account" name="account" [(ngModel)]="selectedAccount">
-    <option *ngFor="let account of accounts" [value]="account">
-      {{account}}
-    </option>
-  </select>
+<div class="login">
+  <div class="row mt-1 blockchain-select">
+    <div class="btn-group btn-group-toggle protocol-select" data-toggle="buttons">
+      <label class="btn btn-sm btn-outline-dark" [class.active]="protocol === 'eth'">
+        <input type="radio" name="options" autocomplete="off" (click)="switchProtocol('eth')"> Ethereum
+      </label>
 
-  <div class="row mt-3 login-btns">
-    <button type="button" class="btn btn-success mr-1" (click)="login()"> Login </button>
-    <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Account </button>
+      <label class="btn btn-sm btn-outline-dark" [class.active]="protocol === 'ont'">
+        <input type="radio" name="options" autocomplete="off" (click)="switchProtocol('ont')"> Ontology
+      </label>
+    </div>
+
+    <div class="btn-group btn-group-toggle network-select">
+      <label class="btn btn-sm btn-outline-dark" [class.active]="network === 'mainnet'">
+        <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('mainnet')"> MainNet
+      </label>
+
+      <label class="btn btn-sm btn-outline-dark" [class.active]="network === 'testnet'">
+        <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('testnet')"> TestNet
+      </label>
+    </div>
   </div>
 
-  <div class="warning" *ngIf="warningMessage !== ''">
-    {{ warningMessage }}
-  </div>
+  <div class="select-account mt-2">
+    <h2> Select your account </h2>
+    <select class="form-control mt-3" id="account" name="account" [(ngModel)]="selectedAccount">
+      <option *ngFor="let account of accounts" [value]="account">
+        {{account}}
+      </option>
+    </select>
 
-  <div class="row other-link mt-1">
-    <div>
-      <a [routerLink]="" (click)="goToWalletManager()">Want to Manage all your accounts?</a>
+    <div class="row mt-3 login-btns">
+      <button type="button" class="btn btn-success mr-1" (click)="login()"> Login </button>
+      <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Account </button>
+    </div>
+
+    <div class="warning" *ngIf="warningMessage !== ''">
+      {{ warningMessage }}
+    </div>
+
+    <div class="row other-link mt-1">
+      <div>
+        <a [routerLink]="" (click)="goToWalletManager()">Want to Manage all your accounts?</a>
+      </div>
     </div>
   </div>
 </div>

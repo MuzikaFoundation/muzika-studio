@@ -160,7 +160,7 @@ export class MuzikaApp {
       require('electron-reload')(__dirname, {
         electron: require(`${__dirname}/../../../node_modules/electron`)
       });
-      loadURL = `localhost:4200/${renderPath}`
+      loadURL = `localhost:4200/${renderPath}`;
       window.loadURL(url.format({
         pathname: loadURL,
         protocol: 'http:',
@@ -168,7 +168,7 @@ export class MuzikaApp {
         hash
       }));
     } else {
-      loadURL = path.join(__dirname, '..', 'renderer', renderPath)
+      loadURL = path.join(__dirname, '..', 'renderer', renderPath);
       window.loadURL(url.format({
         pathname: loadURL,
         protocol: 'file:',

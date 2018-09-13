@@ -8,6 +8,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { PopupRouteModule } from './popup.routes';
 import { PopupLayoutComponent } from './popup-layout.component';
 import { WebPopupComponent } from './components/web/web-popup.component';
+import { WalletManagerComponent } from './components/wallet-manager/wallet-manager.component';
 
 @NgModule({
   schemas: [ NO_ERRORS_SCHEMA ],
@@ -28,6 +29,7 @@ import { WebPopupComponent } from './components/web/web-popup.component';
   ],
   declarations: [
     PopupLayoutComponent,
+    WalletManagerComponent,
     WebPopupComponent,
   ],
   exports: [
