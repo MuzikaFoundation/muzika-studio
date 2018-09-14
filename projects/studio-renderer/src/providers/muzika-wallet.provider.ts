@@ -12,14 +12,15 @@ import * as deserializeError from 'deserialize-error';
 
 @Injectable({providedIn: 'root'})
 export class MuzikaWalletProvider implements Web3Provider {
-  private engine: ProviderEngine;
+  private readonly engine: ProviderEngine;
+  private readonly _rpcProvider: RpcSubprovider;
 
-  constructor(@Inject('RPC_URL') private rpcUrl: string,
+  constructor(@Inject('RPC_URL') private _rpcUrl: string,
               private electronService: ElectronService,
               private tabService: TabService,
               private zone: NgZone,
               private router: Router) {
-    const rpcProvider = new RpcSubprovider({rpcUrl});
+    this._rpcProvider = new RpcSubprovider({ rpcUrl: _rpcUrl });
 
     const opts = {
       getAccounts: (cb: (error, ...args) => any) => {
@@ -46,7 +47,7 @@ export class MuzikaWalletProvider implements Web3Provider {
     this.engine = new ProviderEngine({pollingInterval: 10000});
     this.engine.addProvider(new FiltersSubprovider());
     this.engine.addProvider(new HookedWalletSubprovider(opts));
-    this.engine.addProvider(rpcProvider);
+    this.engine.addProvider(this._rpcProvider);
     this.engine.start(); // Required by the provider engine.
   }
 
@@ -98,5 +99,9 @@ export class MuzikaWalletProvider implements Web3Provider {
       }
     });
     this.electronService.ipcRenderer.send('Wallet:signPersonalMessage', uuid, msgParams);
+  }
+
+  set rpcUrl(url: string) {
+    this._rpcProvider.rpcUrl = url;
   }
 }

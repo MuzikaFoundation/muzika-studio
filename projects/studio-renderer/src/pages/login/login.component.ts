@@ -4,11 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IAppState, MuzikaConsole, promisify } from '@muzika/core';
 import { BaseComponent, ExtendedWeb3, MuzikaWeb3Service, UserActions } from '@muzika/core/angular';
 import {TabService} from '../../providers/tab.service';
-import * as ethWallet from 'ethereumjs-wallet';
-import * as ethUtil from 'ethereumjs-util';
 import {WalletStorageService} from '../../modules/wallet/services/wallet-storage.service';
 import { Store } from '@ngrx/store';
 import { take } from 'rxjs/operators';
+import { BlockChainClientProvider } from '../../providers/blockchain-client.provider';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-page-login',
@@ -16,7 +16,6 @@ import { take } from 'rxjs/operators';
   styleUrls: ['./login.component.scss']
 })
 export class LoginPageComponent extends BaseComponent {
-  currentWalletProvider = 'private';
   selectedAccount: string;
   accounts: string[];
   warningMessage = '';
@@ -29,27 +28,32 @@ export class LoginPageComponent extends BaseComponent {
   constructor(
     private store: Store<IAppState>,
     private userActions: UserActions,
+    private bcClient: BlockChainClientProvider,
     private walletStorage: WalletStorageService,
     private router: Router,
     private route: ActivatedRoute,
     private tabService: TabService,
-    private web3Service: MuzikaWeb3Service,
-    private web3: ExtendedWeb3
   ) {
     super();
   }
 
   ngOnInit() {
     super.ngOnInit();
-    promisify(this.web3.eth.getAccounts).then(accounts => {
-      this.accounts = accounts;
-    });
 
     // get block chain protocol and network from store.
     const protocol$ = this.store.select('app', 'protocol');
     const network$ = this.store.select('app', 'network');
-    protocol$.pipe(take(1)).subscribe((protocol) => this.protocol = protocol);
-    network$.pipe(take(1)).subscribe((network) => this.network = network);
+
+    combineLatest(protocol$, network$)
+      .subscribe(([protocol, network]) => {
+        console.log(`protocol : ${protocol} / network : ${network}`);
+        this.protocol = protocol;
+        this.network = network;
+
+        this._getWallets().then(() => {
+          this.selectedAccount = '';
+        });
+      });
   }
 
 
@@ -72,13 +76,11 @@ export class LoginPageComponent extends BaseComponent {
     );
   }
 
-  createWallet() {
-    const wallet = ethWallet.generate();
-    this.walletStorage.addWallet(ethUtil.bufferToHex(wallet.getPrivateKey()));
-    promisify(this.web3.eth.getAccounts).then(accounts => {
-      this.accounts = accounts;
-      this.selectedAccount = this.accounts[this.accounts.length - 1];
-    });
+  async createWallet() {
+    const privateKey = this.bcClient.randomPrivateKey();
+    this.bcClient.addWallet(privateKey);
+    await this._getWallets();
+    this.selectedAccount = this.accounts[this.accounts.length - 1];
   }
 
   goToWalletManager() {
@@ -87,10 +89,15 @@ export class LoginPageComponent extends BaseComponent {
   }
 
   switchProtocol(protocol: 'eth' | 'ont') {
-    this.protocol = protocol;
+    this.bcClient.protocol = protocol;
   }
 
-  switchNetwork(network: 'mainnet' | 'testnet') {
-    this.network = network;
+  switchNetwork(network: 'mainNet' | 'testNet') {
+    this.bcClient.network = network;
+  }
+
+  private async _getWallets() {
+    this.accounts = await this.bcClient.getWallets();
+    return this.accounts;
   }
 }

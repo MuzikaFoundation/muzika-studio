@@ -1,64 +1,3 @@
-<!--
-<div class="jumbotron">
-  <h2>
-    Welcome to Muzika
-  </h2> <BR />
-  <div class="row">
-    <div class="col-sm-4">
-      <h4>
-        How would you like to access your wallet?
-      </h4>
-      <div class="form-group">
-        <BR/>
-        <mat-radio-group class="example-radio-group" [(ngModel)]="currentWalletProvider">
-          <mat-radio-button [value]="'addressOnly'">
-            View w/ Address Only
-          </mat-radio-button>
-          <BR/>
-          <mat-radio-button [value]="'metamask'">
-            Metamask / Mist
-          </mat-radio-button>
-          <BR/>
-          <mat-radio-button [value]="'ledger'">
-            Ledger Wallet
-          </mat-radio-button>
-          <BR/>
-          <mat-radio-button [value]="'keystore'">
-            Keystore File
-          </mat-radio-button>
-          <BR/>
-          <mat-radio-button [value]="'private'">
-            Private Key
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
-    </div>
-    <div class="col-sm" [ngSwitch]="currentWalletProvider">
-      <div *ngSwitchCase="'addressOnly'">
-        <wallet-address-only-selector></wallet-address-only-selector>
-      </div>
-
-      <div *ngSwitchCase="'metamask'">
-        <wallet-metamask-selector></wallet-metamask-selector>
-      </div>
-
-      <div *ngSwitchCase="'ledger'">
-        <wallet-ledger-selector></wallet-ledger-selector>
-      </div>
-
-      <div *ngSwitchCase="'keystore'">
-        <wallet-keystore-selector></wallet-keystore-selector>
-      </div>
-
-      <div *ngSwitchCase="'private'">
-        <wallet-private-key-selector></wallet-private-key-selector>
-      </div>
-
-    </div>
-  </div>
-</div>
--->
-
 <div class="login">
   <div class="row mt-1 blockchain-select">
     <div class="btn-group btn-group-toggle protocol-select" data-toggle="buttons">
@@ -72,12 +11,12 @@
     </div>
 
     <div class="btn-group btn-group-toggle network-select">
-      <label class="btn btn-sm btn-outline-dark" [class.active]="network === 'mainnet'">
-        <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('mainnet')"> MainNet
+      <label class="btn btn-sm btn-outline-dark" [class.active]="network === 'mainNet'">
+        <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('mainNet')"> MainNet
       </label>
 
-      <label class="btn btn-sm btn-outline-dark" [class.active]="network === 'testnet'">
-        <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('testnet')"> TestNet
+      <label class="btn btn-sm btn-outline-dark" [class.active]="network === 'testNet'">
+        <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('testNet')"> TestNet
       </label>
     </div>
   </div>
@@ -85,13 +24,16 @@
   <div class="select-account mt-2">
     <h2> Select your account </h2>
     <select class="form-control mt-3" id="account" name="account" [(ngModel)]="selectedAccount">
+      <!-- For solving data binding problem after switching protocol -->
+      <option value="" style="display: none"></option>
+      <!--------------------------------------------------------------->
       <option *ngFor="let account of accounts" [value]="account">
         {{account}}
       </option>
     </select>
 
     <div class="row mt-3 login-btns">
-      <button type="button" class="btn btn-success mr-1" (click)="login()"> Login </button>
+      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount"> Login </button>
       <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Account </button>
     </div>
 

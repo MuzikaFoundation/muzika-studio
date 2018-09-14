@@ -40,6 +40,7 @@
     "jquery": "^3.3.1",
     "ngx-bootstrap": "^3.0.1",
     "ngx-uploader": "^6.0.2",
+    "ontology-ts-sdk": "^0.9.4",
     "popper.js": "^1.14.3",
     "redux": "^4.0.0",
     "rxjs": "6.2.0",
