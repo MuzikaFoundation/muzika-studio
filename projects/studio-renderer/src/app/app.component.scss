@@ -31,12 +31,6 @@
       }
     }
 
-    &:not(.popup) {
-      .popup {
-        display: none;
-      }
-    }
-
     &:not(.floating-wallet) {
       .wallet-content {
         .floating-close {
@@ -81,22 +75,14 @@
       }
   }
 
-    &.popup {
-      .wallet-content {
-        display: none;
-      }
-
-      .popup {
-        background: rgba(0, 0, 0, 0.5);
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        padding: 5% 10%;
-        left: 0;
-        top: 0;
-        z-index: 11;
-      }
-    }
+  .popup {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 11;
+  }
 
   .content-area {
     width: 100%;

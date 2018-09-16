@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { combineLatest, from } from 'rxjs';
 import { promisify, unitUp, User } from '@muzika/core';
 import { ElectronService } from '../../../../providers/electron.service';
-import { TabService } from '../../../../providers/tab.service';
+import { PopupService } from '../../../../providers/popup.service';
 
 
 @Component({
@@ -31,7 +31,7 @@ export class WalletInfoComponent extends BaseComponent {
     private web3: ExtendedWeb3,
     private apiConfig: APIConfig,
     private muzikaCoin: MuzikaCoin,
-    private tabService: TabService,
+    private popupService: PopupService,
     private electronService: ElectronService,
   ) {
     super();
@@ -73,8 +73,6 @@ export class WalletInfoComponent extends BaseComponent {
   }
 
   queryAddress() {
-    this.tabService.changeTab('popup');
-    this.router.navigate([{outlets: { popup: 'web' }}], { queryParams: { url: `https://etherscan.io/address/${this.user.address}` } });
-    // this.electronService.shell.openExternal(`https://etherscan.io/address/${this.user.address}`);
+    this.popupService.activate('web', { queryParams: { url: `https://etherscan.io/address/${this.user.address}` } });
   }
 }

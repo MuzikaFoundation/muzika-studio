@@ -20,7 +20,7 @@ export class WalletHomeComponent implements OnInit, OnDestroy {
   ngOnInit() {
     const getAccountsListener = (event, uuid) => {
       this.zone.run(() => {
-        event.sender.send('WalletProvider:getAccounts', uuid, null, this.walletStorage.accounts);
+        event.sender.send('WalletProvider:getAccounts', uuid, null, this.walletStorage.accounts.map(account => account.address));
       });
     };
 

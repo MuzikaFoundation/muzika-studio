@@ -17,9 +17,11 @@ export class OntologyWalletStorageService {
   ) {
   }
 
-  get accounts(): string[] {
+  get accounts(): any[] {
     const currentState: any[] = JSON.parse(this.localStorage.getItem(ONT_WALLET_KEY, '[]'));
-    return currentState.map(state => state.accounts[0].address);
+    return currentState.map(state => {
+      return { name: state.name, address: state.accounts[0].address };
+    });
   }
 
   get walletsObs(): Observable<string[]> {

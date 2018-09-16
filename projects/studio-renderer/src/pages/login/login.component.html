@@ -27,18 +27,21 @@
       <!-- For solving data binding problem after switching protocol -->
       <option value="" style="display: none"></option>
       <!--------------------------------------------------------------->
-      <option *ngFor="let account of accounts" [value]="account">
-        {{account}}
+      <option *ngFor="let account of accounts" [value]="account.address" class="test">
+        {{account.name}} ({{account.address}})
       </option>
     </select>
 
-    <div class="row mt-3 login-btns">
-      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount"> Login </button>
-      <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Account </button>
-    </div>
+    <input type="password" class="form-control mt-2" id="password" name="password" placeholder="Password"
+           *ngIf="protocol === 'ont'" [disabled]="!selectedAccount" [(ngModel)]="selectedPassword">
 
     <div class="warning" *ngIf="warningMessage !== ''">
       {{ warningMessage }}
+    </div>
+
+    <div class="row mt-3 login-btns">
+      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount || protocol === 'ont'"> Login </button>
+      <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Account </button>
     </div>
 
     <div class="row other-link mt-1">

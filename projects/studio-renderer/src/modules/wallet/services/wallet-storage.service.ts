@@ -6,6 +6,11 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import {map} from 'rxjs/operators';
 import * as serializeError from 'serialize-error';
 
+export interface EthWalletInfo {
+  name: string;
+  privateKey: string;
+}
+
 @Injectable({providedIn: 'root'})
 export class WalletStorageService {
   private _stateChange: BehaviorSubject<boolean> = new BehaviorSubject(false);
@@ -21,20 +26,21 @@ export class WalletStorageService {
     return this._eventSignTransaction.asObservable();
   }
 
-  get accounts(): string[] {
-    const currentState: string[] = JSON.parse(this.localStorage.getItem('wallets', '[]'));
+  get accounts(): any[] {
+    const currentState: EthWalletInfo[] = JSON.parse(this.localStorage.getItem('eth-wallets', '[]'));
 
-    return currentState.map(key => {
+    return currentState.map(state => {
+      const key = state.privateKey;
       const address = ethUtil.privateToAddress(ethUtil.toBuffer(key));
 
-      return ethUtil.toChecksumAddress(ethUtil.bufferToHex(address));
+      return { name: state.name, address: ethUtil.toChecksumAddress(ethUtil.bufferToHex(address)) };
     });
   }
 
   get walletsObs(): Observable<string[]> {
     return this._stateChange.asObservable().pipe(
       map(() => {
-        return JSON.parse(this.localStorage.getItem('wallets', '[]'));
+        return JSON.parse(this.localStorage.getItem('eth-wallets', '[]'));
       })
     );
   }
@@ -43,42 +49,46 @@ export class WalletStorageService {
     return this._eventSignPersonalMessage.asObservable();
   }
 
-  addWallet(privateKey: string): void {
-    const currentState: string[] = JSON.parse(this.localStorage.getItem('wallets', '[]'));
+  addWallet(name: string, privateKey: string): void {
+    const currentState: EthWalletInfo[] = JSON.parse(this.localStorage.getItem('eth-wallets', '[]'));
 
     privateKey = ethUtil.addHexPrefix(privateKey);
     if (ethUtil.isValidPrivate(ethUtil.toBuffer(privateKey))) {
-      if (currentState.indexOf(privateKey) === -1) {
-        currentState.push(privateKey);
-        this.localStorage.setItem('wallets', JSON.stringify(currentState));
-        this._stateChange.next(true);
+      // if wallet name does not exist, add it
+      if (currentState.findIndex((state) => (state.name === name)) === -1) {
+        currentState.push(<EthWalletInfo>{ name, privateKey });
+        this.localStorage.setItem('eth-wallets', JSON.stringify(currentState));
       } else {
+        // if wallet name already exists, alert error
         AlertifyInstnace.alert('Already exists in your wallets');
       }
     } else {
+      // if invalid private key format
       AlertifyInstnace.alert('Invalid Private key');
     }
   }
 
   hasPrivateKeyOf(address: string): boolean {
-    const currentState: string[] = JSON.parse(this.localStorage.getItem('wallets', '[]'));
+    const currentState: EthWalletInfo[] = JSON.parse(this.localStorage.getItem('eth-wallets', '[]'));
 
-    return currentState.findIndex(key => {
+    return currentState.findIndex(state => {
+      const key = state.privateKey;
       return ethUtil.bufferToHex(ethUtil.privateToAddress(ethUtil.toBuffer(key))) === address.toLowerCase();
     }) !== -1;
   }
 
   privateKeyOf(address: string): Buffer {
-    const currentState: string[] = JSON.parse(this.localStorage.getItem('wallets', '[]'));
+    const currentState: EthWalletInfo[] = JSON.parse(this.localStorage.getItem('eth-wallets', '[]'));
 
-    const filter = currentState.filter(key => {
+    const filter = currentState.filter(state => {
+      const key = state.privateKey;
       return ethUtil.bufferToHex(ethUtil.privateToAddress(ethUtil.toBuffer(key))) === address.toLowerCase();
     });
 
     if (filter.length === 0) {
       throw new Error(`Unknown address - unable to sign message for this address: "${address}"`);
     } else {
-      return ethUtil.toBuffer(filter[0]);
+      return ethUtil.toBuffer(filter[0].privateKey);
     }
   }
 

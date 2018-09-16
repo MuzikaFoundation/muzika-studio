@@ -53,7 +53,7 @@ export class BlockChainClientProvider {
     switch (this.protocol) {
       case 'eth':
         const wallet = ethWallet.generate();
-        return wallet.getPrivateKey();
+        return wallet.getPrivateKey().toString('hex');
 
       case 'ont':
         return Crypto.PrivateKey.random();
@@ -66,13 +66,13 @@ export class BlockChainClientProvider {
    * @param name the name of wallet.
    * @param password password of wallet.
    */
-  addWallet(privateKey: string | Crypto.PrivateKey = '', name: string = '', password: string = '') {
+  addWallet(name: string, privateKey: string | Crypto.PrivateKey, password: string = '') {
     switch (this.protocol) {
       case 'eth':
         if (privateKey instanceof Crypto.PrivateKey) {
           throw new Error('Unsupported parameter type');
         }
-        this.ethWalletStorage.addWallet(privateKey);
+        this.ethWalletStorage.addWallet(name, privateKey);
         break;
 
       case 'ont':
@@ -90,10 +90,10 @@ export class BlockChainClientProvider {
   /**
    * Gets a wallet list from the current blockchain protocol.
    */
-  async getWallets(): Promise<string[]> {
+  async getWallets(): Promise<any[]> {
     switch (this.protocol) {
       case 'eth':
-        return await promisify((<Web3>this._client).eth.getAccounts);
+        return await Promise.resolve(this.ethWalletStorage.accounts);
       case 'ont':
         return await Promise.resolve(this.ontWalletStorage.accounts);
     }

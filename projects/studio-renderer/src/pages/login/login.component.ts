@@ -1,14 +1,14 @@
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IAppState, MuzikaConsole, promisify } from '@muzika/core';
-import { BaseComponent, ExtendedWeb3, MuzikaWeb3Service, UserActions } from '@muzika/core/angular';
+import { IAppState, MuzikaConsole } from '@muzika/core';
+import { BaseComponent, UserActions } from '@muzika/core/angular';
 import {TabService} from '../../providers/tab.service';
 import {WalletStorageService} from '../../modules/wallet/services/wallet-storage.service';
 import { Store } from '@ngrx/store';
-import { take } from 'rxjs/operators';
 import { BlockChainClientProvider } from '../../providers/blockchain-client.provider';
 import { combineLatest } from 'rxjs';
+import { PopupService } from '../../providers/popup.service';
 
 @Component({
   selector: 'app-page-login',
@@ -17,6 +17,7 @@ import { combineLatest } from 'rxjs';
 })
 export class LoginPageComponent extends BaseComponent {
   selectedAccount: string;
+  selectedPassword: string;
   accounts: string[];
   warningMessage = '';
   protocol: string;
@@ -33,6 +34,7 @@ export class LoginPageComponent extends BaseComponent {
     private router: Router,
     private route: ActivatedRoute,
     private tabService: TabService,
+    private popupService: PopupService,
   ) {
     super();
   }
@@ -44,16 +46,24 @@ export class LoginPageComponent extends BaseComponent {
     const protocol$ = this.store.select('app', 'protocol');
     const network$ = this.store.select('app', 'network');
 
-    combineLatest(protocol$, network$)
-      .subscribe(([protocol, network]) => {
-        console.log(`protocol : ${protocol} / network : ${network}`);
-        this.protocol = protocol;
-        this.network = network;
+    this._sub.push(
+      combineLatest(protocol$, network$)
+        .subscribe(([protocol, network]) => {
+          this.protocol = protocol;
+          this.network = network;
 
-        this._getWallets().then(() => {
-          this.selectedAccount = '';
-        });
-      });
+          this._getWallets().then(() => {
+            this.selectedAccount = '';
+            this.selectedPassword = '';
+          });
+        })
+    );
+
+    this._sub.push(
+      this.tabService.tabChange.subscribe(() => {
+        this._getWallets().then(() => {});
+      })
+    );
   }
 
 
@@ -77,19 +87,22 @@ export class LoginPageComponent extends BaseComponent {
   }
 
   async createWallet() {
-    const privateKey = this.bcClient.randomPrivateKey();
-    this.bcClient.addWallet(privateKey);
-    await this._getWallets();
-    this.selectedAccount = this.accounts[this.accounts.length - 1];
+    this.popupService.activate('wallet-generate',  { queryParams: { genType: 'generate' } });
   }
 
   goToWalletManager() {
-    this.tabService.changeTab('popup');
-    this.router.navigate([{ outlets: { popup: 'wallet-manager' } }]);
+    this.router.navigate([{ outlets: { wallet: 'wallet-list' } }]);
+    this.tabService.changeTab('wallet');
   }
 
   switchProtocol(protocol: 'eth' | 'ont') {
     this.bcClient.protocol = protocol;
+
+    this.warningMessage = '';
+
+    if (protocol === 'ont') {
+      this.warningMessage = 'Sorry, but it does not yet support ontology login.';
+    }
   }
 
   switchNetwork(network: 'mainNet' | 'testNet') {

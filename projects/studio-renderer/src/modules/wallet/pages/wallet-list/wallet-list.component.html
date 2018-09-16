@@ -1,95 +1,45 @@
-<div class="row">
-  <div class="col wallets">
-    <h3 class="text-center">
-      Wallets
-    </h3>
 
-    <hr>
-
-    <div *ngIf="accounts.length > 0" class="wallet-list">
-      <ul class="account-list list-group">
-        <li *ngFor="let account of accounts" class="list-group-item"
-            (click)="selectAccount(account.address)" [class.active]="selectedAccount === account.address">
-          <div class="address">
-            {{account.address}}
-          </div>
-          <div class="balances d-flex justify-content-between">
-            <span> {{account.eth | number}} ETH </span>
-            <span> {{account.mzk | number}} MZK </span>
-          </div>
-        </li>
-      </ul>
-    </div>
-    <div *ngIf="accounts.length === 0" class="flex-grow-1 no-wallet">
-      No wallet
-    </div>
-
-    <hr>
-
-    <div class="buttons d-flex justify-content-between">
-      <button type="button" class="btn btn-dark" (click)="createWallet()">
-        <i class="fa fa-plus-square" style="margin-right: 4px;"></i> Create wallet
-      </button>
-      <button type="button" class="btn btn-dark" (click)="importWallet()">
-        <i class="fa fa-upload" style="margin-right: 4px;"></i> Import wallet
-      </button>
+<div class="wallet-list">
+  <div class="topbar">
+    <button type="button" class="btn btn-sm btn-danger" (click)="goBack()">Go Back</button>
+    <div class="blockchain-info">
+      <span class="badge badge-pill badge-success mr-1" *ngIf="!!blockChain.protocol">
+        <ng-container *ngIf="blockChain.protocol === 'eth'">ETH</ng-container>
+        <ng-container *ngIf="blockChain.protocol === 'ont'">ONT</ng-container>
+      </span>
+      <span class="badge badge-pill badge-dark" *ngIf="!!blockChain.protocol">
+        <ng-container *ngIf="blockChain.network === 'mainNet'">MainNet</ng-container>
+        <ng-container *ngIf="blockChain.network === 'testNet'">TestNet</ng-container>
+      </span>
     </div>
   </div>
-  <div class="col">
-    <div class="send-token">
-      <div *ngIf="selectedAccount" class="transaction">
-        <div class="font-weight-bold"> From </div>
-        <p> {{selectedAccount}} </p>
 
-        <div class="form-group">
-          <div class="font-weight-bold"> To </div>
-          <input type="text" class="form-control" id="txTo" name="txTo" [(ngModel)]="tx.to" (blur)="estimate()">
-        </div>
-
-        <div class="form-group">
-          <div class="font-weight-bold"> Amount </div>
-          <div class="input-group">
-            <input type="number" class="form-control" id="txValue" name="txValue" [(ngModel)]="tx.value" (blur)="estimate()">
-            <div class="input-group-append input-group-text">
-              MZK
+  <div class="wallet-info">
+    <div class="list">
+      <div class="accounts mb-2">
+        <ul class="list-group">
+          <li *ngFor="let account of accounts" class="list-group-item list-group-item-action">
+            <h5>{{ account.name }}&nbsp;</h5>
+            <span>{{ account.address }}</span>
+            <div class="d-flex justify-content-between">
+              <span>{{ account.eth }} <small>ETH</small></span>
+              <span>{{ account.mzk }} <small>MZK</small></span>
             </div>
-          </div>
-        </div>
-
-        <div class="form-group">
-          <div class="font-weight-bold"> Gas Limit </div>
-          <input type="number" class="form-control" id="txGas" name="txGas" [(ngModel)]="tx.gas">
-        </div>
-
-        <div class="form-group">
-          <div class="font-weight-bold"> Gas Price </div>
-          <div class="input-group">
-            <input type="number" class="form-control" id="txGasPrice" name="txGasPrice" [(ngModel)]="tx.gasPrice">
-            <div class="input-group-append input-group-text">
-              Gwei
-            </div>
-          </div>
-        </div>
-
-        <button class="btn btn-primary float-right" (click)="sendMZK()"> Sign &amp; Send </button>
-
-        <div class="clearfix"></div>
-
-        <div *ngIf="sentTxHash" class="text-center">
-          <h3> <i class="fa fa-check text-success"></i> </h3>
-          <h4> Broadcast success </h4>
-
-          <table class="table">
-            <tr>
-              <td> <a href="#" (click)="$event.preventDefault();goScan(sentTxHash)"> {{sentTxHash}} </a> </td>
-            </tr>
-          </table>
-        </div>
+          </li>
+        </ul>
       </div>
 
-      <div *ngIf="!selectedAccount" class="no-messages">
-        Select Account to Transfer
+      <div class="d-flex justify-content-between">
+        <div>
+          <button type="button" class="btn btn-primary" (click)="newWallet()">New Wallet</button>
+          <button type="button" class="btn btn-primary ml-2" (click)="import()">Import</button>
+        </div>
+        <button type="button" class="btn btn-danger" [disabled]="!selectedAccount">Delete</button>
       </div>
+    </div>
+
+    <div class="detail">
+      d
     </div>
   </div>
 </div>

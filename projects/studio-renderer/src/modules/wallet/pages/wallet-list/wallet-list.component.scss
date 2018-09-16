@@ -1,83 +1,65 @@
-:host {
-  display: block;
-  padding: 16px;
-  height: 100%;
-}
 
-.row {
-  height: 100%;
-}
-
-.wallets {
+.wallet-list {
   display: flex;
   flex-direction: column;
+  padding: 20px;
+  height: 100%;
 
-  hr {
-    width: 100%;
-  }
+  .topbar {
+    display: flex;
+    flex-direction: row;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
 
-  .wallet-list {
-    flex: 1;
-    overflow: auto;
+    button {
+      font-size: 0.82em;
+    }
 
-    li {
-      cursor: pointer;
+    .blockchain-info {
+      width: 100%;
+      text-align: right;
 
-      &:hover:not(.active) {
-        background-color: #efefef;
+      span {
+        vertical-align: bottom;
+        padding: 4px 12px;
+        font-weight: 600;
+        pointer-events: none;
       }
     }
   }
 
-  .no-wallet {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #929292;
-  }
-}
-
-.send-token {
-  display: block;
-  height: 100%;
-  overflow: auto;
-  padding: 34px 0;
-
-  .no-messages {
-    color: #999;
-    font-size: 1.4rem;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  .wallet-info {
     width: 100%;
     height: 100%;
-  }
+    display: flex;
+    flex-direction: row;
+    padding: 5px 0;
 
-  textarea {
-    width: 100%;
-  }
+    .list {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      margin-right: 5px;
 
-  .transaction {
-    margin: 0 auto;
-    width: 80%;
-  }
-}
+      .accounts {
+        height: 100%;
+        overflow: auto;
 
-.table {
-  table-layout: fixed;
-
-  td {
-    white-space: nowrap;
-    word-break: break-all;
-    overflow: hidden;
-    text-overflow: ellipsis;
-
-    a {
-      color: blue;
-
-      &:hover {
-        color: darkblue;
+        ul {
+          height: 100%;
+          overflow: auto;
+        }
       }
+
+      button {
+        font-size: 0.82em;
+      }
+    }
+
+    .detail {
+      width: 100%;
+      margin-left: 5px;
     }
   }
 }

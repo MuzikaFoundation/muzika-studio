@@ -35,7 +35,7 @@
 }
 
 .login {
-  width: 450px;
+  width: 500px;
   height: 100%;
   display: flex;
   align-items: center;
@@ -52,6 +52,10 @@
     border: 1px solid #ddd;
     box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.15);
     padding: 15px;
+
+    select {
+      font-size: 0.92em;
+    }
 
     .warning {
       width: 100%;

@@ -1,12 +1,12 @@
-import {Component, NgZone} from '@angular/core';
-import {promisify, toBigNumber, unitDown, unitUp} from '@muzika/core';
-import {BaseComponent, IMuzikaCoin, createTruffleMuzikaCoin} from '@muzika/core/angular';
-import {AlertifyInstnace} from '@muzika/core/browser';
-import * as ethUtil from 'ethereumjs-util';
-import * as ethWallet from 'ethereumjs-wallet';
-import {ElectronService} from '../../../../providers/electron.service';
-import {WalletStorageService} from '../../services/wallet-storage.service';
-import {Web3WalletProvider} from '../../wallet.provider';
+import {Component} from '@angular/core';
+import {BaseComponent} from '@muzika/core/angular';
+import { TabService } from '../../../../providers/tab.service';
+import { Store } from '@ngrx/store';
+import { BlockChainProtocol, IAppState } from '@muzika/core';
+import { combineLatest } from 'rxjs';
+import { BlockChainClientProvider } from '../../../../providers/blockchain-client.provider';
+import { Router } from '@angular/router';
+import { PopupService } from '../../../../providers/popup.service';
 
 @Component({
   selector: 'wallet-list-page',
@@ -15,167 +15,62 @@ import {Web3WalletProvider} from '../../wallet.provider';
 })
 export class WalletListComponent extends BaseComponent {
   accounts: {
-    address: string,
-    eth: string,
-    mzk: string
-  }[] = [];
+    name: string;
+    address: string;
+    eth: string | number;
+    ont: string | number;
+    mzk: string | number;
+    loyalty: string | number;
+  }[];
   selectedAccount: string;
-  tx: {
-    to: string;
-    value: string | number;
-    gas: string | number;
-    gasPrice: string | number;
+  blockChain = <BlockChainProtocol>{
+    protocol: null,
+    network: null
   };
-  web3: any;
 
-  sentTxHash: string;
-  private coin: IMuzikaCoin;
-  private _submitted = false;
-
-  constructor(private walletStorage: WalletStorageService,
-              private walletProvider: Web3WalletProvider,
-              private zone: NgZone,
-              private electronService: ElectronService) {
+  constructor(
+    private tabService: TabService,
+    private popupService: PopupService,
+    private store: Store<IAppState>,
+    private router: Router,
+    private bcClient: BlockChainClientProvider,
+  ) {
     super();
-    walletProvider.create(block => {
-      zone.run(() => {
-        this.loadBalances();
-      });
-    });
-
-    const MuzikaCoin = createTruffleMuzikaCoin();
-    MuzikaCoin.setProvider(walletProvider);
-    MuzikaCoin.deployed().then(deployed => {
-      this.coin = deployed;
-      this.loadBalances();
-    });
   }
 
   ngOnInit() {
-    super.ngOnInit();
+    const protocol$ = this.store.select('app', 'protocol');
+    const network$ = this.store.select('app', 'network');
+
     this._sub.push(
-      this.walletStorage.walletsObs.subscribe(privateKeys => {
-        this.accounts = privateKeys.map(key => {
-          const address = ethUtil.privateToAddress(ethUtil.toBuffer(key));
+      combineLatest(protocol$, network$).subscribe(([protocol, network]) => {
+        this.blockChain.protocol = protocol;
+        this.blockChain.network = network;
 
-          return {
-            address: ethUtil.toChecksumAddress(ethUtil.bufferToHex(address)),
-            eth: null,
-            mzk: null
-          };
-        });
-
-        this.loadBalances();
+        this.updateWalletList();
       })
     );
 
-    this.tx = {
-      to: '',
-      gas: '',
-      value: '',
-      gasPrice: ''
-    };
-  }
-
-  ngOnDestroy() {
-    super.ngOnDestroy();
-    this.walletProvider.stop();
-  }
-
-  createWallet(): void {
-    const wallet = ethWallet.generate();
-    this.walletStorage.addWallet(ethUtil.bufferToHex(wallet.getPrivateKey()));
-  }
-
-  sendMZK() {
-    const tx = this.tx;
-    if (this._submitted) {
-      AlertifyInstnace.alert('Already submitted. Please wait for a second');
-      return;
-    }
-
-    if (!tx.to || !tx.value) {
-      AlertifyInstnace.alert('Please fill `To` and `Amount`');
-      return;
-    }
-
-    AlertifyInstnace.confirm(
-      'Are you sure to transfer? Please make sure that you provided information is correct.',
-      async () => {
-        this._submitted = true;
-        try {
-          const gasPrice = unitDown(tx.gasPrice, 9); // gwei: 9
-          const mzk = unitDown(tx.value);
-          this.sentTxHash = await this.coin.transfer.sendTransaction(tx.to, mzk, {
-            from: this.selectedAccount,
-            gas: tx.gas,
-            gasPrice: gasPrice
-          });
-          this.tx = {
-            to: '',
-            gas: '',
-            value: '',
-            gasPrice: ''
-          };
-        } catch (e) {
-          AlertifyInstnace.alert('Out of gas or your Muzika is not enough to transfer');
-          console.error(e);
-        } finally {
-          this._submitted = false;
-        }
-      }
+    this._sub.push(
+      this.popupService.popupClose$.subscribe(() => this.updateWalletList())
     );
   }
 
-  selectAccount(address: string) {
-    this.walletProvider.changeAddress(address);
-    this.selectedAccount = address;
+  updateWalletList() {
+    this.bcClient.getWallets().then((accounts) => this.accounts = accounts.map((account) => {
+      return { name: account.name, address: account.address, eth: '', ont: '', mzk: '', loyalty: '' };
+    }));
   }
 
-  async loadBalances() {
-    if (this.coin) {
-      this.accounts.forEach(async (account, index) => {
-        this.accounts[index].eth = unitUp(await this.ethBalanceOf(account.address));
-        this.accounts[index].mzk = unitUp(await this.coin.balanceOf(account.address));
-      });
-    }
+  goBack() {
+    this.tabService.changeTab('viewer');
   }
 
-  estimate() {
-    if (this.tx.to && this.tx.value) {
-      this._estimateGas(this.tx, true);
-    }
+  newWallet() {
+    this.popupService.activate('wallet-generate', { queryParams: { genType: 'generate' } });
   }
 
-  ethBalanceOf(address: string): Promise<string> {
-    const params = {
-      jsonrpc: '2.0',
-      method: 'eth_getBalance',
-      params: [address, 'latest']
-    };
-
-    return promisify(this.walletProvider.sendAsync.bind(this.walletProvider), params).then(v => {
-      return toBigNumber(v.result).toString(10);
-    });
-  }
-
-  goScan(txHash: string) {
-    this.electronService.shell.openExternal(`https://ropsten.etherscan.io/tx/${txHash}`);
-  }
-
-  importWallet() {
-    // @TODO Now only for private key
-    AlertifyInstnace.prompt('Enter the wallet private key', (key) => {
-      this.walletStorage.addWallet(key);
-    });
-  }
-
-  private _estimateGas(tx: any, set?: boolean): Promise<number> {
-    return this.coin.transfer.estimateGas(tx.to, unitDown(tx.value), {from: this.selectedAccount}).then(estimated => {
-      if (set) {
-        this.tx.gas = estimated;
-      }
-      return estimated;
-    });
+  import() {
+    this.popupService.activate('wallet-generate', { queryParams: { genType: 'import' } });
   }
 }

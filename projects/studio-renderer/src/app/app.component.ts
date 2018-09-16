@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component, Inject, NgZone, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { BaseComponent, ExtendedWeb3, UserActions } from '@muzika/core/angular';
+import { BaseComponent, ExtendedWeb3, LocalStorage, UserActions } from '@muzika/core/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { interval } from 'rxjs';
 import { environment } from '../environments/environment';
@@ -12,7 +12,7 @@ import { MuzikaConsole } from '@muzika/core';
 import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
 import { RenderOptions } from '../../../studio-main/src/models/render-options';
-import { filter } from 'rxjs/operators';
+import { PopupService } from '../providers/popup.service';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +21,7 @@ import { filter } from 'rxjs/operators';
 })
 export class AppComponent extends BaseComponent implements AfterViewInit {
   currentTab: MuzikaTabs = 'viewer';
+  currentPopup: string;
   renderOptions: RenderOptions;
 
   constructor(public electronService: ElectronService,
@@ -29,7 +30,9 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
               private zone: NgZone,
               private translate: TranslateService,
               private web3: ExtendedWeb3,
+              private localStorage: LocalStorage,
               private tabService: TabService,
+              private popupService: PopupService,
               private router: Router,
               private walletProvider: MuzikaWalletProvider) {
     super();
@@ -66,6 +69,10 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
       this.tabService.tabChange.subscribe(tab => {
         this.currentTab = tab;
       })
+    );
+
+    this._sub.push(
+      this.popupService.popupChange$.subscribe(popup => this.currentPopup = popup)
     );
   }
 
