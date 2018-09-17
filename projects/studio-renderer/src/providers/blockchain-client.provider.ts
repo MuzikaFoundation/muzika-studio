@@ -1,6 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
 import { EnvironmentV2Token, ExtendedWeb3, OntologyClient } from '@muzika/core/angular';
-import { AppActions, AppActionType, BlockChainProtocol, EnvironmentTypeV2, IAppState, promisify } from '@muzika/core';
+import {
+  AccountBalance,
+  AppActionType,
+  BlockChainProtocol,
+  EnvironmentTypeV2,
+  IAppState,
+  promisify,
+  toBigNumber,
+  unitUp
+} from '@muzika/core';
 import { RpcClient, Crypto } from 'ontology-ts-sdk';
 import * as ethWallet from 'ethereumjs-wallet';
 import * as Web3 from 'web3';
@@ -101,6 +110,17 @@ export class BlockChainClientProvider {
     throw new Error('Unsupported blockchain protocol');
   }
 
+  async balanceOf(account: string): Promise<AccountBalance> {
+    switch (this.protocol) {
+      case 'eth':
+        return await this.ethBalanceOf(account);
+      case 'ont':
+        return await this.ontBalanceOf(account);
+    }
+
+    throw new Error('Unsupported blockchain protocol');
+  }
+
   /**
    * Switches the current blockchain protocol.
    * @param _protocol protocol for blockchain.
@@ -162,5 +182,27 @@ export class BlockChainClientProvider {
       default:
         throw new Error('Unsupported blockchain protocol');
     }
+  }
+
+  private async ethBalanceOf(address: string): Promise<AccountBalance> {
+    const params = {
+      jsonrpc: '2.0',
+      method: 'eth_getBalance',
+      params: [address, 'latest']
+    };
+
+    return await promisify(this.walletProvider.sendAsync.bind(this.walletProvider), params).then(v => {
+      console.log('get balance');
+      return {
+        eth: unitUp(toBigNumber(v.result).toString(10))
+      };
+    });
+  }
+
+  private async ontBalanceOf(address: string): Promise<AccountBalance> {
+    const client = <RpcClient>this._client;
+    const balance = <AccountBalance>{};
+    Object.assign(balance, (await client.getBalance(new Crypto.Address(address))).result);
+    return balance;
   }
 }

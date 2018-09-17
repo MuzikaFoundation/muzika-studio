@@ -1,21 +1,21 @@
 <div class="login">
   <div class="row mt-1 blockchain-select">
     <div class="btn-group btn-group-toggle protocol-select" data-toggle="buttons">
-      <label class="btn btn-sm btn-outline-dark" [class.active]="protocol === 'eth'">
+      <label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.protocol === 'eth'">
         <input type="radio" name="options" autocomplete="off" (click)="switchProtocol('eth')"> Ethereum
       </label>
 
-      <label class="btn btn-sm btn-outline-dark" [class.active]="protocol === 'ont'">
+      <label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.protocol === 'ont'">
         <input type="radio" name="options" autocomplete="off" (click)="switchProtocol('ont')"> Ontology
       </label>
     </div>
 
     <div class="btn-group btn-group-toggle network-select">
-      <label class="btn btn-sm btn-outline-dark" [class.active]="network === 'mainNet'">
+      <label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.network === 'mainNet'">
         <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('mainNet')"> MainNet
       </label>
 
-      <label class="btn btn-sm btn-outline-dark" [class.active]="network === 'testNet'">
+      <label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.network === 'testNet'">
         <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('testNet')"> TestNet
       </label>
     </div>
@@ -33,14 +33,15 @@
     </select>
 
     <input type="password" class="form-control mt-2" id="password" name="password" placeholder="Password"
-           *ngIf="protocol === 'ont'" [disabled]="!selectedAccount" [(ngModel)]="selectedPassword">
+           *ngIf="blockChain.protocol === 'ont'" [disabled]="!selectedAccount" [(ngModel)]="selectedPassword">
 
     <div class="warning" *ngIf="warningMessage !== ''">
       {{ warningMessage }}
     </div>
 
     <div class="row mt-3 login-btns">
-      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount || protocol === 'ont'"> Login </button>
+      <!-- TODO: implement ontology login service -->
+      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount || blockChain.protocol === 'ont'"> Login </button>
       <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Account </button>
     </div>
 

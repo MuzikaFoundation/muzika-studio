@@ -28,11 +28,11 @@ export const electronEnvironmentV2: EnvironmentTypeV2 = {
     },
     ont: {
       mainNet: {
-        rpcUrl: 'dappnode1.ont.io',
+        rpcUrl: 'http://dappnode1.ont.io',
         port: 20336
       },
       testNet: {
-        rpcUrl: 'polaris1.ont.io',
+        rpcUrl: 'http://polaris1.ont.io',
         port: 20336
       }
     }

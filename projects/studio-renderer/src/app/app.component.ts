@@ -72,7 +72,7 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
     );
 
     this._sub.push(
-      this.popupService.popupChange$.subscribe(popup => this.currentPopup = popup)
+      this.popupService.popupOpen$.subscribe(popup => this.currentPopup = popup)
     );
   }
 

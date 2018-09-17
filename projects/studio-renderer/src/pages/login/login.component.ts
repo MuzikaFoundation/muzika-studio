@@ -1,7 +1,7 @@
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IAppState, MuzikaConsole } from '@muzika/core';
+import { BlockChainProtocol, IAppState, MuzikaConsole } from '@muzika/core';
 import { BaseComponent, UserActions } from '@muzika/core/angular';
 import {TabService} from '../../providers/tab.service';
 import {WalletStorageService} from '../../modules/wallet/services/wallet-storage.service';
@@ -9,6 +9,7 @@ import { Store } from '@ngrx/store';
 import { BlockChainClientProvider } from '../../providers/blockchain-client.provider';
 import { combineLatest } from 'rxjs';
 import { PopupService } from '../../providers/popup.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-page-login',
@@ -20,8 +21,10 @@ export class LoginPageComponent extends BaseComponent {
   selectedPassword: string;
   accounts: string[];
   warningMessage = '';
-  protocol: string;
-  network: string;
+  blockChain: BlockChainProtocol = {
+    protocol: 'eth',
+    network: 'testNet'
+  };
 
   @ViewChildren(NgForm)
   forms: QueryList<NgForm>;
@@ -49,8 +52,8 @@ export class LoginPageComponent extends BaseComponent {
     this._sub.push(
       combineLatest(protocol$, network$)
         .subscribe(([protocol, network]) => {
-          this.protocol = protocol;
-          this.network = network;
+          this.blockChain.protocol = protocol;
+          this.blockChain.network = network;
 
           this._getWallets().then(() => {
             this.selectedAccount = '';
@@ -59,10 +62,11 @@ export class LoginPageComponent extends BaseComponent {
         })
     );
 
+    // When wallet generate popup is closed, update wallet list
     this._sub.push(
-      this.tabService.tabChange.subscribe(() => {
-        this._getWallets().then(() => {});
-      })
+      this.popupService.popupClose$.pipe(
+        filter(popup => popup === 'wallet-generate')
+      ).subscribe(() => this._getWallets())
     );
   }
 

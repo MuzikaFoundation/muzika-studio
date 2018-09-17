@@ -2,11 +2,12 @@ import {Component} from '@angular/core';
 import {BaseComponent} from '@muzika/core/angular';
 import { TabService } from '../../../../providers/tab.service';
 import { Store } from '@ngrx/store';
-import { BlockChainProtocol, IAppState } from '@muzika/core';
+import { AccountBalance, BlockChainProtocol, IAppState } from '@muzika/core';
 import { combineLatest } from 'rxjs';
 import { BlockChainClientProvider } from '../../../../providers/blockchain-client.provider';
 import { Router } from '@angular/router';
 import { PopupService } from '../../../../providers/popup.service';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'wallet-list-page',
@@ -17,10 +18,7 @@ export class WalletListComponent extends BaseComponent {
   accounts: {
     name: string;
     address: string;
-    eth: string | number;
-    ont: string | number;
-    mzk: string | number;
-    loyalty: string | number;
+    balances: AccountBalance,
   }[];
   selectedAccount: string;
   blockChain = <BlockChainProtocol>{
@@ -51,15 +49,32 @@ export class WalletListComponent extends BaseComponent {
       })
     );
 
+    // if tab is changed to `wallet`, refresh wallet list.
     this._sub.push(
-      this.popupService.popupClose$.subscribe(() => this.updateWalletList())
+      this.tabService.tabChange.pipe(
+        filter((tab) => tab === 'wallet')
+      ).subscribe(() => this.updateWalletList())
+    );
+
+    // if popup for wallet generate is closed, refresh wallet list.
+    this._sub.push(
+      this.popupService.popupClose$.pipe(
+        filter(popup => popup === 'wallet-generate')
+      ).subscribe(() => this.updateWalletList())
     );
   }
 
   updateWalletList() {
-    this.bcClient.getWallets().then((accounts) => this.accounts = accounts.map((account) => {
-      return { name: account.name, address: account.address, eth: '', ont: '', mzk: '', loyalty: '' };
-    }));
+    this.bcClient.getWallets().then((accounts) => {
+      this.accounts = accounts.map((account) => {
+        return { name: account.name, address: account.address, balances: {} };
+      });
+
+      // load all accounts balances
+      this.accounts.forEach(async (account, index) => {
+        account.balances = await this.bcClient.balanceOf(account.address);
+      });
+    });
   }
 
   goBack() {

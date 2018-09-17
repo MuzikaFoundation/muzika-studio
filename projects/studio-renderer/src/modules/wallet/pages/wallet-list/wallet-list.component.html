@@ -22,8 +22,17 @@
             <h5>{{ account.name }}&nbsp;</h5>
             <span>{{ account.address }}</span>
             <div class="d-flex justify-content-between">
-              <span>{{ account.eth }} <small>ETH</small></span>
-              <span>{{ account.mzk }} <small>MZK</small></span>
+              <ng-container *ngIf="blockChain.protocol === 'eth'">
+                <span>{{ account.balances.eth | number: '1.2-2' }} <small>ETH</small></span>
+              </ng-container>
+              <ng-container *ngIf="blockChain.protocol === 'ont'">
+                <span>
+                  {{ account.balances.ont | number: '1.2-2' }} <small>ONT</small> /
+                  {{ account.balances.ong | number: '1.2-2' }} <small>ONG</small>
+                </span>
+              </ng-container>
+
+              <span>{{ account.balances.mzk }} <small>MZK</small></span>
             </div>
           </li>
         </ul>
@@ -38,8 +47,6 @@
       </div>
     </div>
 
-    <div class="detail">
-      d
-    </div>
+    <div class="detail"></div>
   </div>
 </div>
