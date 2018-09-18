@@ -18,6 +18,7 @@ import { filter } from 'rxjs/operators';
 })
 export class LoginPageComponent extends BaseComponent {
   selectedAccount: string;
+  selectedAccountName: string;
   selectedPassword: string;
   accounts: string[];
   warningMessage = '';
@@ -100,6 +101,10 @@ export class LoginPageComponent extends BaseComponent {
   goToWalletManager() {
     this.router.navigate([{ outlets: { wallet: 'wallet-list' } }]);
     this.tabService.changeTab('wallet');
+  }
+
+  selectAccount(account: string) {
+    this.selectedAccount = account;
   }
 
   switchProtocol(protocol: 'eth' | 'ont') {

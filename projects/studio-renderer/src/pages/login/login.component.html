@@ -1,65 +1,82 @@
 <div class="login">
-  <div class="row mt-1 blockchain-select">
-    <!--<div class="btn-group btn-group-toggle protocol-select" data-toggle="buttons">-->
-      <!--<label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.protocol === 'eth'">-->
-        <!--<input type="radio" name="options" autocomplete="off" (click)="switchProtocol('eth')"> Ethereum-->
-      <!--</label>-->
 
-      <!--<label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.protocol === 'ont'">-->
-        <!--<input type="radio" name="options" autocomplete="off" (click)="switchProtocol('ont')"> Ontology-->
-      <!--</label>-->
-    <!--</div>-->
 
-    <div class="dropdown protocol-select">
-      <button type="button" class="btn btn-dropdown dropdown-toggle" id="protocol" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <ng-container *ngIf="blockChain.protocol === 'eth'">
-          <img src="../../assets/blockchain/protocol/ethereum-256x256.png"> Ethereum
-        </ng-container>
-        <ng-container *ngIf="blockChain.protocol === 'ont'">
-          <img src="../../assets/blockchain/protocol/ontology-256x256.png"> Ontology
-        </ng-container>
-        <span class="float-right"><i class="fa fa-caret-down"></i></span>
-      </button>
+  <div class="select-account">
+    <h3><img src="assets/muzika.png">Muzika Studio</h3>
 
-      <div class="dropdown-menu" aria-labelledby="protocol">
-        <div class="dropdown-item" (click)="switchProtocol('eth')">
-          <img src="../../assets/blockchain/protocol/ethereum-256x256.png"> Ethereum
+    <div class="row blockchain-select">
+      <div class="dropdown protocol-select">
+        <button type="button" class="btn btn-dropdown dropdown-toggle" id="protocol" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <ng-container *ngIf="blockChain.protocol === 'eth'">
+            <img src="assets/blockchain/protocol/ethereum-256x256.png"> Ethereum
+          </ng-container>
+          <ng-container *ngIf="blockChain.protocol === 'ont'">
+            <img src="assets/blockchain/protocol/ontology-256x256.png"> Ontology
+          </ng-container>
+          <span class="float-right"><i class="fa fa-caret-down"></i></span>
+        </button>
+
+        <div class="dropdown-menu" aria-labelledby="protocol">
+          <div class="dropdown-item" (click)="switchProtocol('eth')">
+            <img src="assets/blockchain/protocol/ethereum-256x256.png"> Ethereum
+          </div>
+          <div class="dropdown-item" (click)="switchProtocol('ont')">
+            <img src="assets/blockchain/protocol/ontology-256x256.png"> Ontology
+          </div>
         </div>
-        <div class="dropdown-item" (click)="switchProtocol('ont')">
-          <img src="../../assets/blockchain/protocol/ontology-256x256.png"> Ontology
+      </div>
+
+      <div class="dropdown network-select">
+        <button type="button" class="btn btn-dropdown dropdown-toggle" id="network" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <ng-container *ngIf="blockChain.network === 'mainNet'">
+            Main Network
+          </ng-container>
+          <ng-container *ngIf="blockChain.network === 'testNet'">
+            Test Network
+          </ng-container>
+          <span class="float-right"><i class="fa fa-caret-down"></i></span>
+        </button>
+
+        <div class="dropdown-menu" aria-labelledby="network">
+          <div class="dropdown-item" (click)="switchNetwork('mainNet')">
+            MainNet
+          </div>
+          <div class="dropdown-item" (click)="switchNetwork('testNet')">
+            TestNet
+          </div>
         </div>
       </div>
     </div>
 
-    <!--<div class="btn-group btn-group-toggle network-select">-->
-      <!--<label class="btn btn-network active" [class.active]="blockChain.network === 'mainNet'">-->
-        <!--<input type="radio" name="options" autocomplete="off" (click)="switchNetwork('mainNet')"> MainNet-->
-      <!--</label>-->
+    <div class="dropdown account-list mt-3">
+      <button type="button" class="btn btn-dropdown dropdown-toggle" id="wallet" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div class="d-flex flex-row">
+          <div class="account-info">
+            <ng-container *ngIf="selectedAccount">
+              <span class="account-name">{{ selectedAccountName }}</span>
+              <span class="account-address">({{ selectedAccount }})</span>
+            </ng-container>
+          </div>
+          <span class="float-right ml-1"><i class="fa fa-caret-down"></i></span>
+        </div>
+      </button>
 
-      <!--<label class="btn btn-network" [class.active]="blockChain.network === 'testNet'">-->
-        <!--<input type="radio" name="options" autocomplete="off" (click)="switchNetwork('testNet')"> TestNet-->
-      <!--</label>-->
-    <!--</div>-->
-
-    <div>
-      <span style="line-height: 40px">TestNet</span>
-      <label class="switch">
-        <input type="checkbox">
-        <span class="slider"></span>
-      </label>
+      <div class="dropdown-menu" aria-labelledby="wallet">
+        <div *ngFor="let account of accounts" class="dropdown-item" (click)="selectedAccountName = account.name; selectedAccount = account.address">
+          <span class="account-name">{{ account.name }}</span>
+          <span class="account-address">{{ account.address }}</span>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <div class="select-account mt-2">
-    <h2> Select your account </h2>
-    <select class="form-control mt-3" id="account" name="account" [(ngModel)]="selectedAccount">
-      <!-- For solving data binding problem after switching protocol -->
-      <option value="" style="display: none"></option>
-      <!--------------------------------------------------------------->
-      <option *ngFor="let account of accounts" [value]="account.address" class="test">
-        {{account.name}} ({{account.address}})
-      </option>
-    </select>
+    <!--<select class="form-control mt-3" id="account" name="account" [(ngModel)]="selectedAccount">-->
+      <!--&lt;!&ndash; For solving data binding problem after switching protocol &ndash;&gt;-->
+      <!--<option value="" style="display: none"></option>-->
+      <!--&lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
+      <!--<option *ngFor="let account of accounts" [value]="account.address" class="test">-->
+        <!--{{account.name}} ({{account.address}})-->
+      <!--</option>-->
+    <!--</select>-->
 
     <input type="password" class="form-control mt-2" id="password" name="password" placeholder="Password"
            *ngIf="blockChain.protocol === 'ont'" [disabled]="!selectedAccount" [(ngModel)]="selectedPassword">
@@ -70,8 +87,8 @@
 
     <div class="row mt-3 login-btns">
       <!-- TODO: implement ontology login service -->
-      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount || blockChain.protocol === 'ont'"> Login </button>
-      <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Account </button>
+      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount || blockChain.protocol === 'ont'"> Sign in </button>
+      <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Wallet </button>
     </div>
 
     <div class="row other-link mt-1">

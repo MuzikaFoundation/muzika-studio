@@ -8,6 +8,7 @@
   height: 100%;
 }
 
+$login-width: 500px;
 $protocol-button-height: 40px;
 
 .blockchain-select {
@@ -15,79 +16,77 @@ $protocol-button-height: 40px;
   display: flex;
   flex-direction: row;
 
-  .protocol-select {
-    width: 50%;
-    padding: 5px;
-
-    .btn {
-      font-size: 0.82em;
-      width: 100%;
-      line-height: $protocol-button-height;
-    }
-
-    .dropdown {
-    }
-
-    .btn-dropdown {
-      background: #fff;
-      border: 1px solid #e4e4e4;
-    }
-
-    .dropdown-menu, .dropdown-toggle {
-      width: 100%;
-      text-align: left;
-      font-size: 17px;
-      line-height: $protocol-button-height;
-
-      img {
-        width: 32px;
-        height: 32px;
-      }
-    }
-
-    .dropdown-toggle::after {
-      display: none;
-    }
-
-    .dropdown-item {
-      cursor: pointer;
-    }
+  .network-select {
+    padding-left: 5px;
   }
 
-  .network-select {
-    width: 50%;
-    padding: 5px;
+  .protocol-select {
+    padding-right: 5px;
+  }
 
-    .btn {
-      font-size: 0.82em;
-      width: 50%;
-      line-height: $protocol-button-height;
-    }
+  .protocol-select, .network-select {
+    width: 50%;
   }
 }
 
-.btn-network {
+.btn-dropdown {
   background: #fff;
   border: 1px solid #e4e4e4;
+}
 
-  &.active {
-    background: #ddd;
+.dropdown-menu, .dropdown-toggle {
+  text-align: left;
+  font-size: 17px;
+  line-height: $protocol-button-height;
+
+  img {
+    width: 32px;
+    height: 32px;
   }
 }
 
-//.btn-network + .active {
-//  background: #000;
-//}
+.dropdown-menu {
+  width: 100%;
+}
+
+.dropdown-toggle {
+  width: 100%;
+};
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.dropdown-item {
+  padding-left: 12px;
+  cursor: pointer;
+}
+
 
 .login {
-  width: 500px;
+  width: $login-width;
   height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
 
+  h3 {
+    user-select: none;
+    cursor: default;
+    display: block;
+    width: 100%;
+    font-size: 24px;
+
+    img {
+      width: 64px;
+      height: 64px;
+      margin-right: 8px;
+    }
+  }
+
   .select-account {
+    background: #fefefe;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -98,8 +97,62 @@ $protocol-button-height: 40px;
     box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.15);
     padding: 15px;
 
-    select {
-      font-size: 0.92em;
+    input {
+      height: $protocol-button-height + 14px;
+    }
+
+    .account-list {
+      width: 100%;
+
+      .dropdown-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: left;
+      }
+
+      .btn-dropdown {
+        height: 54px;
+        line-height: normal;
+
+        .account-info {
+          width: 100%;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+
+        .account-name {
+          font-weight: 600;
+          font-size: 17px;
+          line-height: 22px;
+          margin-right: 5px;
+        }
+
+        .account-address {
+          color: #888;
+          font-size: 14px;
+          line-height: 14px;
+        }
+      }
+
+      .dropdown-menu {
+        .account-name {
+          display: block;
+          width: 100%;
+          font-weight: 600;
+          font-size: 17px;
+          line-height: 25px;
+        }
+
+        .account-address {
+          display: block;
+          width: 100%;
+          font-size: 14px;
+          line-height: 22px;
+        }
+      }
     }
 
     .warning {
@@ -142,56 +195,4 @@ $protocol-button-height: 40px;
 
 #account {
   width: 100%;
-}
-
-
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 30px;
-  height: 17px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {display:none;}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 34px;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 13px;
-  width: 13px;
-  left: 2px;
-  bottom: 2px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-  border-radius: 50%;
-}
-
-input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(13px);
-  -ms-transform: translateX(13px);
-  transform: translateX(13px);
 }

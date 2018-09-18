@@ -39,12 +39,26 @@ html, body {
   background-color: $background-color;
 }
 
+img {
+  -webkit-user-drag: none;
+}
+
 .bg-primary {
   color: mat-contrast($primary-palette, 700);
 }
 
 .bg-secondary {
   color: mat-contrast($secondary-palette, 700);
+}
+
+.btn-success {
+  background-image:linear-gradient(0deg, #1ea531, #29be47);
+  border: 1px solid #20ab32;
+}
+
+.btn-success:not(:disabled):hover {
+  background-image:linear-gradient(0deg, #1e8c2e, #2aa548);
+  border: 1px solid #20ab32;
 }
 
 .material-shadow {
