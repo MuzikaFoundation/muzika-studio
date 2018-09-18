@@ -91,7 +91,8 @@
               "node_modules/froala-editor/js/plugins/paragraph_style.min.js",
               "node_modules/froala-editor/js/plugins/image.min.js",
               "node_modules/froala-editor/js/plugins/video.min.js",
-              "node_modules/froala-editor/js/plugins/image_manager.min.js"
+              "node_modules/froala-editor/js/plugins/image_manager.min.js",
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.js"
             ]
           },
           "configurations": {

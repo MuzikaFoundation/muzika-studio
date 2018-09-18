@@ -1,22 +1,51 @@
 <div class="login">
   <div class="row mt-1 blockchain-select">
-    <div class="btn-group btn-group-toggle protocol-select" data-toggle="buttons">
-      <label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.protocol === 'eth'">
-        <input type="radio" name="options" autocomplete="off" (click)="switchProtocol('eth')"> Ethereum
-      </label>
+    <!--<div class="btn-group btn-group-toggle protocol-select" data-toggle="buttons">-->
+      <!--<label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.protocol === 'eth'">-->
+        <!--<input type="radio" name="options" autocomplete="off" (click)="switchProtocol('eth')"> Ethereum-->
+      <!--</label>-->
 
-      <label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.protocol === 'ont'">
-        <input type="radio" name="options" autocomplete="off" (click)="switchProtocol('ont')"> Ontology
-      </label>
+      <!--<label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.protocol === 'ont'">-->
+        <!--<input type="radio" name="options" autocomplete="off" (click)="switchProtocol('ont')"> Ontology-->
+      <!--</label>-->
+    <!--</div>-->
+
+    <div class="dropdown protocol-select">
+      <button type="button" class="btn btn-dropdown dropdown-toggle" id="protocol" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <ng-container *ngIf="blockChain.protocol === 'eth'">
+          <img src="../../assets/blockchain/protocol/ethereum-256x256.png"> Ethereum
+        </ng-container>
+        <ng-container *ngIf="blockChain.protocol === 'ont'">
+          <img src="../../assets/blockchain/protocol/ontology-256x256.png"> Ontology
+        </ng-container>
+        <span class="float-right"><i class="fa fa-caret-down"></i></span>
+      </button>
+
+      <div class="dropdown-menu" aria-labelledby="protocol">
+        <div class="dropdown-item" (click)="switchProtocol('eth')">
+          <img src="../../assets/blockchain/protocol/ethereum-256x256.png"> Ethereum
+        </div>
+        <div class="dropdown-item" (click)="switchProtocol('ont')">
+          <img src="../../assets/blockchain/protocol/ontology-256x256.png"> Ontology
+        </div>
+      </div>
     </div>
 
-    <div class="btn-group btn-group-toggle network-select">
-      <label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.network === 'mainNet'">
-        <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('mainNet')"> MainNet
-      </label>
+    <!--<div class="btn-group btn-group-toggle network-select">-->
+      <!--<label class="btn btn-network active" [class.active]="blockChain.network === 'mainNet'">-->
+        <!--<input type="radio" name="options" autocomplete="off" (click)="switchNetwork('mainNet')"> MainNet-->
+      <!--</label>-->
 
-      <label class="btn btn-sm btn-outline-dark" [class.active]="blockChain.network === 'testNet'">
-        <input type="radio" name="options" autocomplete="off" (click)="switchNetwork('testNet')"> TestNet
+      <!--<label class="btn btn-network" [class.active]="blockChain.network === 'testNet'">-->
+        <!--<input type="radio" name="options" autocomplete="off" (click)="switchNetwork('testNet')"> TestNet-->
+      <!--</label>-->
+    <!--</div>-->
+
+    <div>
+      <span style="line-height: 40px">TestNet</span>
+      <label class="switch">
+        <input type="checkbox">
+        <span class="slider"></span>
       </label>
     </div>
   </div>

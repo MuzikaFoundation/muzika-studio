@@ -8,6 +8,8 @@
   height: 100%;
 }
 
+$protocol-button-height: 40px;
+
 .blockchain-select {
   width: 100%;
   display: flex;
@@ -19,7 +21,36 @@
 
     .btn {
       font-size: 0.82em;
-      width: 50%;
+      width: 100%;
+      line-height: $protocol-button-height;
+    }
+
+    .dropdown {
+    }
+
+    .btn-dropdown {
+      background: #fff;
+      border: 1px solid #e4e4e4;
+    }
+
+    .dropdown-menu, .dropdown-toggle {
+      width: 100%;
+      text-align: left;
+      font-size: 17px;
+      line-height: $protocol-button-height;
+
+      img {
+        width: 32px;
+        height: 32px;
+      }
+    }
+
+    .dropdown-toggle::after {
+      display: none;
+    }
+
+    .dropdown-item {
+      cursor: pointer;
     }
   }
 
@@ -30,9 +61,23 @@
     .btn {
       font-size: 0.82em;
       width: 50%;
+      line-height: $protocol-button-height;
     }
   }
 }
+
+.btn-network {
+  background: #fff;
+  border: 1px solid #e4e4e4;
+
+  &.active {
+    background: #ddd;
+  }
+}
+
+//.btn-network + .active {
+//  background: #000;
+//}
 
 .login {
   width: 500px;
@@ -97,4 +142,56 @@
 
 #account {
   width: 100%;
+}
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 17px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 13px;
+  width: 13px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(13px);
+  -ms-transform: translateX(13px);
+  transform: translateX(13px);
 }

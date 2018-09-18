@@ -62,10 +62,13 @@ export class LoginPageComponent extends BaseComponent {
         })
     );
 
-    // When wallet generate popup is closed, update wallet list
+    // When tab changed or event occurs or popup is closed, update wallet list since
+    // wallet list component in wallet tab or wallet-create popup would change the
+    // wallet storage.
     this._sub.push(
-      this.popupService.popupClose$.pipe(
-        filter(popup => popup === 'wallet-generate')
+      combineLatest(
+        this.tabService.tabChange,
+        this.popupService.popupClose$.pipe(filter(popup => popup === 'wallet-generate'))
       ).subscribe(() => this._getWallets())
     );
   }

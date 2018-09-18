@@ -9,6 +9,7 @@ import { PopupRouteModule } from './popup.routes';
 import { PopupLayoutComponent } from './popup-layout.component';
 import { WebPopupComponent } from './components/web/web-popup.component';
 import { WalletGeneratorComponent } from './components/wallet-generator/wallet-generator.component';
+import { WalletCallComponent } from './components/wallet-call/wallet-call.component';
 
 @NgModule({
   schemas: [ NO_ERRORS_SCHEMA ],
@@ -30,6 +31,7 @@ import { WalletGeneratorComponent } from './components/wallet-generator/wallet-g
   declarations: [
     PopupLayoutComponent,
     WalletGeneratorComponent,
+    WalletCallComponent,
     WebPopupComponent,
   ],
   exports: [

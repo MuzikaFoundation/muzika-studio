@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import {BaseComponent} from '@muzika/core/angular';
 import { TabService } from '../../../../providers/tab.service';
 import { Store } from '@ngrx/store';
@@ -8,6 +8,7 @@ import { BlockChainClientProvider } from '../../../../providers/blockchain-clien
 import { Router } from '@angular/router';
 import { PopupService } from '../../../../providers/popup.service';
 import { filter } from 'rxjs/operators';
+import { AlertifyInstnace } from '@muzika/core/browser';
 
 @Component({
   selector: 'wallet-list-page',
@@ -21,9 +22,19 @@ export class WalletListComponent extends BaseComponent {
     balances: AccountBalance,
   }[];
   selectedAccount: string;
+  selectedName: string;
   blockChain = <BlockChainProtocol>{
     protocol: null,
     network: null
+  };
+
+  onDelete = false;
+  delInputText: string;
+  @ViewChild('delInput') delInput: ElementRef;
+
+  txCall = {
+    func: 'transfer',
+    amountType: 'ETH'
   };
 
   constructor(
@@ -66,15 +77,56 @@ export class WalletListComponent extends BaseComponent {
 
   updateWalletList() {
     this.bcClient.getWallets().then((accounts) => {
-      this.accounts = accounts.map((account) => {
+      const initialUpdate = !this.accounts;
+
+      const newAccounts = accounts.map((account) => {
         return { name: account.name, address: account.address, balances: {} };
       });
 
-      // load all accounts balances
-      this.accounts.forEach(async (account, index) => {
-        account.balances = await this.bcClient.balanceOf(account.address);
-      });
+      if (initialUpdate) {
+        // When initialing updating wallet list, assign account list before balance
+        // update for showing all wallets address more faster.
+        this.accounts = newAccounts;
+        // load all accounts balances
+        this.accounts.forEach(async (account) => {
+          account.balances = await this.bcClient.balanceOf(account.address);
+        });
+      } else {
+        Promise.all(newAccounts.map(async (account, index) => {
+          newAccounts[index].balances = await this.bcClient.balanceOf(account.address);
+        })).then(() => this.accounts = newAccounts);
+      }
+
     });
+  }
+
+  selectWallet(account: any) {
+    this.selectedAccount = account.address;
+    this.selectedName = account.name;
+  }
+
+  clickDeleteAccount() {
+    this.onDelete = true;
+    this.delInputText = '';
+    setImmediate(() => this.delInput.nativeElement.focus());
+  }
+
+  /**
+   * Deletes current account.
+   */
+  deleteAccount() {
+    this.onDelete = false;
+    this.bcClient.deleteWallet(this.selectedName);
+    this.accounts = this.accounts.filter((account) => this.selectedName !== account.name);
+    this.updateWalletList();
+    this.selectedAccount = null;
+    this.selectedName = null;
+  }
+
+  onDeletePopupKeyDown($event) {
+    if ($event.key === 'Escape') {
+      this.onDelete = false;
+    }
   }
 
   goBack() {
@@ -87,5 +139,12 @@ export class WalletListComponent extends BaseComponent {
 
   import() {
     this.popupService.activate('wallet-generate', { queryParams: { genType: 'import' } });
+  }
+
+  export() {
+  }
+
+  callTransaction() {
+
   }
 }

@@ -33,7 +33,7 @@
     height: 100%;
     display: flex;
     flex-direction: row;
-    padding: 5px 0;
+    padding: 10px 0;
 
     .list {
       display: flex;
@@ -60,6 +60,99 @@
     .detail {
       width: 100%;
       margin-left: 5px;
+
+      form {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        .tx-input {
+          height: 100%;
+        }
+
+        .btn {
+          font-size: 0.82em;
+        }
+      }
+
+      label {
+        margin-top: 8px;
+        font-size: 0.87em;
+        color: #666;
+        font-weight: 600;
+      }
+
+      ::placeholder {
+        color: #ddd;
+      }
+
+      .amount {
+        display: flex;
+        flex-direction: row;
+      }
+    }
+  }
+}
+
+.delete-warning {
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+
+  .popup-close {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+  }
+
+  .popup {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 5px 5px;
+    box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    padding: 40px;
+    z-index: 2;
+
+    .del-title {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+    }
+
+    .del-wallet-info {
+      display: block;
+      text-align: center;
+      font-size: 0.87em;
+    }
+
+    .del-buttons {
+      display: flex;
+      flex-direction: column;
+
+      input {
+        width: 100%;
+        margin-top: 8px;
+      }
+
+      .del {
+        font-size: 0.87em;
+        font-weight: 600;
+        border-color: #ddd;
+        background-color: #f4f4f4;
+      }
     }
   }
 }

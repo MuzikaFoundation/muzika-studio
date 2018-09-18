@@ -55,6 +55,19 @@ export class OntologyWalletStorageService {
     }
   }
 
+  deleteWallet(name: string): void {
+    const currentState: any[] = JSON.parse(this.localStorage.getItem('ont-wallets', '[]'));
+
+    const index = currentState.findIndex((state => state.name === name));
+
+    if (index === -1) {
+      throw new Error('cannot find wallet');
+    } else {
+      currentState.splice(index, 1);
+      this.localStorage.setItem('ont-wallets', JSON.stringify(currentState));
+    }
+  }
+
   hasWalletNameOf(name: string): boolean {
     const currentState: any[] = JSON.parse(this.localStorage.getItem(ONT_WALLET_KEY, '[]'));
     return currentState.map(state => state.name).includes(name);

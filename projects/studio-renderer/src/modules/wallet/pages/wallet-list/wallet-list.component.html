@@ -18,7 +18,7 @@
     <div class="list">
       <div class="accounts mb-2">
         <ul class="list-group">
-          <li *ngFor="let account of accounts" class="list-group-item list-group-item-action">
+          <li *ngFor="let account of accounts" class="list-group-item list-group-item-action" (click)="selectWallet(account)" [class.active]="selectedAccount === account.address">
             <h5>{{ account.name }}&nbsp;</h5>
             <span>{{ account.address }}</span>
             <div class="d-flex justify-content-between">
@@ -42,11 +42,68 @@
         <div>
           <button type="button" class="btn btn-primary" (click)="newWallet()">New Wallet</button>
           <button type="button" class="btn btn-primary ml-2" (click)="import()">Import</button>
+          <button type="button" class="btn btn-primary ml-2" (click)="export()">Export</button>
         </div>
-        <button type="button" class="btn btn-danger" [disabled]="!selectedAccount">Delete</button>
+        <button type="button" class="btn btn-danger" [disabled]="!selectedAccount" (click)="clickDeleteAccount()">Delete</button>
       </div>
     </div>
 
-    <div class="detail"></div>
+    <div class="detail" *ngIf="selectedAccount">
+      <form (submit)="callTransaction()">
+      <div class="tx-input">
+          <label for="tx-func-type" class="col-form-label">Transaction Type</label>
+          <select class="form-control" id="tx-func-type" name="tx-func-type" [(ngModel)]="txCall.func">
+            <option value="transfer">Transfer Assets</option>
+          </select>
+
+          <label for="from-address" class="col-form-label">Withdraw from</label>
+          <input type="text" class="form-control" id="from-address" name="from-address" disabled [(ngModel)]="selectedAccount">
+
+          <label for="to-address" class="col-form-label">Send to</label>
+          <input type="text" class="form-control" id="to-address" name="to-address" placeholder="0x0000000000000000000000000000000000000000">
+
+          <label for="amount" class="col-form-label">Amount</label>
+          <div class="amount" id="amount">
+            <select class="col-4 form-control" name="amount-type" [(ngModel)]="txCall.amountType">
+              <option value="TEST"><div><img src="#"></div></option>
+              <option value="ETH" *ngIf="blockChain.protocol === 'eth'">Ethereum</option>
+              <option value="ONT" *ngIf="blockChain.protocol === 'ont'">Ontology</option>
+              <option value="ONG" *ngIf="blockChain.protocol === 'ont'">Ontology Gas</option>
+              <option value="MZK">MZK</option>
+            </select>
+            <div class="col-8 input-group pr-0">
+              <input type="number" class="col form-control ml-1" name="amount">
+              <div class="input-group-append">
+                <span class="input-group-text">{{ txCall.amountType }}</span>
+              </div>
+            </div>
+          </div>
+      </div>
+      <div class="tx-submit">
+        <input type="submit" name="send-transaction" class="btn btn-success w-100 mt-3" value="Send">
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="delete-warning" [class.d-none]="!onDelete" (keydown)="onDeletePopupKeyDown($event)">
+  <div class="popup-close" (click)="onDelete = false"></div>
+  <div class="popup">
+    <div class="del-title">
+      <h4>Warning!</h4>
+    </div>
+    <p>
+      It will permanently delete your wallet from Muzika Studio. If you want to delete anyway, please type your wallet name.
+    </p>
+    <p>
+      <span class="del-wallet-info">{{ selectedAccount }}</span>
+    </p>
+    <form (submit)="deleteAccount()">
+      <input type="text" class="form-control" placeholder="{{ selectedName }}" name="del-input" [(ngModel)]="delInputText" #delInput>
+      <div class="del-buttons">
+        <input type="submit" class="btn text-danger del" [disabled]="selectedName !== delInputText" value="I understand and delete the wallet">
+      </div>
+    </form>
   </div>
 </div>

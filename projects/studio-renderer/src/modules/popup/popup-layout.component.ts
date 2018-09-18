@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MuzikaTabs } from '../../providers/tab.service';
 import { BaseComponent } from '@muzika/core/angular';
 import { PopupService } from '../../providers/popup.service';
 

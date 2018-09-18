@@ -1,0 +1,23 @@
+<div class="wallet-call">
+  <div class="detail">
+    <form>
+      <select type="form-control">
+        <select>Transfer</select>
+      </select>
+
+      <label for="from-address" class="col-form-label">Withdraw from</label>
+      <input type="text" class="form-control" id="from-address" name="from-address" disabled [(ngModel)]="selectedAccount">
+
+      <label for="to-address" class="col-form-label">Send to</label>
+      <input type="text" class="form-control" id="to-address" name="to-address" placeholder="0x0000000000000000000000000000000000000000">
+
+      <label for="amount" class="col-form-label">Amount</label>
+      <div class="amount" id="amount"></div>
+      <select>
+        <option>Ethereum</option>
+        <option>MZK</option>
+      </select>
+      <input type="number" class="form-control" name="amount">
+    </form>
+  </div>
+</div>

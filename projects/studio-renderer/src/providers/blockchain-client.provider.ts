@@ -96,6 +96,21 @@ export class BlockChainClientProvider {
     }
   }
 
+  deleteWallet(name: string) {
+    switch (this.protocol) {
+      case 'eth':
+        this.ethWalletStorage.deleteWallet(name);
+        break;
+
+      case 'ont':
+        this.ontWalletStorage.deleteWallet(name);
+        break;
+
+      default:
+        throw new Error('Unsupported blockchain protocol');
+    }
+  }
+
   /**
    * Gets a wallet list from the current blockchain protocol.
    */
@@ -192,7 +207,6 @@ export class BlockChainClientProvider {
     };
 
     return await promisify(this.walletProvider.sendAsync.bind(this.walletProvider), params).then(v => {
-      console.log('get balance');
       return {
         eth: unitUp(toBigNumber(v.result).toString(10))
       };

@@ -44,7 +44,7 @@ export class PopupService {
    * get Observable instance for observing popup close.
    */
   get popupClose$(): Observable<string> {
-    return this.popupOpen$.pipe(
+    return this.popupChange$.pipe(
       filter((popup) => popup === ''),
       map(() => this._prevPopup)
     );

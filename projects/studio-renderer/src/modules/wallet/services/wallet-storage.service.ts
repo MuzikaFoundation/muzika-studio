@@ -68,6 +68,19 @@ export class WalletStorageService {
     }
   }
 
+  deleteWallet(name: string): void {
+    const currentState: EthWalletInfo[] = JSON.parse(this.localStorage.getItem('eth-wallets', '[]'));
+
+    const index = currentState.findIndex((state => state.name === name));
+
+    if (index === -1) {
+      throw new Error('cannot find wallet');
+    } else {
+      currentState.splice(index, 1);
+      this.localStorage.setItem('eth-wallets', JSON.stringify(currentState));
+    }
+  }
+
   hasPrivateKeyOf(address: string): boolean {
     const currentState: EthWalletInfo[] = JSON.parse(this.localStorage.getItem('eth-wallets', '[]'));
 
