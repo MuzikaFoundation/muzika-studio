@@ -1,7 +1,7 @@
 {
   "name": "muzika-studio-main",
   "private": true,
-  "version": "0.0.9",
+  "version": "0.1.0",
   "license": "MIT",
   "main": "studio-main/es6-init.js",
   "author": "Muzika Foundation",
@@ -10,7 +10,7 @@
     "clean": "rm -rf projects/studio-main/renderer projects/.cache",
     "electron:compile": "rm -f core/typings.d.ts && electron-compile --appdir `pwd` ./studio-main ./core",
     "build": "npm run electron:compile && electron-builder build",
-    "publish": "sh scripts/build-studio.sh && cd ../../dist/studio-main/ && electron-builder build --publish always"
+    "publish": "npm run electron:compile && electron-builder build --publish always"
   },
   "dependencies": {
     "@0xproject/types": "^0.6.1",

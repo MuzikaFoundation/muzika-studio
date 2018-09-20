@@ -10,7 +10,7 @@
   "npmRebuild": false,
   "asar": true,
   "win": {
-    "icon": "assets/muzika.png",
+    "icon": "./studio-main/assets/muzika.png",
     "target": [
       "zip",
       "nsis"
@@ -58,7 +58,7 @@
     }]
   },
   "mac": {
-    "icon": "assets/muzika.png",
+    "icon": "./studio-main/assets/muzika.png",
     "target": [
       "dmg",
       "zip"
