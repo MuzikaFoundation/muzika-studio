@@ -17,7 +17,7 @@ const debug = require('debug')('muzika:renderer:wallet-generator');
 })
 export class WalletGeneratorComponent extends BaseComponent {
   prevTab: MuzikaTabs;
-  genType: 'generate' | 'import' = 'generate';
+  genType: 'generate' | 'import' | '' = '';
   blockChain = <BlockChainProtocol>{
     protocol: 'eth',
     network: 'testNet'

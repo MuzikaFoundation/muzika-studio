@@ -1,47 +1,85 @@
 <div class="wallet-manager">
-  <ul class="nav nav-pills nav-fill">
-    <li class="nav-item">
-      <span class="nav-link" [class.active]="genType === 'generate'" (click)="changeType('generate')">Generate</span>
-    </li>
-    <li class="nav-item">
-      <span class="nav-link" [class.active]="genType === 'import'" (click)="changeType('import')">Import</span>
-    </li>
-  </ul>
+  <div class="popup-info">
+    <div class="title-icon">
+      <img src="assets/blockchain/protocol/ethereum-256x256.png" *ngIf="blockChain.protocol === 'eth'">
+      <img src="assets/blockchain/protocol/ontology-256x256.png" *ngIf="blockChain.protocol === 'ont'">
+    </div>
 
-  <div class="input-info" *ngIf="genType === 'generate'">
-    <input class="form-control" type="text" placeholder="Wallet Name"
-           [class.is-invalid]="showInvalid && !walletGenInputs.name" [(ngModel)]="walletGenInputs.name">
-    <input class="form-control" type="password" placeholder="Password"
-           [class.is-invalid]="showInvalid && !walletGenInputs.password" [(ngModel)]="walletGenInputs.password">
+    <div class="title">
+      Create Wallet
+    </div>
+
+    <div class="description">
+      Create or Import your own
+      <ng-container *ngIf="blockChain.protocol === 'eth'">Ethereum</ng-container>
+      <ng-container *ngIf="blockChain.protocol === 'ont'">Ontology</ng-container>
+      Wallet.
+    </div>
   </div>
 
-  <div class="input-info" *ngIf="genType === 'import'">
-
-    <ng-container *ngIf="blockChain.protocol === 'eth'">
-      <input class="form-control" type="text" placeholder="Wallet Name"
-             [class.is-invalid]="showInvalid && !ethWalletImportForm.name" [(ngModel)]="ethWalletImportForm.name">
-      <input class="form-control" type="text" placeholder="Private Key"
-             [class.is-invalid]="showInvalid && !ethWalletImportForm.privateKey" [(ngModel)]="ethWalletImportForm.privateKey">
-    </ng-container>
-
-    <ng-container *ngIf="blockChain.protocol === 'ont'">
-      <input class="form-control" type="text" placeholder="Wallet Name"
-             [class.is-valid]="showInvalid && !ontWalletImportForm.name">
-      <div class="custom-file">
-        <input type="file" class="custom-file-input" id="key-file">
-        <label class="custom-file-label" for="key-file">Key file</label>
+  <div class="popup-content" *ngIf="!genType">
+    <div class="type-select">
+      <div class="choice">
+        <div class="icon">
+          <i class="fa fa-calendar-plus" (click)="genType = 'generate'"></i>
+          <div class="title">New Wallet</div>
+        </div>
       </div>
-    </ng-container>
+
+      <div class="choice">
+        <div class="icon">
+          <i class="fa fa-download" (click)="genType = 'import'"></i>
+          <div class="title">Import</div>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div *ngIf="warningMessage" class="warning">
-    {{ warningMessage }}
-  </div>
+  <div class="popup-content" *ngIf="genType">
+    <!--<ul class="nav nav-pills nav-fill">-->
+      <!--<li class="nav-item">-->
+        <!--<span class="nav-link" [class.active]="genType === 'generate'" (click)="changeType('generate')">Generate</span>-->
+      <!--</li>-->
+      <!--<li class="nav-item">-->
+        <!--<span class="nav-link" [class.active]="genType === 'import'" (click)="changeType('import')">Import</span>-->
+      <!--</li>-->
+    <!--</ul>-->
 
-  <button type="button" class="btn btn-success wallet-add" (click)="generateWallet()">
-    Add
-    <ng-container *ngIf="blockChain.protocol === 'eth'">Ethereum</ng-container>
-    <ng-container *ngIf="blockChain.protocol === 'ont'">Ontology</ng-container>
-    Wallet
-  </button>
+    <div class="input-info" *ngIf="genType === 'generate'">
+      <input class="form-control" type="text" placeholder="Wallet Name"
+             [class.is-invalid]="showInvalid && !walletGenInputs.name" [(ngModel)]="walletGenInputs.name">
+      <input class="form-control" type="password" placeholder="Password"
+             [class.is-invalid]="showInvalid && !walletGenInputs.password" [(ngModel)]="walletGenInputs.password">
+    </div>
+
+    <div class="input-info" *ngIf="genType === 'import'">
+
+      <ng-container *ngIf="blockChain.protocol === 'eth'">
+        <input class="form-control" type="text" placeholder="Wallet Name"
+               [class.is-invalid]="showInvalid && !ethWalletImportForm.name" [(ngModel)]="ethWalletImportForm.name">
+        <input class="form-control" type="text" placeholder="Private Key"
+               [class.is-invalid]="showInvalid && !ethWalletImportForm.privateKey" [(ngModel)]="ethWalletImportForm.privateKey">
+      </ng-container>
+
+      <ng-container *ngIf="blockChain.protocol === 'ont'">
+        <input class="form-control" type="text" placeholder="Wallet Name"
+               [class.is-valid]="showInvalid && !ontWalletImportForm.name">
+        <div class="custom-file">
+          <input type="file" class="custom-file-input" id="key-file">
+          <label class="custom-file-label" for="key-file">Key file</label>
+        </div>
+      </ng-container>
+    </div>
+
+    <div *ngIf="warningMessage" class="warning">
+      {{ warningMessage }}
+    </div>
+
+    <button type="button" class="btn btn-success wallet-add" (click)="generateWallet()">
+      Add
+      <ng-container *ngIf="blockChain.protocol === 'eth'">Ethereum</ng-container>
+      <ng-container *ngIf="blockChain.protocol === 'ont'">Ontology</ng-container>
+      Wallet
+    </button>
+  </div>
 </div>
