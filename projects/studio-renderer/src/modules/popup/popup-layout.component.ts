@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { BaseComponent } from '@muzika/core/angular';
 import { PopupService } from '../../providers/popup.service';
 
@@ -12,7 +12,7 @@ import { PopupService } from '../../providers/popup.service';
     </div>`,
   styles: [`
     :host {
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, .5);
       position: absolute;
       width: 100%;
       height: 100%;
@@ -35,6 +35,17 @@ import { PopupService } from '../../providers/popup.service';
   `]
 })
 export class PopupLayoutComponent extends BaseComponent {
+
+  // register a key-down listener for deactivating popup. If ESC key pressed,
+  // the popup will be deactivated.
+  @HostListener('window:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    // if ESC key pressed
+    if (event.keyCode === 27) {
+      this.deactivate();
+    }
+  }
+
   constructor(
     private popupService: PopupService,
   ) {
