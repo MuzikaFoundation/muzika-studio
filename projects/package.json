@@ -44,6 +44,7 @@
     "go-ipfs-wrapper": "^0.1.1",
     "ipfs-api": "^24.0.1",
     "jquery": "^3.3.1",
+    "ontology-dapi": "^0.3.12",
     "popper.js": "^1.14.3",
     "redux": "^4.0.0",
     "rxjs": "6.2.0",
