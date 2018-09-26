@@ -14,7 +14,6 @@ import { RpcClient, Crypto } from 'ontology-ts-sdk';
 import * as ethWallet from 'ethereumjs-wallet';
 import * as Web3 from 'web3';
 import { MuzikaWalletProvider } from './muzika-wallet.provider';
-import { OntologyWalletStorageService } from './ontology/wallet-storage.service';
 import { WalletStorageService } from '../modules/wallet/services/wallet-storage.service';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject } from 'rxjs';
@@ -28,7 +27,7 @@ import { BehaviorSubject } from 'rxjs';
  *  - Ontology (MainNet / TestNet)
  */
 @Injectable({providedIn: 'root'})
-export class BlockChainClientProvider {
+export class BlockChainClient {
   blockChain: BehaviorSubject<BlockChainProtocol>;
   private _client: Web3 | RpcClient;
 
@@ -37,8 +36,7 @@ export class BlockChainClientProvider {
     private store: Store<IAppState>,
     private ontClient: OntologyClient,
     private walletProvider: MuzikaWalletProvider,
-    private ethWalletStorage: WalletStorageService,
-    private ontWalletStorage: OntologyWalletStorageService,
+    private walletStorage: WalletStorageService,
     @Inject(EnvironmentV2Token) private environment: EnvironmentTypeV2,
   ) {
     this.blockChain = new BehaviorSubject<BlockChainProtocol>({
@@ -56,73 +54,44 @@ export class BlockChainClientProvider {
   }
 
   /**
-   *
+   * Generates a random private key for the current protocol wallet.
    */
-  randomPrivateKey(): string | Crypto.PrivateKey {
+  randomPrivateKey(): string {
     switch (this.protocol) {
       case 'eth':
         const wallet = ethWallet.generate();
         return wallet.getPrivateKey().toString('hex');
 
       case 'ont':
-        return Crypto.PrivateKey.random();
+        return Crypto.PrivateKey.random().key;
     }
   }
 
   /**
    * Adds a wallet in the current blockchain protocol.
+   *
    * @param privateKey private key for wallet.
    * @param name the name of wallet.
    * @param password password of wallet.
    */
-  addWallet(name: string, privateKey: string | Crypto.PrivateKey, password: string = '') {
-    switch (this.protocol) {
-      case 'eth':
-        if (privateKey instanceof Crypto.PrivateKey) {
-          throw new Error('Unsupported parameter type');
-        }
-        this.ethWalletStorage.addWallet(name, privateKey);
-        break;
-
-      case 'ont':
-        if (privateKey instanceof String) {
-          privateKey = new Crypto.PrivateKey(<string>privateKey);
-        }
-        this.ontWalletStorage.addWallet(name, <Crypto.PrivateKey>privateKey, password);
-        break;
-
-      default:
-        throw new Error('Unsupported blockchain protocol');
-    }
+  async addWallet(name: string, privateKey: string, password: string = '') {
+    await this.walletStorage.addWallet(this.protocol, name, privateKey, password);
   }
 
+  /**
+   * Deletes a wallet in the current blockchain protocol.
+   *
+   * @param name the name of wallet to delete.
+   */
   deleteWallet(name: string) {
-    switch (this.protocol) {
-      case 'eth':
-        this.ethWalletStorage.deleteWallet(name);
-        break;
-
-      case 'ont':
-        this.ontWalletStorage.deleteWallet(name);
-        break;
-
-      default:
-        throw new Error('Unsupported blockchain protocol');
-    }
+    this.walletStorage.deleteWallet(this.protocol, name);
   }
 
   /**
    * Gets a wallet list from the current blockchain protocol.
    */
   async getWallets(): Promise<any[]> {
-    switch (this.protocol) {
-      case 'eth':
-        return await Promise.resolve(this.ethWalletStorage.accounts);
-      case 'ont':
-        return await Promise.resolve(this.ontWalletStorage.accounts);
-    }
-
-    throw new Error('Unsupported blockchain protocol');
+    return await Promise.resolve(this.walletStorage.getAccounts(this.protocol));
   }
 
   async balanceOf(account: string): Promise<AccountBalance> {
