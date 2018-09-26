@@ -4,19 +4,23 @@ import {
   AccountBalance,
   AppActionType,
   BlockChainProtocol,
-  EnvironmentTypeV2,
-  IAppState,
+  EnvironmentTypeV2, EthereumWalletItem,
+  IAppState, OntologyWalletItem,
   promisify,
   toBigNumber,
   unitUp
 } from '@muzika/core';
-import { RpcClient, Crypto } from 'ontology-ts-sdk';
+import { Crypto } from 'ontology-ts-sdk';
 import * as ethWallet from 'ethereumjs-wallet';
-import * as Web3 from 'web3';
 import { MuzikaWalletProvider } from './muzika-wallet.provider';
 import { WalletStorageService } from '../modules/wallet/services/wallet-storage.service';
 import { Store } from '@ngrx/store';
 import { BehaviorSubject } from 'rxjs';
+
+export interface MuzikaWallet {
+  account: EthereumWalletItem | OntologyWalletItem;
+  password: string;
+}
 
 /**
  * This class produces an interface for interacting with various blockchain protocol as a
@@ -29,12 +33,13 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable({providedIn: 'root'})
 export class BlockChainClient {
   blockChain: BehaviorSubject<BlockChainProtocol>;
-  private _client: Web3 | RpcClient;
+  currentWallet: BehaviorSubject<EthereumWalletItem | OntologyWalletItem>;
+  currentWalletPassword: BehaviorSubject<string>;
 
   constructor(
     private web3: ExtendedWeb3,
-    private store: Store<IAppState>,
     private ontClient: OntologyClient,
+    private store: Store<IAppState>,
     private walletProvider: MuzikaWalletProvider,
     private walletStorage: WalletStorageService,
     @Inject(EnvironmentV2Token) private environment: EnvironmentTypeV2,
@@ -44,8 +49,10 @@ export class BlockChainClient {
       network: (environment.production) ? 'mainNet' : 'testNet'
     });
 
+    this.currentWallet = new BehaviorSubject<EthereumWalletItem|OntologyWalletItem>(null);
+    this.currentWalletPassword = new BehaviorSubject<string>('');
+
     this.blockChain.asObservable().subscribe(blockChain => {
-      this._switchClient(blockChain);
       this.store.dispatch({
         type: AppActionType.SET_PROTOCOL,
         payload: { ...blockChain }
@@ -141,41 +148,35 @@ export class BlockChainClient {
     return this.blockChain.value.network;
   }
 
+  set account(_account: string) {
+    const wallet = this.walletStorage.addressOf(this.protocol, _account);
+    this.currentWallet.next(wallet);
+    this.store.dispatch({
+      type: AppActionType.SET_CURRENT_WALLET,
+      payload: { wallet }
+    });
+  }
+
   /**
-   * Switch the client by the current blockchain protocol and network.
-   * @private
+   * Sets the current wallet password.
+   *
+   * @param _password password
    */
-  private _switchClient(info: BlockChainProtocol): void {
-    switch (info.protocol) {
-      case 'eth':
-        if (!(this._client instanceof Web3)) {
-          this._client = this.web3;
-        }
-        const rpcUrl = this.environment.protocol.eth[info.network].rpcUrl;
-        const infuraAccessToken = this.environment.protocol.eth[info.network].infuraAccessToken;
-        this.walletProvider.rpcUrl = `${rpcUrl}/${infuraAccessToken}`;
-        break;
+  set password(_password: string) {
+    this.currentWalletPassword.next(_password);
 
-      case 'ont':
-        if (!(this._client instanceof RpcClient)) {
-          this._client = this.ontClient;
-        }
-        this.ontClient.network = info.network;
-        break;
+    this.store.dispatch({
+      type: AppActionType.SET_WALLET_PASSWORD,
+      payload: { password: _password }
+    });
+  }
 
-      default:
-        throw new Error('Unsupported blockchain protocol');
-    }
+  get password(): string {
+    return this.currentWalletPassword.value;
   }
 
   private async ethBalanceOf(address: string): Promise<AccountBalance> {
-    const params = {
-      jsonrpc: '2.0',
-      method: 'eth_getBalance',
-      params: [address, 'latest']
-    };
-
-    return await promisify(this.walletProvider.sendAsync.bind(this.walletProvider), params).then(v => {
+    return await promisify(this.web3.eth.getBalance, address).then(v => {
       return {
         eth: unitUp(toBigNumber(v.result).toString(10))
       };
@@ -183,9 +184,8 @@ export class BlockChainClient {
   }
 
   private async ontBalanceOf(address: string): Promise<AccountBalance> {
-    const client = <RpcClient>this._client;
     const balance = <AccountBalance>{};
-    Object.assign(balance, (await client.getBalance(new Crypto.Address(address))).result);
+    Object.assign(balance, (await this.ontClient.api.network.getBalance({ address })).result);
     return balance;
   }
 }
