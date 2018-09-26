@@ -1,7 +1,7 @@
 import { isPlatformBrowser } from '@angular/common';
 import { AfterViewInit, Component, Inject, NgZone, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
-import { BaseComponent, ExtendedWeb3, LocalStorage, UserActions } from '@muzika/core/angular';
+import { BaseComponent, ExtendedWeb3, LocalStorage, OntologyClient, UserActions } from '@muzika/core/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { interval } from 'rxjs';
 import { environment } from '../environments/environment';
@@ -13,6 +13,7 @@ import { forwardToMain, replayActionRenderer } from 'electron-redux';
 import { remote } from 'electron';
 import { RenderOptions } from '../../../studio-main/src/models/render-options';
 import { PopupService } from '../providers/popup.service';
+import { OntologyProvider } from '../providers/ontology/ontology.provider';
 
 @Component({
   selector: 'app-root',
@@ -30,11 +31,13 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
               private zone: NgZone,
               private translate: TranslateService,
               private web3: ExtendedWeb3,
+              private ontClient: OntologyClient,
               private localStorage: LocalStorage,
               private tabService: TabService,
               private popupService: PopupService,
               private router: Router,
-              private walletProvider: MuzikaWalletProvider) {
+              private walletProvider: MuzikaWalletProvider,
+              private ontologyProvider: OntologyProvider) {
     super();
     translate.setDefaultLang('en');
     MuzikaConsole.log('AppConfig', environment);
@@ -79,6 +82,7 @@ export class AppComponent extends BaseComponent implements AfterViewInit {
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       this.web3.setProvider(this.walletProvider);
+      this.ontClient.setProvider(this.ontologyProvider);
     }
 
     // when this option is false, let the current electron BrowserWindow instance

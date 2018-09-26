@@ -4,9 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { BlockChainProtocol, IAppState } from '@muzika/core';
 import { combineLatest } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { BlockChainClientProvider } from '../../../../providers/blockchain-client.provider';
+import { BlockChainClient } from '../../../../providers/blockchain-client.service';
 import { MuzikaTabs } from '../../../../providers/tab.service';
 import { PopupService } from '../../../../providers/popup.service';
+const debug = require('debug')('muzika:renderer:wallet-generator');
 
 
 @Component({
@@ -23,19 +24,16 @@ export class WalletGeneratorComponent extends BaseComponent {
   };
 
   showInvalid = false;
+  warningMessage = '';
 
-  ethWalletInfo = {
+  walletGenInputs = {
     name: '',
+    password: ''
   };
 
   ethWalletImportForm = {
     name: '',
     privateKey: ''
-  };
-
-  ontWalletInfo = {
-    name: '',
-    password: ''
   };
 
   ontWalletImportForm = {
@@ -45,7 +43,7 @@ export class WalletGeneratorComponent extends BaseComponent {
   constructor(
    private route: ActivatedRoute,
    private store: Store<IAppState>,
-   private bcClient: BlockChainClientProvider,
+   private bcClient: BlockChainClient,
    private popupService: PopupService,
   ) {
     super();
@@ -75,43 +73,15 @@ export class WalletGeneratorComponent extends BaseComponent {
   }
 
   generateWallet() {
-    this.showInvalid = true;
-
-    if (!this.checkValidation()) {
-      return;
-    }
-
-    if (this.genType === 'generate') {
-      const privateKey = this.bcClient.randomPrivateKey();
-
-      if (this.blockChain.protocol === 'eth') {
-        this.bcClient.addWallet(this.ethWalletInfo.name, privateKey);
-      } else if (this.blockChain.protocol === 'ont') {
-        this.bcClient.addWallet(this.ontWalletInfo.name, privateKey, this.ontWalletInfo.password);
-      }
-    } else {
-      if (this.blockChain.protocol === 'eth') {
-        this.bcClient.addWallet(this.ethWalletImportForm.name, this.ethWalletImportForm.privateKey);
-      }
-    }
-
-    this.popupService.deactivate();
+    this._generateWallet()
+      .then(() => debug('generate wallet success!'))
+      .catch((err) => this.warningMessage = err.message);
   }
 
   checkValidation() {
     switch (this.genType) {
       case 'generate':
-        if (this.blockChain.protocol === 'eth') {
-          if (!this.ethWalletInfo.name) {
-            return false;
-          }
-        } else if (this.blockChain.protocol === 'ont') {
-          if (!this.ontWalletInfo.name || !this.ontWalletInfo.password) {
-            return false;
-          }
-        }
-
-        return true;
+        return !(!this.walletGenInputs.name || !this.walletGenInputs.password);
 
       case 'import':
         if (this.blockChain.protocol === 'eth') {
@@ -126,5 +96,24 @@ export class WalletGeneratorComponent extends BaseComponent {
     }
 
     return true;
+  }
+
+  private async _generateWallet() {
+    // if input form is not fulfilled, don't try to generate and show unfulfilled inputs.
+    this.showInvalid = true;
+    if (!this.checkValidation()) {
+      return;
+    }
+
+    if (this.genType === 'generate') {
+      const privateKey = this.bcClient.randomPrivateKey();
+      await this.bcClient.addWallet(this.walletGenInputs.name, privateKey, this.walletGenInputs.password);
+    } else {
+      if (this.blockChain.protocol === 'eth') {
+        await this.bcClient.addWallet(this.ethWalletImportForm.name, this.ethWalletImportForm.privateKey);
+      }
+    }
+
+    this.popupService.deactivate();
   }
 }

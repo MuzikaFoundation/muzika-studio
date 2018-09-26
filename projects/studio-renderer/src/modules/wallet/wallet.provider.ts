@@ -30,7 +30,11 @@ export class Web3WalletProvider implements Web3Provider {
         cb(null, this.selectedAddress ? [this.selectedAddress] : []);
       },
       getPrivateKey: (address, cb) => {
-        cb(null, this.walletStorage.privateKeyOf(this.selectedAddress));
+        cb(null, this.walletStorage.privateKeyOf({
+          protocol: 'eth',
+          address: this.selectedAddress,
+          password: ''
+        }));
       }
     }));
     this.engine.addProvider(new RpcSubprovider({rpcUrl: this.rpcUrl}));

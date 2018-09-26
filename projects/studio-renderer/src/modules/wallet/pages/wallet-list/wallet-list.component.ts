@@ -4,11 +4,10 @@ import { TabService } from '../../../../providers/tab.service';
 import { Store } from '@ngrx/store';
 import { AccountBalance, BlockChainProtocol, IAppState } from '@muzika/core';
 import { combineLatest } from 'rxjs';
-import { BlockChainClientProvider } from '../../../../providers/blockchain-client.provider';
+import { BlockChainClient } from '../../../../providers/blockchain-client.service';
 import { Router } from '@angular/router';
 import { PopupService } from '../../../../providers/popup.service';
 import { filter } from 'rxjs/operators';
-import { AlertifyInstnace } from '@muzika/core/browser';
 
 @Component({
   selector: 'wallet-list-page',
@@ -42,7 +41,7 @@ export class WalletListComponent extends BaseComponent {
     private popupService: PopupService,
     private store: Store<IAppState>,
     private router: Router,
-    private bcClient: BlockChainClientProvider,
+    private bcClient: BlockChainClient,
   ) {
     super();
   }

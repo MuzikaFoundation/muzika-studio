@@ -9,17 +9,10 @@
   </ul>
 
   <div class="input-info" *ngIf="genType === 'generate'">
-    <ng-container *ngIf="blockChain.protocol === 'eth'">
-      <input class="form-control" type="text" placeholder="Wallet Name"
-             [class.is-invalid]="showInvalid && !ethWalletInfo.name" [(ngModel)]="ethWalletInfo.name">
-    </ng-container>
-
-    <ng-container *ngIf="blockChain.protocol === 'ont'">
-      <input class="form-control" type="text" placeholder="Wallet Name"
-             [class.is-invalid]="showInvalid && !ontWalletInfo.name" [(ngModel)]="ontWalletInfo.name">
-      <input class="form-control" type="password" placeholder="Password"
-             [class.is-invalid]="showInvalid && !ontWalletInfo.password" [(ngModel)]="ontWalletInfo.password">
-    </ng-container>
+    <input class="form-control" type="text" placeholder="Wallet Name"
+           [class.is-invalid]="showInvalid && !walletGenInputs.name" [(ngModel)]="walletGenInputs.name">
+    <input class="form-control" type="password" placeholder="Password"
+           [class.is-invalid]="showInvalid && !walletGenInputs.password" [(ngModel)]="walletGenInputs.password">
   </div>
 
   <div class="input-info" *ngIf="genType === 'import'">
@@ -39,6 +32,10 @@
         <label class="custom-file-label" for="key-file">Key file</label>
       </div>
     </ng-container>
+  </div>
+
+  <div *ngIf="warningMessage" class="warning">
+    {{ warningMessage }}
   </div>
 
   <button type="button" class="btn btn-success wallet-add" (click)="generateWallet()">

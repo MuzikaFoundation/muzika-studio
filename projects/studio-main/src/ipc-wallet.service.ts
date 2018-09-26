@@ -1,5 +1,9 @@
 import { ipcMain } from 'electron';
 import { IPCUtil } from './util/ipc-utils';
+import * as ethWallet from 'ethereumjs-wallet';
+import * as ethUtil from 'ethereumjs-util';
+import { Crypto, Wallet, Account } from 'ontology-ts-sdk';
+import { EthereumWalletItem, OntologyWalletItem } from '../../core/common/models/blockchain';
 
 // ipcMain.on('synchronous-message', (event, arg) => {
 //   MuzikaConsole.log(arg); // prints "ping"
@@ -11,6 +15,29 @@ export class IpcWalletService {
   }
 
   init() {
+    ipcMain.on('Wallet:generate', (event, uuid, protocol: 'eth' | 'ont', name, privateKey, password) => {
+      let keystore = {};
+      switch (protocol) {
+        case 'eth':
+          privateKey = ethUtil.toBuffer(ethUtil.addHexPrefix(privateKey));
+          if (ethUtil.isValidPrivate(privateKey)) {
+            keystore = <EthereumWalletItem>{
+              name: name,
+              wallet: ethWallet.fromPrivateKey(privateKey).toV3(password)
+            };
+          }
+          break;
+
+        case 'ont':
+          privateKey = new Crypto.PrivateKey(privateKey);
+          const wallet = Wallet.create(name);
+          wallet.addAccount(Account.create(privateKey, password));
+          keystore = <OntologyWalletItem>wallet.toJsonObj();
+      }
+
+      event.sender.send(IPCUtil.wrap('Wallet:generate', uuid), null, keystore);
+    });
+
     /* For getAccounts */
     ipcMain.on('Wallet:getAccounts', (event, uuid) => {
       // Request wallet application getting accounts

@@ -6,7 +6,7 @@ import { BaseComponent, UserActions } from '@muzika/core/angular';
 import {TabService} from '../../providers/tab.service';
 import {WalletStorageService} from '../../modules/wallet/services/wallet-storage.service';
 import { Store } from '@ngrx/store';
-import { BlockChainClientProvider } from '../../providers/blockchain-client.provider';
+import { BlockChainClient } from '../../providers/blockchain-client.service';
 import { combineLatest } from 'rxjs';
 import { PopupService } from '../../providers/popup.service';
 import { filter } from 'rxjs/operators';
@@ -33,7 +33,7 @@ export class LoginPageComponent extends BaseComponent {
   constructor(
     private store: Store<IAppState>,
     private userActions: UserActions,
-    private bcClient: BlockChainClientProvider,
+    private bcClient: BlockChainClient,
     private walletStorage: WalletStorageService,
     private router: Router,
     private route: ActivatedRoute,
@@ -82,7 +82,9 @@ export class LoginPageComponent extends BaseComponent {
     }
 
     // this.userActions.login('metamask').subscribe();
-    this.userActions.login(this.selectedAccount).subscribe(
+    this.bcClient.account = this.selectedAccount;
+    this.bcClient.password = this.selectedPassword;
+    this.userActions.login(this.blockChain.protocol, this.selectedAccount).subscribe(
       user => {
         const redirectTo = this.route.snapshot.queryParams['redirectTo'] || '/home';
         this.router.navigateByUrl(redirectTo);
@@ -111,10 +113,6 @@ export class LoginPageComponent extends BaseComponent {
     this.bcClient.protocol = protocol;
 
     this.warningMessage = '';
-
-    if (protocol === 'ont') {
-      this.warningMessage = 'Sorry, but it does not yet support ontology login.';
-    }
   }
 
   switchNetwork(network: 'mainNet' | 'testNet') {

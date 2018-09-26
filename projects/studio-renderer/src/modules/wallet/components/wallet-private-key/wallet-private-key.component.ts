@@ -19,7 +19,7 @@ export class WalletPrivateKeyComponent extends BaseComponent {
       return this.web3Service
         .usingPrivateKey(form.value.privKey)
         .subscribe(accounts => {
-          this.userActions.login(accounts[0]).subscribe(user => {
+          this.userActions.login('eth', accounts[0]).subscribe(user => {
             MuzikaConsole.log(user);
           });
         });

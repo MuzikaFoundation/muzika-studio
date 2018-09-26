@@ -69,17 +69,8 @@
       </div>
     </div>
 
-    <!--<select class="form-control mt-3" id="account" name="account" [(ngModel)]="selectedAccount">-->
-      <!--&lt;!&ndash; For solving data binding problem after switching protocol &ndash;&gt;-->
-      <!--<option value="" style="display: none"></option>-->
-      <!--&lt;!&ndash;-&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&ndash;&gt;-->
-      <!--<option *ngFor="let account of accounts" [value]="account.address" class="test">-->
-        <!--{{account.name}} ({{account.address}})-->
-      <!--</option>-->
-    <!--</select>-->
-
     <input type="password" class="form-control mt-2" id="password" name="password" placeholder="Password"
-           *ngIf="blockChain.protocol === 'ont'" [disabled]="!selectedAccount" [(ngModel)]="selectedPassword">
+           [disabled]="!selectedAccount" [(ngModel)]="selectedPassword">
 
     <div class="warning" *ngIf="warningMessage !== ''">
       {{ warningMessage }}
@@ -87,7 +78,7 @@
 
     <div class="row mt-3 login-btns">
       <!-- TODO: implement ontology login service -->
-      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount || blockChain.protocol === 'ont'"> Sign in </button>
+      <button type="button" class="btn btn-success mr-1" (click)="login()" [disabled]="!selectedAccount"> Sign in </button>
       <button type="button" class="btn btn-success ml-1" (click)="createWallet()"> Create Wallet </button>
     </div>
 
