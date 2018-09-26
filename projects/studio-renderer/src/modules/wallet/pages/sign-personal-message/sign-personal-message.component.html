@@ -1,17 +1,44 @@
-<div *ngIf="currentMsg" style="width: 80%">
-  <h4> Signer </h4>
+<div *ngIf="currentMsg" class="message">
+  <!--<i class="fa fa-edit"></i>-->
 
-  <p> {{currentMsg.from}} </p>
+  <div class="message-info">
+    <div class="title-icon">
+      <img src="assets/blockchain/protocol/ethereum-256x256.png" *ngIf="blockChain.protocol === 'eth'">
+      <img src="assets/blockchain/protocol/ontology-256x256.png" *ngIf="blockChain.protocol === 'ont'">
+    </div>
 
-  <h4> Message </h4>
+    <div class="title"> Sign Message </div>
 
-  <div>
-    <textarea rows="8" readonly>{{parsedCurrentMsg}}</textarea>
+    <div class="description">
+      App tries to sign following message by your wallet
+    </div>
   </div>
 
-  <div class="btn btn-group float-right p-0">
-    <button class="btn btn-primary" (click)="sign()"> Sign </button>
-    <button class="btn btn-danger" (click)="reject()"> Reject </button>
+  <div class="message-param">
+    <div class="info">
+      <label for="address">Signer (Wallet Address)</label>
+      <span id="address" class="address">{{currentMsg.from}}</span>
+    </div>
+    <!--<p> {{currentMsg.from}} </p>-->
+
+    <div class="info form-group">
+      <label for="message">Message</label>
+      <textarea rows="3" id="message" class="form-control" readonly>{{parsedCurrentMsg}}</textarea>
+    </div>
+
+    <div class="info form-group">
+      <label for="password">Wallet Password</label>
+      <input class="form-control" id="password" type="password" [(ngModel)]="password">
+    </div>
+
+    <div class="info warning">
+      {{ warningMessage }}
+    </div>
+  </div>
+
+  <div class="message-action">
+    <button class="btn btn-success mr-1" (click)="sign()" [disabled]="!password"> Accept </button>
+    <button class="btn btn-danger ml-1" (click)="reject()"> Reject </button>
   </div>
 </div>
 

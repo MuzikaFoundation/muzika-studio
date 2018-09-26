@@ -3,6 +3,9 @@ import {BaseComponent} from '@muzika/core/angular';
 import * as sigUtil from 'eth-sig-util';
 import * as ethUtil from 'ethereumjs-util';
 import {UUIDEvent, WalletStorageService} from '../../services/wallet-storage.service';
+import { BlockChainClient } from '../../../../providers/blockchain-client.service';
+import { Store } from '@ngrx/store';
+import { BlockChainProtocol, IAppState } from '@muzika/core';
 
 @Component({
   selector: 'wallet-sign-personal-message',
@@ -13,12 +16,26 @@ export class WalletSignPersonalMessageComponent extends BaseComponent {
   currentEvent: UUIDEvent;
   currentMsg: any;
   parsedCurrentMsg: string;
+  blockChain: BlockChainProtocol;
+  password: string;
 
-  constructor(private walletStorage: WalletStorageService) {
+  warningMessage = '';
+
+  constructor(
+    private walletStorage: WalletStorageService,
+    private bcClient: BlockChainClient,
+    private store: Store<IAppState>,
+  ) {
     super();
   }
 
   ngOnInit() {
+    this._sub.push(
+      this.bcClient.blockChain.asObservable().subscribe(protocol => {
+        this.blockChain = protocol;
+      })
+    );
+
     this._sub.push(
       this.walletStorage.eventSignMessage.subscribe(event => {
         if (event) {
@@ -31,16 +48,25 @@ export class WalletSignPersonalMessageComponent extends BaseComponent {
         }
       })
     );
+
+    this._sub.push(
+      this.store.select('app', 'currentWalletPassword').subscribe(password => this.password = password)
+    );
   }
 
   sign() {
     try {
-      const privateKey = this.walletStorage.privateKeyOf(this.currentMsg.from);
-      const serialized = sigUtil.personalSign(privateKey, this.currentMsg);
+      const signObject = this.walletStorage.signMessage({
+        protocol: this.bcClient.protocol,
+        address: this.currentMsg.from,
+        password: this.password,
+        message: this.currentMsg.data
+      });
 
-      this.walletStorage.receiveSignMessageEvent(Object.assign(this.currentEvent, {data: serialized}));
+      this.walletStorage.receiveSignMessageEvent(Object.assign(this.currentEvent, {data: signObject}));
     } catch (e) {
-      this.walletStorage.receiveSignMessageEvent(Object.assign(this.currentEvent, {error: e}));
+      this.warningMessage = 'Maybe password is not incorrect!';
+      // this.walletStorage.receiveSignMessageEvent(Object.assign(this.currentEvent, {error: e}));
     }
   }
 

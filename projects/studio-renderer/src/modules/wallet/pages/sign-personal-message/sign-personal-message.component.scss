@@ -8,6 +8,79 @@
   border-radius: 5px 5px;
 }
 
+.message {
+  width: 450px;
+  padding: 20px 40px;
+
+  .message-info {
+    display: flex;
+    flex-direction: column;
+
+    .title-icon {
+      font-size: 64px;
+      line-height: 64px;
+      text-align: center;
+
+      img {
+        width: 80px;
+        height: 80px;
+        display: inline-block;
+      }
+    }
+
+    .title {
+      font-size: 32px;
+      font-weight: 600;
+      text-align: center;
+      margin: 8px 0;
+    }
+
+    .description {
+      font-size: 16px;
+      margin: 8px 0;
+      text-align: center;
+    }
+  }
+
+  .message-param {
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #dcdcdc;
+    margin: 8px 0;
+    padding: 8px 0;
+
+    .info {
+      margin: 4px 0;
+      font-size: 15px;
+
+      label {
+        font-weight: 600;
+        display: block;
+      }
+
+      textarea {
+        font-size: 14px;
+      }
+    }
+
+    .warning {
+      text-align: center;
+      color: red;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+
+  .message-action {
+    display: flex;
+    flex-direction: row;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
 .no-messages {
   color: #999;
   font-size: 1.4rem;
