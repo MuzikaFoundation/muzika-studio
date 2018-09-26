@@ -2,6 +2,9 @@ import {Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import * as serializeError from 'serialize-error';
 import {ElectronService} from '../../../../providers/electron.service';
 import {WalletStorageService} from '../../services/wallet-storage.service';
+import { BlockChainProtocol, IAppState } from '@muzika/core';
+import { Store } from '@ngrx/store';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'wallet-home',
@@ -11,13 +14,23 @@ import {WalletStorageService} from '../../services/wallet-storage.service';
 export class WalletHomeComponent implements OnInit, OnDestroy {
   accounts: string[] = [];
   listeners: any[] = [];
+  blockChain: BlockChainProtocol = {
+    protocol: 'eth',
+    network: 'testNet'
+  };
 
   constructor(private walletStorage: WalletStorageService,
               private electronService: ElectronService,
+              private store: Store<IAppState>,
               private zone: NgZone) {
   }
 
   ngOnInit() {
+    combineLatest(
+      this.store.select('app', 'protocol'),
+      this.store.select('app', 'network')
+    ).subscribe(([protocol, network]) => this.blockChain = { protocol, network });
+
     const getAccountsListener = (event, uuid) => {
       this.zone.run(() => {
         event.sender.send('WalletProvider:getAccounts', uuid, null, this.walletStorage.accounts.map(account => account.address));
@@ -28,7 +41,7 @@ export class WalletHomeComponent implements OnInit, OnDestroy {
 
     const signTransactionListener = (event, uuid, txData) => {
       this.zone.run(() => {
-        if (this.walletStorage.hasPrivateKeyOf(txData.from)) {
+        if (this.walletStorage.hasAddressOf(this.blockChain.protocol, txData.from)) {
           this.walletStorage.emitSignTransactionEvent({event, uuid, data: txData});
         } else {
           event.sender.send(
@@ -46,7 +59,7 @@ export class WalletHomeComponent implements OnInit, OnDestroy {
 
     const signPersonalMessageListener = (event, uuid, msgParams) => {
       this.zone.run(() => {
-        if (this.walletStorage.hasPrivateKeyOf(msgParams.from)) {
+        if (this.walletStorage.hasAddressOf(this.blockChain.protocol, msgParams.from)) {
           this.walletStorage.emitSignMessageEvent({event, uuid, data: msgParams});
         } else {
           event.sender.send(
