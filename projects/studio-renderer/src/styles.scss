@@ -43,6 +43,10 @@ img {
   -webkit-user-drag: none;
 }
 
+.btn {
+  font-size: 0.9em;
+}
+
 .bg-primary {
   color: mat-contrast($primary-palette, 700);
 }
@@ -52,12 +56,12 @@ img {
 }
 
 .btn-success {
-  background-image:linear-gradient(0deg, #1ea531, #29be47);
+  background-image:linear-gradient(0deg, #219a30, #29cc49);
   border: 1px solid #20ab32;
 }
 
 .btn-success:not(:disabled):hover {
-  background-image:linear-gradient(0deg, #1e8c2e, #2aa548);
+  background-image:linear-gradient(0deg, #1e812d, #2ab348);
   border: 1px solid #20ab32;
 }
 
@@ -220,4 +224,64 @@ button:focus {
 
 ul, li {
   list-style: none;
+}
+
+
+.popup-info {
+  display: flex;
+  flex-direction: column;
+
+  .title-icon {
+    font-size: 64px;
+    line-height: 64px;
+    text-align: center;
+
+    img {
+      width: 80px;
+      height: 80px;
+      display: inline-block;
+    }
+  }
+
+  .title {
+    font-size: 32px;
+    font-weight: 600;
+    text-align: center;
+    margin: 8px 0;
+  }
+
+  .description {
+    font-size: 16px;
+    margin: 8px 0;
+    text-align: center;
+  }
+}
+
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #dcdcdc;
+  margin: 8px 0;
+  padding: 8px 0;
+
+  .info {
+    margin: 4px 0;
+    font-size: 15px;
+
+    label {
+      font-weight: 600;
+      display: block;
+    }
+
+    textarea {
+      font-size: 14px;
+    }
+  }
+
+  .warning {
+    text-align: center;
+    color: red;
+    font-size: 14px;
+    font-weight: 500;
+  }
 }

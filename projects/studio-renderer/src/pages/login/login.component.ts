@@ -97,7 +97,7 @@ export class LoginPageComponent extends BaseComponent {
   }
 
   async createWallet() {
-    this.popupService.activate('wallet-generate',  { queryParams: { genType: 'generate' } });
+    this.popupService.activate('wallet-generate');
   }
 
   goToWalletManager() {

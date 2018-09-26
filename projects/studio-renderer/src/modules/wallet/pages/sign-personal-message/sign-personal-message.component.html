@@ -1,7 +1,7 @@
 <div *ngIf="currentMsg" class="message">
   <!--<i class="fa fa-edit"></i>-->
 
-  <div class="message-info">
+  <div class="popup-info">
     <div class="title-icon">
       <img src="assets/blockchain/protocol/ethereum-256x256.png" *ngIf="blockChain.protocol === 'eth'">
       <img src="assets/blockchain/protocol/ontology-256x256.png" *ngIf="blockChain.protocol === 'ont'">
@@ -14,7 +14,7 @@
     </div>
   </div>
 
-  <div class="message-param">
+  <div class="popup-content">
     <div class="info">
       <label for="address">Signer (Wallet Address)</label>
       <span id="address" class="address">{{currentMsg.from}}</span>
