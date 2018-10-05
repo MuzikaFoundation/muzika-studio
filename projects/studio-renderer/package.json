@@ -1,7 +1,7 @@
 {
   "name": "muzika-studio-renderer",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "author": "Muzika Foundation",
   "description": "Muzika platform Minimum Viable Product",

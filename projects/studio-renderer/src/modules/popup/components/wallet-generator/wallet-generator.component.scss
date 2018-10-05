@@ -74,8 +74,13 @@
     height: 100%;
     padding-top: 10px;
 
-    input {
+    .form-control {
       margin: 5px 0;
+      height: 48px;
+    }
+
+    ::placeholder {
+      color: #ccc;
     }
 
     .custom-file {

@@ -2,8 +2,8 @@ import { ipcMain } from 'electron';
 import { IPCUtil } from './util/ipc-utils';
 import * as ethWallet from 'ethereumjs-wallet';
 import * as ethUtil from 'ethereumjs-util';
-import { Crypto, Wallet, Account } from 'ontology-ts-sdk';
-import { EthereumWalletItem, OntologyWalletItem } from '../../core/common/models/blockchain';
+import { EthereumWalletItem, OntologyWalletItem, ProtocolType } from '../../core';
+import { Account, Wallet, Crypto } from 'ontology-ts-sdk';
 
 // ipcMain.on('synchronous-message', (event, arg) => {
 //   MuzikaConsole.log(arg); // prints "ping"
@@ -29,13 +29,40 @@ export class IpcWalletService {
           break;
 
         case 'ont':
-          privateKey = new Crypto.PrivateKey(privateKey);
           const wallet = Wallet.create(name);
-          wallet.addAccount(Account.create(privateKey, password));
+          wallet.addAccount(Account.create(new Crypto.PrivateKey(privateKey), password));
           keystore = <OntologyWalletItem>wallet.toJsonObj();
       }
 
       event.sender.send(IPCUtil.wrap('Wallet:generate', uuid), null, keystore);
+    });
+
+    ipcMain.on('Wallet:decrypt', (event, uuid, protocol: ProtocolType, keystore: any, password: string) => {
+      try {
+        let wallet;
+
+        switch (protocol) {
+          case 'eth':
+            wallet = ethWallet.fromV3((keystore as EthereumWalletItem).wallet, password);
+            event.sender.send(IPCUtil.wrap('Wallet:decrypt', uuid), null, wallet.getPrivateKey());
+            break;
+
+          case 'ont':
+            wallet = Wallet.fromWalletFile(keystore);
+            const account: Account = wallet.accounts[0];
+            event.sender.send(
+              IPCUtil.wrap('Wallet:decrypt', uuid),
+              null,
+              account.encryptedKey.decrypt(password, account.address, account.salt, {
+                cost: wallet.scrypt.n,
+                blockSize: wallet.scrypt.r,
+                parallel: wallet.scrypt.p,
+                size: wallet.scrypt.dkLen
+              }).serializeWIF());
+        }
+      } catch (e) {
+        event.sender.send(IPCUtil.wrap('Wallet:decrypt', uuid), e);
+      }
     });
 
     /* For getAccounts */

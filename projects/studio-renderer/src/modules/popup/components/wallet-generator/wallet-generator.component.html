@@ -36,15 +36,6 @@
   </div>
 
   <div class="popup-content" *ngIf="genType">
-    <!--<ul class="nav nav-pills nav-fill">-->
-      <!--<li class="nav-item">-->
-        <!--<span class="nav-link" [class.active]="genType === 'generate'" (click)="changeType('generate')">Generate</span>-->
-      <!--</li>-->
-      <!--<li class="nav-item">-->
-        <!--<span class="nav-link" [class.active]="genType === 'import'" (click)="changeType('import')">Import</span>-->
-      <!--</li>-->
-    <!--</ul>-->
-
     <div class="input-info" *ngIf="genType === 'generate'">
       <input class="form-control" type="text" placeholder="Wallet Name"
              [class.is-invalid]="showInvalid && !walletGenInputs.name" [(ngModel)]="walletGenInputs.name">

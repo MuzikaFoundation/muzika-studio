@@ -186,30 +186,24 @@ export class WalletStorageService {
    * @param address wallet address.
    * @param password wallet password
    */
-  privateKeyOf({ protocol, name, address, password }: {
+  async privateKeyOf({ protocol, name, address, password }: {
     protocol: ProtocolType,
     name?: string,
     address?: string,
     password: string
-  }): Buffer | Crypto.PrivateKey {
+  }): Promise<Buffer | Crypto.PrivateKey> {
     const keystore = (name) ? this.nameOf(protocol, name) : this.addressOf(protocol, address);
-    let wallet;
 
-    switch (protocol) {
-      case 'eth':
-        wallet = ethWallet.fromV3((keystore as EthereumWalletItem).wallet, password);
-        return wallet.getPrivateKey();
-
-      case 'ont':
-        wallet = Wallet.fromWalletFile(keystore);
-        const account: Account = wallet.accounts[0];
-        return account.encryptedKey.decrypt(password, account.address, account.salt, {
-          cost: wallet.scrypt.n,
-          blockSize: wallet.scrypt.r,
-          parallel: wallet.scrypt.p,
-          size: wallet.scrypt.dkLen
-        });
-    }
+    return new Promise<any>((resolve) => {
+      const uuid = IPCUtil.uuid();
+      this.electronService.ipcRenderer.once(IPCUtil.wrap('Wallet:decrypt', uuid), (events, error, privateKey) => {
+        if (protocol === 'ont') {
+          privateKey = Crypto.PrivateKey.deserializeWIF(privateKey);
+        }
+        resolve(privateKey);
+      });
+      this.electronService.ipcRenderer.send('Wallet:decrypt', uuid, protocol, keystore, password);
+    });
   }
 
   /**
@@ -222,14 +216,14 @@ export class WalletStorageService {
    * @param password wallet password.
    * @param message message for signing.
    */
-  signMessage({ protocol, name, address, password, message }: {
+  async signMessage({ protocol, name, address, password, message }: {
     protocol: ProtocolType,
     name?: string,
     address?: string,
     password: string,
     message: string
-  }): string | Signature {
-    const privateKey = this.privateKeyOf({ protocol, name, address, password });
+  }): Promise<string | Signature> {
+    const privateKey = await this.privateKeyOf({ protocol, name, address, password });
     switch (protocol) {
       case 'eth':
         return sigUtil.personalSign(privateKey, { data: message });

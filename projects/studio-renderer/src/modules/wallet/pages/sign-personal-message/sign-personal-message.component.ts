@@ -54,9 +54,9 @@ export class WalletSignPersonalMessageComponent extends BaseComponent {
     );
   }
 
-  sign() {
+  async sign() {
     try {
-      const signObject = this.walletStorage.signMessage({
+      const signObject = await this.walletStorage.signMessage({
         protocol: this.bcClient.protocol,
         address: this.currentMsg.from,
         password: this.password,
