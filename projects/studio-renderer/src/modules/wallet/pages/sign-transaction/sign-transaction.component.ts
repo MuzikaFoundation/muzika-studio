@@ -46,7 +46,11 @@ export class WalletSignTransactionComponent extends BaseComponent {
       this.currentTx.value = this.currentTx.value || '0x00';
       this.currentTx.data = ethUtil.addHexPrefix(this.currentTx.data);
 
-      const privateKey = this.walletStorage.privateKeyOf(this.currentTx.from);
+      const privateKey = this.walletStorage.privateKeyOf({
+        protocol: this.walletStorage.protocol,
+        address: this.currentTx.from,
+        password: this.walletStorage.currentWalletPassword
+      });
 
       const tx = new EthTx(this.currentTx);
       tx.sign(privateKey);

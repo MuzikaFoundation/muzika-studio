@@ -131,7 +131,7 @@ export class WalletStorageService {
 
   addressIndexOf(protocol: 'eth' | 'ont', address: string, state?: any[]): number {
     const currentState = (state) ? state : this.getCurrentState(protocol);
-    address = (address.slice(0, 2) === '0x') ? address.slice(2) : address;
+    address = ((address.slice(0, 2) === '0x') ? address.slice(2) : address).toLowerCase();
     return currentState.findIndex(_state => {
       if (protocol === 'eth') {
         return _state.wallet.address === address;
