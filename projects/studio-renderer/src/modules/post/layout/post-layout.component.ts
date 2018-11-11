@@ -4,13 +4,9 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'mzk-post-layout',
   template: `
-    <div class="container">
+    <div class="container post-layout">
       <mzk-post-layout-topbar></mzk-post-layout-topbar>
-      <div class="row">
-        <div class="col">
-          <router-outlet></router-outlet>
-        </div>
-      </div>
+      <router-outlet></router-outlet>
     </div>
   `,
   styles: [`
@@ -18,7 +14,13 @@ import { Component } from '@angular/core';
       display: block;
       background: #EEEEEE;
       padding: 10px 0;
-      min-height: 100%;
+      height: 100%;
+    }
+    
+    .post-layout {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
     }
   `]
 })

@@ -26,6 +26,7 @@ import { PostLayoutComponent } from './layout/post-layout.component';
 import { PostLayoutTopbarComponent } from './layout/post-layout-topbar.component';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { PostNotReadyComponent } from './pages/post-not-ready/post-not-ready.component';
+import { PostSelectionComponent } from './pages/post-selection/post-selection.component';
 
 @NgModule({
   imports: [
@@ -44,7 +45,7 @@ import { PostNotReadyComponent } from './pages/post-not-ready/post-not-ready.com
     FroalaViewModule.forRoot()
   ],
   declarations: [
-
+    PostSelectionComponent,
     PostListItemComponent,
     PostMusicComponent,
     PostItemDetailHeaderComponent,

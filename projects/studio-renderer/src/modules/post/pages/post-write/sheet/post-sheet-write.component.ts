@@ -34,10 +34,18 @@ export class PostSheetMusicWriteComponent extends BasePostWriteComponent {
 
   currentUser: User;
 
-  songType: '~cover' | '~original' = '~original';
+  songType: '~cover' | '~original';
+  songCountry: string;
 
   genreSelections = SheetMusicGenreSelections;
   instrumentSelections = InstrumentSelections;
+  countrySelection = [
+    'South Korea',
+    'China',
+    'HongKong',
+    'USA',
+    'Japan'
+  ];
 
   genres: Set<string> = new Set();
   instruments: Set<string> = new Set();

@@ -13,11 +13,13 @@ import { PostStreamingItemDetailComponent } from './pages/post-item-detail/music
 import { PostSheetItemDetailComponent } from './pages/post-item-detail/sheets/post-sheet-item-detail.component';
 import { PostDraftListComponent } from './pages/post-draft-list/post-draft-list.component';
 import { PostLayoutComponent } from './layout/post-layout.component';
+import { PostSelectionComponent } from './pages/post-selection/post-selection.component';
 
 const routes: Routes = [{
   path: 'board',
   component: PostLayoutComponent,
   children: [
+    { path: 'select', component: PostSelectionComponent },
     { path: ':type/draft', component: PostDraftListComponent },
     { path: 'community/write', component: PostCommunityWriteComponent },
     { path: 'streaming/write', component: PostStreamingMusicWriteComponent },

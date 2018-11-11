@@ -1,123 +1,197 @@
-<section class="post-write bg-white h-100">
-  <form class="form h-100" #form="ngForm" (ngSubmit)="submit(form)">
-    <div class="row h-100 mx-0">
-      <section class="col extra-section sale-sheet-section" id="sale-sheet-section">
-        <h2> Upload Sheet Music </h2>
+<div class="write-form">
+  <form class="h-100" (ngSubmit)="1">
+    <div class="container h-100">
 
-        <div class="file-select-form" (click)="fileSelector.click();">
-          <div class="upload-btn" [class.disabled]="uploadStatus?.status === 'uploading'">
-            <input type="file" id="upload-sheet" class="upload-sheet" #fileSelector name="upload-sheet"
-                     (change)="addFile($event.target.files[0])" accept=".pdf" />
-            <span class="btn-text">
-              Choose pdf file / Drag & drop <BR />
-              <small> Support extension: pdf </small>
-            </span>
-          </div>
-        </div>
-
-        <div class="position-relative">
-          <div *ngFor="let file of files; let i = index" class="m-1">
-            <div class="d-flex justify-content-between align-items-center">
-              <span class="file-name">
-                <i class="fa fa-file-pdf"></i>
-                {{file.file.name}}
-              </span>
-
-              <label class="btn btn-primary btn-sm">
-                <input type="file" [id]="'upload-preview' + i" class="upload-sheet d-none" name="upload-sheet"
-                       (change)="addPreview(i, $event)">
-                <span class="btn-text">
-                  <i class="fa fa-plus"></i>
-                  Add Preview
-                </span>
-              </label>
-            </div>
-
-            <div *ngFor="let preview of file.previews; let i = index" class="preview-item pl-1">
-              <span class="file-name">
-                <i class="fa fa-file-image"></i>
-                {{preview.name}}
-              </span>
-            </div>
-          </div>
-
-          <div class="progress upload-progress position-relative" *ngIf="uploadStatus">
-            <div class="progress-bar"
-                 role="progressbar"
-                 [attr.aria-valuenow]="uploadStatus.progress" aria-valuemin="0" aria-valuemax="100"
-                 [style.width]="uploadStatus.progress + '%'">
-              <div style="position: absolute; left: 0; right: 0">
-                {{uploadStatus.progress}}%
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <h2> Song Type </h2>
-
-        <div class="song-type-form">
-          <div class="btn-group">
-            <button class="btn btn-secondary" type="button"
-                    [class.active]="songType === '~cover'"
-                    (click)="songType = '~cover'"> Cover </button>
-            <button class="btn btn-secondary" type="button"
-                    [class.active]="songType === '~original'"
-                    (click)="songType = '~original'"> Original </button>
-          </div>
-        </div>
-
-        <h2> Genre </h2>
-
-        <div class="tag-selector genre-form">
-          <ul>
-            <li *ngFor="let genre of genreSelections"
-                [class.active]="genres.has(genre.value)" (click)="toggleGenre(genre.value)">
-              {{genre.name}}
-            </li>
-          </ul>
-        </div>
-
-        <h2> Instrument </h2>
-
-        <div class="tag-selector instrument-form">
-          <ul>
-            <li *ngFor="let instrument of instrumentSelections"
-                [class.active]="instruments.has(instrument.value)" (click)="toggleInstrument(instrument.value)">
-              {{instrument.name}}
-            </li>
-          </ul>
-        </div>
-
-        <h5> Price </h5>
-
-        <div class="price-form">
-          <div class="input-group">
-            <input type="number" class="form-control" id="price" name="price"
-                   [(ngModel)]="post.price" required>
-            <div class="input-group-append">
-              <div class="input-group-text">
-                MZK
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <div class="col-6 px-0 write-form border-left">
-        <div class="title">
-          <input type="text" id="title" name="title" class="w-100" placeholder="Title"
-                 required [(ngModel)]="post.title">
-        </div>
-
-        <div class="description">
-          <!--<div [froalaEditor]="options" #froalaEditor required [(froalaModel)]="post.content">123</div>-->
-          <textarea [(ngModel)]="post.content" name="content" placeholder="description"></textarea>
+      <div class="row">
+        <div class="col-12 write-group">
+          <input type="text" class="write-control" id="title" aria-describedby="title-help" required>
+          <label for="title"><i class="fas fa-book-open"></i> Sheet Title</label>
         </div>
       </div>
+
+      <div class="row">
+        <div class="col-5 write-group">
+          <button type="button" class="write-control" id="sheet-type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" [class.valid]="!!songType">
+            <ng-container *ngIf="songType === '~original'">Original Song</ng-container>
+            <ng-container *ngIf="songType === '~cover'">Cover Song</ng-container>
+            <span class="float-right"><i class="fa fa-caret-down"></i></span>
+          </button>
+
+          <label for="sheet-type"><i class="fas fa-code-branch"></i> Sheet Type</label>
+
+          <div class="dropdown-menu sheet-type" aria-labelledby="sheet-type">
+            <div class="dropdown-item" (click)="songType = '~original'">
+              <h6>Original Music Sheet</h6>
+              <span>This music sheet is for your own music.</span>
+            </div>
+
+            <div class="dropdown-item" (click)="songType = '~cover'">
+              <h6>Cover Music Sheet</h6>
+              <span>This music sheet is a new performance of other music.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-7 write-group">
+          <button type="button" class="write-control" id="genre" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="float-right"><i class="fa fa-caret-down"></i></span>
+          </button>
+
+          <label for="genre"><i class="fas fa-code-branch"></i> Genre</label>
+
+          <div class="dropdown-menu" aria-labelledby="genre">
+            <div class="dropdown-item" *ngFor="let genre of genreSelections">
+              <span>{{ genre.name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6 write-group">
+          <input type="text" class="write-control" id="country" name="country" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" [(ngModel)]="songCountry" required>
+          <label for="country"><i class="fas fa-code-branch"></i> Country</label>
+
+          <div class="dropdown-menu" aria-labelledby="genre">
+            <div class="dropdown-item" *ngFor="let country of countrySelection" (click)="songCountry = country">
+              <span>{{ country }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <textarea [(ngModel)]="post.content" rows="8" class="write-control" id="description" name="content" placeholder="description"></textarea>
+      </div>
+
     </div>
 
-    <div class="submit-floating">
-      <button type="button" mat-raised-button color="accent" (click)="savePost()"><i class="fa fa-save"></i> Save</button>
-      <button mat-raised-button color="accent" class="ml-2"> <i class="fa fa-pencil"></i> Upload </button>
+    <div class="container text-right">
+      <input type="submit" value="next" class="btn btn-success w-25">
     </div>
   </form>
-</section>
+</div>
+
+<!--<section class="post-write bg-white h-100">-->
+  <!--<form class="form h-100" #form="ngForm" (ngSubmit)="submit(form)">-->
+    <!--<div class="row h-100 mx-0">-->
+      <!--<section class="col extra-section sale-sheet-section" id="sale-sheet-section">-->
+        <!--<h2> Upload Sheet Music </h2>-->
+
+        <!--<div class="file-select-form" (click)="fileSelector.click();">-->
+          <!--<div class="upload-btn" [class.disabled]="uploadStatus?.status === 'uploading'">-->
+            <!--<input type="file" id="upload-sheet" class="upload-sheet" #fileSelector name="upload-sheet"-->
+                     <!--(change)="addFile($event.target.files[0])" accept=".pdf" />-->
+            <!--<span class="btn-text">-->
+              <!--Choose pdf file / Drag & drop <BR />-->
+              <!--<small> Support extension: pdf </small>-->
+            <!--</span>-->
+          <!--</div>-->
+        <!--</div>-->
+
+        <!--<div class="position-relative">-->
+          <!--<div *ngFor="let file of files; let i = index" class="m-1">-->
+            <!--<div class="d-flex justify-content-between align-items-center">-->
+              <!--<span class="file-name">-->
+                <!--<i class="fa fa-file-pdf"></i>-->
+                <!--{{file.file.name}}-->
+              <!--</span>-->
+
+              <!--<label class="btn btn-primary btn-sm">-->
+                <!--<input type="file" [id]="'upload-preview' + i" class="upload-sheet d-none" name="upload-sheet"-->
+                       <!--(change)="addPreview(i, $event)">-->
+                <!--<span class="btn-text">-->
+                  <!--<i class="fa fa-plus"></i>-->
+                  <!--Add Preview-->
+                <!--</span>-->
+              <!--</label>-->
+            <!--</div>-->
+
+            <!--<div *ngFor="let preview of file.previews; let i = index" class="preview-item pl-1">-->
+              <!--<span class="file-name">-->
+                <!--<i class="fa fa-file-image"></i>-->
+                <!--{{preview.name}}-->
+              <!--</span>-->
+            <!--</div>-->
+          <!--</div>-->
+
+          <!--<div class="progress upload-progress position-relative" *ngIf="uploadStatus">-->
+            <!--<div class="progress-bar"-->
+                 <!--role="progressbar"-->
+                 <!--[attr.aria-valuenow]="uploadStatus.progress" aria-valuemin="0" aria-valuemax="100"-->
+                 <!--[style.width]="uploadStatus.progress + '%'">-->
+              <!--<div style="position: absolute; left: 0; right: 0">-->
+                <!--{{uploadStatus.progress}}%-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+
+        <!--<h2> Song Type </h2>-->
+
+        <!--<div class="song-type-form">-->
+          <!--<div class="btn-group">-->
+            <!--<button class="btn btn-secondary" type="button"-->
+                    <!--[class.active]="songType === '~cover'"-->
+                    <!--(click)="songType = '~cover'"> Cover </button>-->
+            <!--<button class="btn btn-secondary" type="button"-->
+                    <!--[class.active]="songType === '~original'"-->
+                    <!--(click)="songType = '~original'"> Original </button>-->
+          <!--</div>-->
+        <!--</div>-->
+
+        <!--<h2> Genre </h2>-->
+
+        <!--<div class="tag-selector genre-form">-->
+          <!--<ul>-->
+            <!--<li *ngFor="let genre of genreSelections"-->
+                <!--[class.active]="genres.has(genre.value)" (click)="toggleGenre(genre.value)">-->
+              <!--{{genre.name}}-->
+            <!--</li>-->
+          <!--</ul>-->
+        <!--</div>-->
+
+        <!--<h2> Instrument </h2>-->
+
+        <!--<div class="tag-selector instrument-form">-->
+          <!--<ul>-->
+            <!--<li *ngFor="let instrument of instrumentSelections"-->
+                <!--[class.active]="instruments.has(instrument.value)" (click)="toggleInstrument(instrument.value)">-->
+              <!--{{instrument.name}}-->
+            <!--</li>-->
+          <!--</ul>-->
+        <!--</div>-->
+
+        <!--<h5> Price </h5>-->
+
+        <!--<div class="price-form">-->
+          <!--<div class="input-group">-->
+            <!--<input type="number" class="form-control" id="price" name="price"-->
+                   <!--[(ngModel)]="post.price" required>-->
+            <!--<div class="input-group-append">-->
+              <!--<div class="input-group-text">-->
+                <!--MZK-->
+              <!--</div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
+      <!--</section>-->
+      <!--<div class="col-6 px-0 write-form border-left">-->
+        <!--<div class="title">-->
+          <!--<input type="text" id="title" name="title" class="w-100" placeholder="Title"-->
+                 <!--required [(ngModel)]="post.title">-->
+        <!--</div>-->
+
+        <!--<div class="description">-->
+          <!--&lt;!&ndash;<div [froalaEditor]="options" #froalaEditor required [(froalaModel)]="post.content">123</div>&ndash;&gt;-->
+          <!--<textarea [(ngModel)]="post.content" name="content" placeholder="description"></textarea>-->
+        <!--</div>-->
+      <!--</div>-->
+    <!--</div>-->
+
+    <!--<div class="submit-floating">-->
+      <!--<button type="button" mat-raised-button color="accent" (click)="savePost()"><i class="fa fa-save"></i> Save</button>-->
+      <!--<button mat-raised-button color="accent" class="ml-2"> <i class="fa fa-pencil"></i> Upload </button>-->
+    <!--</div>-->
+  <!--</form>-->
+<!--</section>-->

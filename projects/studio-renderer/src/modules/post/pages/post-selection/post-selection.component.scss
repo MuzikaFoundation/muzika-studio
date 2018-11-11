@@ -1,0 +1,101 @@
+
+:host {
+  height: 100%;
+}
+
+.post-selection {
+  width: 100%;
+  height: 100%;
+  background: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, .1);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  .selection-title {
+    font-size: 32px;
+    font-weight: 700;
+    text-shadow: 1px 2px #dddddd;
+    margin: 0 0 48px 0;
+  }
+
+  .selection-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin: 0 48px;
+
+    $icon-size: 172px;
+    $icon-hover-additional: 12px;
+    .button {
+      margin: 0 48px;
+      width: $icon-size + $icon-hover-additional + 128px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      .icon {
+        width: $icon-size + $icon-hover-additional;
+        height: $icon-size + $icon-hover-additional;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        svg {
+          cursor: pointer;
+          display: inline-block;
+          width: $icon-size;
+          height: $icon-size;
+          line-height: $icon-size + 12px;
+          color: red;
+          fill: url('#default-gradient');
+          transition: all ease-in-out 0.1s;
+
+          .cls-1 {
+            fill:none;
+            stroke: url('#default-gradient');
+            stroke-linecap:round;
+            stroke-miterlimit:10;
+            stroke-width:4px;
+          }
+
+          &:hover {
+            fill: url('#hover-gradient');
+            width: $icon-size + $icon-hover-additional;
+            height: $icon-size + $icon-hover-additional;
+          }
+
+          &:hover .cls-1 {
+            fill:none;
+            stroke: url('#hover-gradient');
+            stroke-linecap:round;
+            stroke-miterlimit:10;
+            stroke-width:4px;
+          }
+        }
+      }
+
+      .title {
+        font-size: 30px;
+        font-weight: 700;
+        margin: 28px 0 20px 0;
+        color: #444;
+        text-shadow: 1px 2px 4px #c3bbef;
+        user-select: none;
+      }
+
+      .description {
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 28px;
+        color: #a0a7bf;
+        user-select: none;
+      }
+    }
+  }
+}
